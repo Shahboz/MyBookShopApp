@@ -1,8 +1,10 @@
 DROP TABLE IF EXISTS author;
 
 CREATE TABLE author (
-    id       INT AUTO_INCREMENT PRIMARY KEY,
-    name     VARCHAR(250) NOT NULL
+    id        INT AUTO_INCREMENT PRIMARY KEY,
+    name      VARCHAR(250) NOT NULL,
+    biography VARCHAR(4000),
+    photo     VARCHAR(250)
 );
 
 DROP TABLE IF EXISTS books;

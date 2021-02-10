@@ -103,7 +103,7 @@
             <div class="Authors-block" th:each="key : ${authors.keySet()}">
               <h2 class="Authors-title" th:id="${key}" th:text="${key}"></h2>
               <div class="Authors-letter">
-                <div class="Authors-item" th:each="author : ${authors.get(key)}"><a href="/authors/slug.html" th:text="${author}">Абгарян Наринэ</a>
+                <div class="Authors-item" th:each="author : ${authors.get(key)}"><a th:href="'/authors/author?id=' + ${author.id}" th:text="${author.name}">Абгарян Наринэ</a>
                 </div>
               </div>
             </div>
