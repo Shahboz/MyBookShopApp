@@ -1,15 +1,14 @@
 package com.example.MyBookShopApp.controllers;
 
-
-import com.example.MyBookShopApp.data.BookService;
-import lombok.extern.slf4j.Slf4j;
+import com.example.MyBookShopApp.entity.Book;
+import com.example.MyBookShopApp.service.BookService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 
+import java.util.List;
 
-@Slf4j
 @Controller
 public class MainPageController {
 
@@ -20,21 +19,54 @@ public class MainPageController {
         this.bookService = bookService;
     }
 
+    @ModelAttribute("recommendedBooks")
+    public List<Book> recommendedBooks(){
+        return bookService.getBooksData();
+    }
+
+    @ModelAttribute("postponedBooks")
+    public List<Book> postponedBooks(){
+        return bookService.getBooksData().subList(0, 3);
+    }
+
     @GetMapping("/")
-    public String index(Model model) {
-        model.addAttribute("bookData", bookService.getBookData());
+    public String mainPage(){
         return "index";
     }
 
-    @GetMapping("/genres")
-    public String genres() {
-        return "genres/index";
+    @GetMapping("/postponed")
+    public String postponedPage(){
+        return "postponed";
     }
 
-    @GetMapping("/authors")
-    public String authors(Model model) {
-        model.addAttribute("authors", bookService.getAuthors());
-        return "authors/index";
+    @GetMapping("/cart")
+    public String cartPage(){
+        return "cart";
+    }
+
+    @GetMapping("/signin")
+    public String signinPage(){
+        return "signin";
+    }
+
+    @GetMapping("/signup")
+    public String signupPage(){
+        return "signup";
+    }
+
+    @GetMapping("/about")
+    public String aboutPage(){
+        return "about";
+    }
+
+    @GetMapping("/faq")
+    public String faqPage(){
+        return "faq";
+    }
+
+    @GetMapping("/contacts")
+    public String contactsPage(){
+        return "contacts";
     }
 
 }
