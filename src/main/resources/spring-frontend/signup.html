@@ -1,0 +1,76 @@
+
+<!--END-->
+<!--END--><!DOCTYPE html><!--[if IE 7]>
+<html class="ie7" lang="ru">
+<![endif]-->
+<!--[if IE 8]>
+<html class="ie8" lang="ru">
+<![endif]-->
+<!--[if IE 9]>
+<html class="ie9" lang="ru">
+<![endif]-->
+<!--[if gt IE 9]><!--> <html lang="ru" xmlns:th="http://www.thymeleaf.org"> <!--<![endif]-->
+<head th:replace="~{fragments/head_fragment :: headFragment(65675850)}"></head>
+<body class="Site">
+  <!--if lt IE 8
+  p.error-browser
+      | Ваш браузер&nbsp;
+      em устарел!&nbsp;
+      a(href="http://browsehappy.com/") Выберите новую версию
+          +s
+          | браузера здесь&nbsp;
+      | для правильного отображения сайта.
+  -->
+  <header th:replace="~{fragments/header_fragment :: headFragment}"></header>
+  <div class="Middle Middle_form">
+    <div class="Middle-top">
+      <div class="wrap">
+        <h1 class="Middle-title" th:text="#{menubar.registration}">Регистрация
+        </h1>
+      </div>
+    </div>
+    <div class="wrap">
+      <main class="Middle-main">
+        <form class="form Login Login_registration" action="#" method="post">
+          <div class="Login-ins">
+            <div class="Login-step">
+              <div class="form-group">
+                <input class="form-input" id="name" name="name" type="text" placeholder="Введите Имя" data-validate="require" th:placeholder="#{siginbar.placeholder.name}"/>
+              </div>
+              <div class="form-group form-group_row">
+                <div class="form-group">
+                  <input class="form-input form-input_phone" id="phone" name="phone" type="text" placeholder="Введите телефон" data-mask="+7 (999) 999-99-99" data-validate="require" th:placeholder="#{siginbar.placeholder.phonefield}"/>
+                </div>
+                <div class="form-group form-group_key">
+                  <input class="form-input form-input_code" id="phoneCode" name="phoneCode" type="text" placeholder="Код из СМС" data-mask="999 999" data-validate="require key" th:placeholder="#{siginbar.placeholder.codefromphone}"/>
+                </div>
+                <div class="form-group">
+                  <button class="btn btn_success btn_sm form-btn" type="button" name="submitPhone" disabled="disabled" id="submitPhone" th:text="#{button.submit}">Подтвердить
+                  </button>
+                </div>
+              </div>
+              <div class="form-group form-group_row">
+                <div class="form-group">
+                  <input class="form-input form-input_mail" id="mail" name="mail" type="text" placeholder="Введите e-mail" data-validate="mail require" th:placeholder="#{siginbar.placeholder.emailfield}"/>
+                </div>
+                <div class="form-group form-group_key">
+                  <input class="form-input form-input_code" id="mailCode" name="mailCode" type="text" placeholder="Код из письма" data-mask="999 999" data-validate="require key" th:placeholder="#{siginbar.placeholder.codefromemail}"/>
+                </div>
+                <div class="form-group">
+                  <button class="btn btn_success btn_sm form-btn" type="button" name="submitMail" disabled="disabled" id="submitMail" th:text="#{button.submit}">Подтвердить
+                  </button>
+                </div>
+              </div>
+              <div class="form-group form-group_center">
+                <button class="btn btn_primary form-btn" type="button" name="registration" id="registration" disabled="disabled" th:text="#{menubar.registration}">Зарегистрироваться
+                </button>
+              </div>
+            </div>
+          </div>
+        </form>
+      </main>
+    </div>
+  </div>
+  <footer th:replace="~{fragments/footer_fragment :: footFragment}"></footer>
+  <script src="/assets/plg/jQuery/jquery-3.5.1.min.js"></script>
+</body></html>
