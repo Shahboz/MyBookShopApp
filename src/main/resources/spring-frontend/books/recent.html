@@ -26,9 +26,9 @@
     <div class="wrap">
       <main class="Middle-main">
         <ul class="breadcrumbs">
-          <li class="breadcrumbs-item"><a href="/index.html" th:text="#{menubar.main}">Главная</a>
+          <li class="breadcrumbs-item"><a href="/index.html" th:href="@{/}" th:text="#{menubar.main}">Главная</a>
           </li>
-          <li class="breadcrumbs-item"><a href="/genres/index.html" th:text="#{menubar.books}">Книги</a>
+          <li class="breadcrumbs-item"><a href="/genres/index.html" th:href="@{/genres}" th:text="#{menubar.books}">Книги</a>
           </li>
           <li class="breadcrumbs-item breadcrumbs-item_current" th:text="#{menubar.news}"><span>Новинки</span>
           </li>
