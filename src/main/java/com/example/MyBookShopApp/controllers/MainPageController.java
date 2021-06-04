@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
-
 import java.util.List;
 
 @Controller
@@ -24,8 +23,15 @@ public class MainPageController {
         return bookService.getBooksData();
     }
 
+    @ModelAttribute("newBooks")
+    public List<Book> newBooks() {
+        return bookService.getNewBooks(null, null);
+    }
+
     @ModelAttribute("postponedBooks")
-    public List<Book> postponedBooks(){
+    public List<Book> postponedBooks() {
+        List<Book> bookList = bookService.getBooksData();
+        if(bookList.isEmpty() || bookList.size() < 3) return null;
         return bookService.getBooksData().subList(0, 3);
     }
 

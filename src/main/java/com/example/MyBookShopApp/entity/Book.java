@@ -1,72 +1,75 @@
 package com.example.MyBookShopApp.entity;
 
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import javax.persistence.*;
+import java.util.*;
+import java.util.stream.Collectors;
+
+
+@Entity
+@Getter
+@Setter
+@NoArgsConstructor
+@Table(name = "book")
 public class Book {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    private String author;
+
+    @Column(columnDefinition = "TIMESTAMP WITHOUT TIME ZONE", nullable = false)
+    private Date pubDate;
+
+    @Column(columnDefinition="SMALLINT", nullable = false)
+    private Integer isBestseller;
+
+    @Column(nullable = false)
+    private String slug;
+
+    @Column(nullable = false)
     private String title;
-    private String priceOld;
-    private String price;
-    private Integer signPopular;
 
-    public Integer getSignPopular() {
-        return signPopular;
-    }
+    private String image;
 
-    public void setSignPopular(Integer signPopular) {
-        this.signPopular = signPopular;
-    }
+    @Column(columnDefinition="TEXT")
+    private String description;
 
-    @Override
-    public String toString() {
-        return "Book{" +
-                "id=" + id +
-                ", author='" + author + '\'' +
-                ", title='" + title + '\'' +
-                ", priceOld='" + priceOld + '\'' +
-                ", price='" + price + '\'' +
-                ", signPopular='" + signPopular + '\'' +
-                '}';
-    }
+    @Column(nullable = false)
+    private Integer price;
 
-    public Integer getId() {
-        return id;
-    }
+    @Column(columnDefinition="smallint default 0", nullable = false)
+    private Integer discount;
 
-    public void setId(Integer id) {
-        this.id = id;
-    }
+    @OneToMany(mappedBy = "book",cascade = CascadeType.REMOVE)
+    private List<AuthorBooks> authorList = new ArrayList<>();
 
-    public String getAuthor() {
-        return author;
-    }
-
-    public void setAuthor(String author) {
-        this.author = author;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
+    public Book(Date pubDate, Integer isBestseller, String slug, String title, Integer price, Integer discount) {
+        this.pubDate = pubDate;
+        this.isBestseller = isBestseller;
+        this.slug = slug;
         this.title = title;
-    }
-
-    public String getPriceOld() {
-        return priceOld;
-    }
-
-    public void setPriceOld(String priceOld) {
-        this.priceOld = priceOld;
-    }
-
-    public String getPrice() {
-        return price;
-    }
-
-    public void setPrice(String price) {
         this.price = price;
+        this.discount = discount;
+    }
+
+    public List<Author> getAuthors() {
+        return this.authorList.stream().map(AuthorBooks::getAuthor).collect(Collectors.toList());
+    }
+
+    public void setAuthors(List<Author> authorList) {
+        int i = 1;
+        for (Author author : authorList) {
+            this.authorList.add(new AuthorBooks(this, author, i++));
+        }
+    }
+
+    public String getAuthorName() {
+        if(this.getAuthorList().size() == 0)
+            return null;
+        this.getAuthorList().sort(Comparator.comparing(AuthorBooks::getSortIndex));
+        return this.getAuthorList().get(0).getAuthor().getName() + (this.getAuthorList().size() > 1 ? " и др." : null);
     }
 
 }
