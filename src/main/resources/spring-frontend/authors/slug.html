@@ -40,7 +40,7 @@
           </div>
           <div class="Spoiler">
             <div class="Spoiler-visible">
-              <div class="pict pict_left"><img src="/assets/img/content/main/card.jpg" alt="card.jpg"/>
+              <div class="pict pict_left"><img th:src="${author.getPhoto()}" src="/assets/img/content/main/card.jpg" alt="card.jpg"/>
               </div>
               <div>
                 <h2 th:text="#{author.biography}">Биография
@@ -65,11 +65,12 @@
             </h2>
           </header>
           <div class="Slider Slider_carousel">
-            <div class="Slider-box Cards">
-              <div class="Slider-item" th:each="book : ${author.getBooks()}">
+            <div class="Slider-box Cards" data-load="authorBook" data-loadoffset="0" data-loadlimit="6" th:attr="data-refreshid=${author.getSlug()}">
+              <div class="Slider-item" th:each="book : ${authorBooks}">
                 <div class="Slider-content">
                   <div class="Card">
-                    <div class="Card-picture"><a href="#"><img src="/assets/img/content/main/card.jpg" alt="card.jpg"/></a>
+                    <div class="Card-picture">
+                      <a href="#"><img th:src="${book.getImage()}" src="/assets/img/content/main/card.jpg" alt="card.jpg"/></a>
                       <div class="Card-sale" th:if="${book.getDiscount() > 0}" th:text="${book.getDiscount()} + '% скидка'">30% скидка</div>
                       <div class="Card-ribbon" th:if="${book.getIsBestseller() == 1}"><span class="Card-ribbonText">Бестселлер</span></div>
                     </div>
@@ -91,9 +92,17 @@
               <div class="Slider-navigate">
               </div>
             </div>
+            <div class="Slider-load">
+              <div class="Slider-load-text">Идет загрузка данных</div>
+            </div>
           </div>
           <footer class="Section-footer">
-            <a class="Author-books" href="/books/author.html" th:href="@{'/books/author'(authorId=${author.getId()})}" th:text="#{author.allBooks} + '(' + ${author.getBookList().size()} + ')'">Все книги автора<span class="Author-amount">(55)</span></a>
+            <a class="Author-books"
+               href="/books/author.html"
+               th:href="'/books/author/' + ${author.getSlug()}"
+               th:text="#{author.allBooks} + '(' + ${author.getBooks().size()} + ')'">Все книги автора
+              <span class="Author-amount">(55)</span>
+            </a>
           </footer>
         </div>
       </main>

@@ -32,11 +32,12 @@
             </h2>
           </div>
           <div class="Slider Slider_carousel">
-            <div class="Slider-box Cards" data-load="recommended" data-loadoffset="8" data-loadlimit="20">
+            <div class="Slider-box Cards" data-load="recommended" data-loadoffset="0" data-loadlimit="6">
               <div class="Slider-item" th:each="book : ${recommendedBooks}">
                 <div class="Slider-content">
                   <div class="Card">
-                    <a class="Card-picture" href="/books/slug.html"><img src="/assets/img/content/main/card.jpg" alt="card.jpg"/>
+                    <a class="Card-picture" href="/books/slug.html">
+                      <img th:src="${book.getImage()}" alt="card.jpg"/>
                       <div class="Card-sale" th:if="${book.getDiscount() > 0}" th:text="${book.getDiscount()} + '% скидка'">30% скидка</div>
                     </a>
                     <div class="Card-ribbon" th:if="${book.getIsBestseller() == 1}"><span class="Card-ribbonText">Бестселлер</span></div>
@@ -66,11 +67,11 @@
             <h2 class="Section-title" th:text="#{menubar.news}">Новинки</h2>
           </div>
           <div class="Slider Slider_carousel">
-            <div class="Slider-box Cards" data-load="recent" data-loadoffset="8" data-loadlimit="20">
+            <div class="Slider-box Cards" data-load="recent" data-loadoffset="0" data-loadlimit="6">
               <div class="Slider-item" th:each="book : ${newBooks}">
                 <div class="Slider-content">
                   <div class="Card">
-                    <a class="Card-picture" href="/books/slug.html"><img src="/assets/img/content/main/card.jpg" alt="card.jpg"/>
+                    <a class="Card-picture" href="/books/slug.html"><img th:src="${book.getImage()}" src="/assets/img/content/main/card.jpg" alt="card.jpg"/>
                       <div class="Card-sale" th:if="${book.getDiscount() > 0}" th:text="${book.getDiscount()} + '% скидка'">30% скидка</div>
                     </a>
                     <div class="Card-ribbon" th:if="${book.getIsBestseller() == 1}"><span class="Card-ribbonText">Бестселлер</span></div>
@@ -102,122 +103,23 @@
             </h2>
           </div>
           <div class="Slider Slider_carousel">
-            <div class="Slider-box Cards" data-load="popular" data-loadoffset="8" data-loadlimit="20">
-              <div class="Slider-item">
+            <div class="Slider-box Cards" data-load="popular" data-loadoffset="0" data-loadlimit="6">
+              <div class="Slider-item" th:each="book : ${popularBooks}">
                 <div class="Slider-content">
-                  <div class="Card"><a class="Card-picture" href="/books/slug.html"><img src="/assets/img/content/main/card.jpg" alt="card.jpg"/>
-                      <div class="Card-sale">30% скидка
-                      </div>
-                      <div class="Card-ribbon"><span class="Card-ribbonText">Бестселлер</span>
-                      </div></a>
+                  <div class="Card">
+                    <a class="Card-picture" href="/books/slug.html">
+                      <img th:src="${book.getImage()}" alt="card.jpg"/>
+                      <div class="Card-sale" th:if="${book.getDiscount() > 0}" th:text="${book.getDiscount()} + '% скидка'">30% скидка</div>
+                      <div class="Card-ribbon" th:if="${book.getIsBestseller() == 1}"><span class="Card-ribbonText">Бестселлер</span></div>
+                    </a>
                     <div class="Card-content">
-                      <strong class="Card-title"><a href="/books/slug.html">Техника</a>
+                      <strong class="Card-title"><a href="/books/slug.html" th:text="${book.getTitle()}">Техника</a>
                       </strong>
-                      <div class="Card-description">Кондратенко Александр Петрович
+                      <div class="Card-description" th:text="${book.getAuthorName()}">Кондратенко Александр Петрович
                       </div>
-                      <div class="Card-cost"><span class="Card-priceOld">₽500.00</span><span class="Card-price">₽390.00</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div class="Slider-item">
-                <div class="Slider-content">
-                  <div class="Card"><a class="Card-picture" href="/books/slug.html"><img src="/assets/img/content/main/card.jpg" alt="card.jpg"/></a>
-                    <div class="Card-content">
-                      <strong class="Card-title"><a href="/books/slug.html">Английский язык. 5 класс. Английский в фокусе. Рабочая тетрадь. ФГОС</a>
-                      </strong>
-                      <div class="Card-description">Ваулина, Дули, Подоляко
-                      </div>
-                      <div class="Card-cost"><span class="Card-priceOld">₽300.00</span><span class="Card-price">₽190.00</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div class="Slider-item">
-                <div class="Slider-content">
-                  <div class="Card"><a class="Card-picture" href="/books/slug.html"><img src="/assets/img/content/main/card.jpg" alt="card.jpg"/></a>
-                    <div class="Card-content">
-                      <strong class="Card-title"><a href="/books/slug.html">Английский язык. 4 класс. Английский в фокусе. Рабочая тетрадь</a>
-                      </strong>
-                      <div class="Card-description">Быкова, Дули, Эванс
-                      </div>
-                      <div class="Card-cost"><span class="Card-priceOld">₽300.00</span><span class="Card-price">₽190.00</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div class="Slider-item">
-                <div class="Slider-content">
-                  <div class="Card"><a class="Card-picture" href="/books/slug.html"><img src="/assets/img/content/main/card.jpg" alt="card.jpg"/>
-                      <div class="Card-ribbon"><span class="Card-ribbonText">Бестселлер</span>
-                      </div></a>
-                    <div class="Card-content">
-                      <strong class="Card-title"><a href="/books/slug.html">Великая Отечественная война. 1941-1945</a>
-                      </strong>
-                      <div class="Card-description">Солопенко Алла, Меркулов Дмитрий
-                      </div>
-                      <div class="Card-cost"><span class="Card-priceOld">₽300.00</span><span class="Card-price">₽190.00</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div class="Slider-item">
-                <div class="Slider-content">
-                  <div class="Card"><a class="Card-picture" href="/books/slug.html"><img src="/assets/img/content/main/card.jpg" alt="card.jpg"/></a>
-                    <div class="Card-content">
-                      <strong class="Card-title"><a href="/books/slug.html">Английский язык. 5 класс. Английский в фокусе. Рабочая тетрадь. ФГОС</a>
-                      </strong>
-                      <div class="Card-description">Ваулина, Дули, Подоляко
-                      </div>
-                      <div class="Card-cost"><span class="Card-priceOld">₽300.00</span><span class="Card-price">₽190.00</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div class="Slider-item">
-                <div class="Slider-content">
-                  <div class="Card"><a class="Card-picture" href="/books/slug.html"><img src="/assets/img/content/main/card.jpg" alt="card.jpg"/></a>
-                    <div class="Card-content">
-                      <strong class="Card-title"><a href="/books/slug.html">Английский язык. 4 класс. Английский в фокусе. Рабочая тетрадь</a>
-                      </strong>
-                      <div class="Card-description">Быкова, Дули, Эванс
-                      </div>
-                      <div class="Card-cost"><span class="Card-priceOld">₽300.00</span><span class="Card-price">₽190.00</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div class="Slider-item">
-                <div class="Slider-content">
-                  <div class="Card"><a class="Card-picture" href="/books/slug.html"><img src="/assets/img/content/main/card.jpg" alt="card.jpg"/>
-                      <div class="Card-ribbon"><span class="Card-ribbonText">Бестселлер</span>
-                      </div></a>
-                    <div class="Card-content">
-                      <strong class="Card-title"><a href="/books/slug.html">Великая Отечественная война. 1941-1945</a>
-                      </strong>
-                      <div class="Card-description">Солопенко Алла, Меркулов Дмитрий
-                      </div>
-                      <div class="Card-cost"><span class="Card-priceOld">₽300.00</span><span class="Card-price">₽190.00</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div class="Slider-item">
-                <div class="Slider-content">
-                  <div class="Card"><a class="Card-picture" href="/books/slug.html"><img src="/assets/img/content/main/card.jpg" alt="card.jpg"/></a>
-                    <div class="Card-content">
-                      <strong class="Card-title"><a href="/books/slug.html">Большое путешествие по телу человека</a>
-                      </strong>
-                      <div class="Card-description">Джон Фарндон
-                      </div>
-                      <div class="Card-cost"><span class="Card-priceOld">₽300.00</span><span class="Card-price">₽190.00</span>
+                      <div class="Card-cost">
+                        <span th:class="${book.getDiscount() > 0} ? 'Card-priceOld' : 'Card-price'" th:text="'₽' + ${book.getPrice()}">₽300.00</span>
+                        <span class="Card-price" th:if="${book.getDiscount() > 0}" th:text="'₽' + ${book.getPrice()-book.getPrice()*book.getDiscount() / 100}">₽19.00</span>
                       </div>
                     </div>
                   </div>
@@ -234,106 +136,11 @@
             </div>
           </div>
         </div>
-        <h2 class="Middle-title" th:text="#{menubar.tags}">Книги по тегам
-        </h2>
+        <h2 class="Middle-title" th:text="#{menubar.tags}">Книги по тегам</h2>
         <div class="Tags" id="tags">
-          <div class="Tag Tag_xs"><a href="/tags/index.html">современная литература</a>
-          </div>
-          <div class="Tag Tag_sm"><a href="/tags/index.html">классическая литература</a>
-          </div>
-          <div class="Tag"><a href="/tags/index.html">зарубежная литература</a>
-          </div>
-          <div class="Tag Tag_md"><a href="/tags/index.html">фэнтези</a>
-          </div>
-          <div class="Tag Tag_lg"><a href="/tags/index.html">английская литература</a>
-          </div>
-          <div class="Tag"><a href="/tags/index.html">русская литература</a>
-          </div>
-          <div class="Tag"><a href="/tags/index.html">американская литература</a>
-          </div>
-          <div class="Tag"><a href="/tags/index.html">фантастика</a>
-          </div>
-          <div class="Tag Tag_md"><a href="/tags/index.html">детская литература</a>
-          </div>
-          <div class="Tag"><a href="/tags/index.html">детектив</a>
-          </div>
-          <div class="Tag Tag_sm"><a href="/tags/index.html">любовь</a>
-          </div>
-          <div class="Tag Tag_sm"><a href="/tags/index.html">мистика</a>
-          </div>
-          <div class="Tag"><a href="/tags/index.html">юмор</a>
-          </div>
-          <div class="Tag"><a href="/tags/index.html">приключения</a>
-          </div>
-          <div class="Tag"><a href="/tags/index.html">сказка</a>
-          </div>
-          <div class="Tag"><a href="/tags/index.html">французская литература</a>
-          </div>
-          <div class="Tag Tag_xs"><a href="/tags/index.html">англия</a>
-          </div>
-          <div class="Tag"><a href="/tags/index.html">художественная литература</a>
-          </div>
-          <div class="Tag Tag_xs"><a href="/tags/index.html">психология</a>
-          </div>
-          <div class="Tag"><a href="/tags/index.html">философия</a>
-          </div>
-          <div class="Tag Tag_lg"><a href="/tags/index.html">экранизировано</a>
-          </div>
-          <div class="Tag"><a href="/tags/index.html">любимое</a>
-          </div>
-          <div class="Tag"><a href="/tags/index.html">антиутопия</a>
-          </div>
-          <div class="Tag Tag_xs"><a href="/tags/index.html">books you must read before you die</a>
-          </div>
-          <div class="Tag"><a href="/tags/index.html">роман</a>
-          </div>
-          <div class="Tag Tag_md"><a href="/tags/index.html">франция</a>
-          </div>
-          <div class="Tag"><a href="/tags/index.html">дайте две</a>
-          </div>
-          <div class="Tag"><a href="/tags/index.html">young adult</a>
-          </div>
-          <div class="Tag Tag_lg"><a href="/tags/index.html">война</a>
-          </div>
-          <div class="Tag"><a href="/tags/index.html">история</a>
-          </div>
-          <div class="Tag Tag_sm"><a href="/tags/index.html">флэшмоб 2016</a>
-          </div>
-          <div class="Tag"><a href="/tags/index.html">детство</a>
-          </div>
-          <div class="Tag"><a href="/tags/index.html">жизнь</a>
-          </div>
-          <div class="Tag"><a href="/tags/index.html">драма</a>
-          </div>
-          <div class="Tag Tag_md"><a href="/tags/index.html">россия</a>
-          </div>
-          <div class="Tag Tag_md"><a href="/tags/index.html">книжное путешествие</a>
-          </div>
-          <div class="Tag"><a href="/tags/index.html">советская литература</a>
-          </div>
-          <div class="Tag"><a href="/tags/index.html">триллер</a>
-          </div>
-          <div class="Tag"><a href="/tags/index.html">америка</a>
-          </div>
-          <div class="Tag Tag_sm"><a href="/tags/index.html">немецкая литература</a>
-          </div>
-          <div class="Tag Tag_xs"><a href="/tags/index.html">вампиры</a>
-          </div>
-          <div class="Tag"><a href="/tags/index.html">школьная программа</a>
-          </div>
-          <div class="Tag Tag_xs"><a href="/tags/index.html">рассказы</a>
-          </div>
-          <div class="Tag"><a href="/tags/index.html">магия</a>
-          </div>
-          <div class="Tag"><a href="/tags/index.html">дети</a>
-          </div>
-          <div class="Tag"><a href="/tags/index.html">русская классика</a>
-          </div>
-          <div class="Tag"><a href="/tags/index.html">флэшмоб 2015</a>
-          </div>
-          <div class="Tag"><a href="/tags/index.html">биография</a>
-          </div>
-          <div class="Tag"><a href="/tags/index.html">english</a>
+          <div th:each="tag : ${tagBooks.keySet()}"
+               th:class="${tagBooks.get(tag)}>3 ? 'Tag Tag_lg' : (${tagBooks.get(tag)}==3 ? 'Tag Tag_md' : (${tagBooks.get(tag)}==2 ? 'Tag' : (${tagBooks.get(tag)}==1 ? 'Tag Tag_sm' : 'Tag Tag_xs')))">
+            <a href="/tags/index.html" th:href="'/tags/' + ${tag.getSlug()}" th:text="${tag.getName()}">современная литература</a>
           </div>
         </div>
       </main>

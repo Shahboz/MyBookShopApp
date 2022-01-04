@@ -1,12 +1,14 @@
 package com.example.MyBookShopApp.controllers;
 
 import com.example.MyBookShopApp.entity.Book;
+import com.example.MyBookShopApp.entity.Tag;
 import com.example.MyBookShopApp.service.BookService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 public class MainPageController {
@@ -19,59 +21,62 @@ public class MainPageController {
     }
 
     @ModelAttribute("recommendedBooks")
-    public List<Book> recommendedBooks(){
-        return bookService.getBooksData();
+    public List<Book> getRecommendedBooks(){
+        return bookService.getPageOfRecommendedBooks(0, 6).getContent();
     }
 
     @ModelAttribute("newBooks")
-    public List<Book> newBooks() {
-        return bookService.getNewBooks(null, null);
+    public List<Book> getNewBooks() {
+        return bookService.getPageOfNewBooks(0, 6, null, null).getContent();
     }
 
-    @ModelAttribute("postponedBooks")
-    public List<Book> postponedBooks() {
-        List<Book> bookList = bookService.getBooksData();
-        if(bookList.isEmpty() || bookList.size() < 3) return null;
-        return bookService.getBooksData().subList(0, 3);
+    @ModelAttribute("popularBooks")
+    public List<Book> getPopularBooks() {
+        return bookService.getPageOfPopularBooks(0, 6).getContent();
+    }
+
+    @ModelAttribute("tagBooks")
+    public Map<Tag, Integer> getTagBooks() {
+        return bookService.getTags();
     }
 
     @GetMapping("/")
-    public String mainPage(){
+    public String getMainPage(){
         return "index";
     }
 
     @GetMapping("/postponed")
-    public String postponedPage(){
+    public String getPostponedPage(){
         return "postponed";
     }
 
     @GetMapping("/cart")
-    public String cartPage(){
+    public String getCartPage(){
         return "cart";
     }
 
     @GetMapping("/signin")
-    public String signinPage(){
+    public String getSigninPage(){
         return "signin";
     }
 
     @GetMapping("/signup")
-    public String signupPage(){
+    public String getSignupPage(){
         return "signup";
     }
 
     @GetMapping("/about")
-    public String aboutPage(){
+    public String getAboutPage(){
         return "about";
     }
 
     @GetMapping("/faq")
-    public String faqPage(){
+    public String getFaqPage(){
         return "faq";
     }
 
     @GetMapping("/contacts")
-    public String contactsPage(){
+    public String getContactsPage(){
         return "contacts";
     }
 

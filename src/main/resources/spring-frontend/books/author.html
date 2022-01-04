@@ -38,9 +38,10 @@
         </h1>
         <div class="Section">
           <div class="Cards Cards_refresh">
-            <div class="Card" th:each="book : ${author.getBooks()}">
+            <!-- Ставим заглушку authorBooks, так как страница еще не рабочая-->
+            <div class="Card" th:each="book : ${authorBooks}">
               <div class="Card-picture">
-                <a href="#"><img src="/assets/img/content/main/card.jpg" alt="card.jpg"/></a>
+                <a href="#"><img th:src="${book.getImage()}" alt="card.jpg"/></a>
                 <div class="Card-sale" th:if="${book.getDiscount() > 0}" th:text="${book.getDiscount()} + '% скидка'">30% скидка</div>
                 <div class="Card-ribbon" th:if="${book.getIsBestseller() == 1}"><span class="Card-ribbonText" >Бестселлер</span></div>
               </div>
@@ -56,7 +57,7 @@
               </div>
             </div>
             <div class="Cards-footer Cards-footer_center">
-              <a class="btn btn_primary" href="#" data-refreshshow="author" data-refreshoffset="20" data-refreshlimit="20" data-refreshid="10" th:text="#{button.showmore}">Показать еще</a>
+              <a class="btn btn_primary" href="#" data-refreshshow="author" data-refreshoffset="0" data-refreshlimit="6" th:attr="data-refreshid=${author.getSlug()}" th:text="#{button.showmore}">Показать еще</a>
             </div>
           </div>
         </div>

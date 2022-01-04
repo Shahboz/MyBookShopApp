@@ -1,11 +1,13 @@
 package com.example.MyBookShopApp.controllers;
 
 import com.example.MyBookShopApp.entity.Author;
+import com.example.MyBookShopApp.entity.Book;
 import com.example.MyBookShopApp.service.AuthorService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Map;
@@ -13,6 +15,8 @@ import java.util.Map;
 
 @Slf4j
 @Controller
+@RequestMapping("/authors")
+@Api(description = "Authors data")
 public class AuthorsController {
 
     private final AuthorService authorService;
@@ -28,26 +32,36 @@ public class AuthorsController {
     }
 
     @ModelAttribute("author")
-    public Author getAuthor(@RequestParam(value = "authorId", required = false, defaultValue = "0") int authorId) {
-        if (authorId == 0) {
+    public Author author(@PathVariable(value = "slug", required = false) String authorSlug) {
+        if(authorSlug == null)
             return null;
-        }
-        return authorService.getAuthorById(authorId);
+        return authorService.getAuthorBySlug(authorSlug);
     }
 
-    @GetMapping("/authors")
-    public String authorsPage() {
+    @ModelAttribute("authorBooks")
+    public List<Book> authorBooks(@PathVariable(value = "slug", required = false) String authorSlug,
+                                  @RequestParam(value = "offset", required = false, defaultValue = "0") Integer offset,
+                                  @RequestParam(value = "limit",  required = false, defaultValue = "6") Integer limit) {
+        if(authorSlug == null)
+            return null;
+        return authorService.getPageOfAuthorBooks(authorSlug, offset, limit).getContent();
+    }
+
+    @GetMapping("")
+    public String getAuthorsPage() {
         return "/authors/index";
     }
 
-    @GetMapping("/authors/slug")
-    public String authorPage(@ModelAttribute("author") Author author, Model model) {
+    @GetMapping("/{slug}")
+    public String getAuthorPage(@ModelAttribute("author") Author author, @ModelAttribute("authorBooks") List<Book> authorBooks) {
         return "/authors/slug";
     }
 
-    @GetMapping("/books/author")
-    public String authorBookPage(@ModelAttribute("author") Author author, Model model) {
-        return "/books/author";
+    @ApiOperation("Method to get map authors")
+    @GetMapping("/api/authors")
+    @ResponseBody
+    public Map<String,List<Author>> authors() {
+        return authorService.getAuthorsMap();
     }
 
 }

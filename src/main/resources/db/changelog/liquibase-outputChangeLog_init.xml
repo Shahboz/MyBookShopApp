@@ -93,4 +93,95 @@
     <changeSet author="SSafarov (generated)" id="1622823661355-10">
         <addForeignKeyConstraint baseColumnNames="author_id" baseTableName="book2author" constraintName="fkcdamvjmc66dxs94gpco2g5yyb" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="author"/>
     </changeSet>
+
+    <changeSet author="SSafarov" id="1622823661355-11">
+        <createSequence sequenceName="genre_id_seq"/>
+    </changeSet>
+
+    <changeSet author="SSafarov" id="1622823661355-12">
+        <createTable tableName="genre">
+            <column autoIncrement="true" name="id" type="SERIAL">
+                <constraints primaryKey="true" primaryKeyName="genre_pkey"/>
+            </column>
+            <column name="parent_id" type="INT"/>
+            <column name="slug" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="name" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="SSafarov" id="1622823661355-13">
+        <createSequence sequenceName="book2genre_seq"/>
+    </changeSet>
+
+    <changeSet author="SSafarov" id="1622823661355-14">
+        <createTable tableName="book2genre">
+            <column autoIncrement="true" name="id" type="SERIAL">
+                <constraints primaryKey="true" primaryKeyName="book2genre_pkey"/>
+            </column>
+            <column name="book_id" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="genre_id" type="INT">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="SSafarov" id="1622823661355-15">
+        <addForeignKeyConstraint baseColumnNames="parent_id" baseTableName="genre" constraintName="genre_fk1" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="genre"/>
+    </changeSet>
+
+    <changeSet author="SSafarov" id="1622823661355-16">
+        <addForeignKeyConstraint baseColumnNames="book_id" baseTableName="book2genre" constraintName="book2genre_fk1" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="book"/>
+    </changeSet>
+
+    <changeSet author="SSafarov" id="1622823661355-17">
+        <addForeignKeyConstraint baseColumnNames="genre_id" baseTableName="book2genre" constraintName="book2genre_fk2" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="genre"/>
+    </changeSet>
+
+    <changeSet author="SSafarov" id="1622823661355-18">
+        <createTable tableName="tags">
+            <column autoIncrement="true" name="id" type="SERIAL">
+                <constraints primaryKey="true" primaryKeyName="tags_pkey"/>
+            </column>
+            <column name="name" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="slug" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="SSafarov" id="1622823661355-19">
+        <createTable tableName="book2tag">
+            <column name="book_id" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="tag_id" type="INT">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="SSafarov" id="1622823661355-20">
+        <addForeignKeyConstraint baseColumnNames="book_id" baseTableName="book2tag" constraintName="book2tag_fk1" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="book"/>
+    </changeSet>
+
+    <changeSet author="SSafarov" id="1622823661355-21">
+        <addForeignKeyConstraint baseColumnNames="tag_id" baseTableName="book2tag" constraintName="book2tag_fk2" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="tags"/>
+    </changeSet>
+
+    <changeSet author="SSafarov" id="1622823661355-22">
+        <addColumn tableName="book">
+            <column name="bought_users" type="SERIAL" defaultValue="0"/>
+            <column name="card_users"   type="SERIAL" defaultValue="0"/>
+            <column name="hold_users"   type="SERIAL" defaultValue="0"/>
+        </addColumn>
+    </changeSet>
+
 </databaseChangeLog>

@@ -9,7 +9,8 @@
 <!--[if IE 9]>
 <html class="ie9" lang="ru">
 <![endif]-->
-<!--[if gt IE 9]><!--> <html lang="ru" xmlns:th="http://www.thymeleaf.org"> <!--<![endif]-->
+<!--[if gt IE 9]><!-->
+<html lang="ru" xmlns:th="http://www.thymeleaf.org"> <!--<![endif]-->
 <head th:replace="~{fragments/head_fragment :: headFragment(45035206)}"></head>
 <body class="Site">
   <!--if lt IE 8
@@ -40,12 +41,14 @@
           </div>
           <div class="Cards Cards_refresh">
             <div class="Card" th:each="book, iStat : ${popularBooks}">
-              <div class="Card-picture"><a href="#"><img src="/assets/img/content/main/card.jpg" alt="card.jpg"/></a>
+              <div class="Card-picture"><a href="#"><img th:src="${book.getImage()}" src="/assets/img/content/main/card.jpg" alt="card.jpg"/></a>
                 <div class="Card-sale" th:if="${book.getDiscount() > 0}" th:text="${book.getDiscount()} + '% скидка'">30% скидка</div>
                 <div class="Card-ribbon" th:if="${book.getIsBestseller() == 1}"><span class="Card-ribbonText">Бестселлер</span></div>
+                <!--
                 <a th:if="${(iStat.index+1) % 6 == 0}" class="Card-status" title="Куплена"><img src="/assets/img/icons/check.svg" alt="check.svg"/></a>
                 <a th:if="${(iStat.index+1) % 7 == 0}" class="Card-status" title="Отложена"><img src="/assets/img/icons/heart.svg" alt="heart.svg"/></a>
                 <a th:if="${(iStat.index+1) % 8 == 0}" class="Card-status" title="В корзине"><img src="/assets/img/icons/shopping-basket.svg" alt="shopping-basket.svg"/></a>
+                -->
               </div>
               <div class="Card-content">
                 <strong class="Card-title"><a href="#" th:text="${book.getTitle()}">Техника</a>
@@ -58,7 +61,8 @@
                 </div>
               </div>
             </div>
-            <div class="Cards-footer Cards-footer_center"><a class="btn btn_primary" href="#" data-refreshshow="popular" data-refreshoffset="20" data-refreshlimit="20" th:text="#{button.showmore}">Показать еще</a>
+            <div class="Cards-footer Cards-footer_center">
+              <a class="btn btn_primary" href="#" data-refreshshow="popular" data-refreshoffset="0" data-refreshlimit="6" th:text="#{button.showmore}">Показать еще</a>
             </div>
           </div>
         </div>
