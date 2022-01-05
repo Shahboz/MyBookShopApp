@@ -39,13 +39,11 @@ public class GenreService {
     }
 
     public Genre getGenreBySlug(String genreSlug) {
-        Genre genre = genreRepository.findGenreBySlug(genreSlug);
-        System.out.println("genreSlug = " + genreSlug);
-        return genre;
+        return genreRepository.findGenreBySlug(genreSlug);
     }
 
     public Page<Book> getPageOfGenreBooks(String genreSlug, Integer offset, Integer limit) {
-        Pageable nextPage = PageRequest.of(offset, limit);
+        Pageable nextPage = PageRequest.of(offset/limit, limit);
         return genreRepository.findBooksByGenreSlug(genreSlug, nextPage);
     }
 

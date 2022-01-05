@@ -25,7 +25,7 @@ public class TagService {
     }
 
     public Page<Book> getPageOfBooksByTag(String slugTag, int offset, int limit) {
-        Pageable nextPage = PageRequest.of(offset, limit);
+        Pageable nextPage = PageRequest.of(offset/limit, limit);
         return tagRepository.findBooksByTag(slugTag, nextPage);
     }
 

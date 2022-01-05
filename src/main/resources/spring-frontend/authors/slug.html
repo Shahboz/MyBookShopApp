@@ -26,43 +26,40 @@
     <div class="wrap">
       <main class="Middle-main">
         <ul class="breadcrumbs">
-          <li class="breadcrumbs-item"><a href="/index.html" th:href="@{/}" th:text="#{menubar.main}">Главная</a>
+          <li class="breadcrumbs-item">
+            <a href="/index.html" th:href="@{/}" th:text="#{menubar.main}">Главная</a>
           </li>
-          <li class="breadcrumbs-item"><a href="/authors/index.html" th:href="@{/authors}" th:text="#{menubar.author}">Авторы</a>
+          <li class="breadcrumbs-item">
+            <a href="/authors/index.html" th:href="@{/authors}" th:text="#{menubar.author}">Авторы</a>
           </li>
-          <li class="breadcrumbs-item breadcrumbs-item_current" th:text="${author.getName()}"><span>Борис Васильевич Бедный</span>
+          <li class="breadcrumbs-item breadcrumbs-item_current" th:text="${author.getName()}">
+            <span>Борис Васильевич Бедный</span>
           </li>
         </ul>
-        <h1 class="Middle-title" th:text="${author.getName()}">Борис Васильевич Бедный
-        </h1>
+        <h1 class="Middle-title" th:text="${author.getName()}">Борис Васильевич Бедный</h1>
         <article class="Article">
-          <div class="sdf">
-          </div>
+          <div class="sdf"></div>
           <div class="Spoiler">
             <div class="Spoiler-visible">
-              <div class="pict pict_left"><img th:src="${author.getPhoto()}" src="/assets/img/content/main/card.jpg" alt="card.jpg"/>
+              <div class="pict pict_left">
+                <img th:src="${author.getPhoto()}" src="/assets/img/content/main/card.jpg" alt="card.jpg"/>
               </div>
               <div>
-                <h2 th:text="#{author.biography}">Биография
-                </h2>
-                <p th:text="${#strings.substringBefore(author.getDescription(), '.')}">Борис Бедный родился в семье учителя в 1916 году в станице Ярославская Краснодарского края. Окончил Майкопский лесной техникум и был послан учиться в Ленинградскую лесотехническую академию. Стал специалистом по сплаву леса и приехал в Республику Коми, работать на сплавных предприятиях.
-                </p>
+                <h2 th:text="#{author.biography}">Биография</h2>
+                <p th:text="${#strings.substringBefore(author.getDescription(), '.')}">Борис Бедный родился в семье учителя в 1916 году в станице Ярославская Краснодарского края. Окончил Майкопский лесной техникум и был послан учиться в Ленинградскую лесотехническую академию. Стал специалистом по сплаву леса и приехал в Республику Коми, работать на сплавных предприятиях.</p>
               </div>
             </div>
             <div class="Spoiler-hide">
-              <p th:text="${#strings.substringAfter(author.getDescription(), '.')}">"Писать он начал до войны, в академии,- рассказал о нем в предисловии к книге "Первое дело" поэт К.Ваншенкин.- Был участником литературных кружков и студий. Но всерьез вернулся к этому в сорок шестом, в далекой сплавконторе, на Трехозерной запани. Печатался в Коми республиканской газете "За новый Север" ("Красное знамя") и наконец решился вновь переломить судьбу, поступив в Литературный институт" в 1952г.
-              </p>
+              <p th:text="${#strings.substringAfter(author.getDescription(), '.')}">"Писать он начал до войны, в академии,- рассказал о нем в предисловии к книге "Первое дело" поэт К.Ваншенкин.- Был участником литературных кружков и студий. Но всерьез вернулся к этому в сорок шестом, в далекой сплавконторе, на Трехозерной запани. Печатался в Коми республиканской газете "За новый Север" ("Красное знамя") и наконец решился вновь переломить судьбу, поступив в Литературный институт" в 1952г.</p>
             </div>
             <div class="Spoiler-footer">
-              <button class="Spoiler-trigger btn btn_primary btn_nr" type="button" data-showtext="Свернуть" data-hidetext="Показать полностью" th:data-hidetext="#{author.showInFull}">
-              </button>
+              <button class="Spoiler-trigger btn btn_primary btn_nr" type="button" data-showtext="Свернуть" data-hidetext="Показать полностью" th:data-hidetext="#{author.showInFull}"></button>
             </div>
           </div>
         </article>
         <div class="Section">
           <header class="Section-header">
-            <h2 class="Section-title" th:text="#{author.books}">Книги автора
-            </h2>
+            <h2 class="Section-title" th:text="#{author.books}">Книги автора</h2>
           </header>
           <div class="Slider Slider_carousel">
             <div class="Slider-box Cards" data-load="authorBook" data-loadoffset="0" data-loadlimit="6" th:attr="data-refreshid=${author.getSlug()}">
@@ -75,10 +72,10 @@
                       <div class="Card-ribbon" th:if="${book.getIsBestseller() == 1}"><span class="Card-ribbonText">Бестселлер</span></div>
                     </div>
                     <div class="Card-content">
-                      <strong class="Card-title"><a href="#" th:text="${book.getTitle()}">Техника</a>
+                      <strong class="Card-title">
+                        <a href="#" th:text="${book.getTitle()}">Техника</a>
                       </strong>
-                      <div class="Card-description" th:text="${author.getName()}">Кондратенко Александр Петрович
-                      </div>
+                      <div class="Card-description" th:text="${author.getName()}">Кондратенко Александр Петрович</div>
                       <div class="Card-cost">
                         <span th:class="${book.getDiscount() > 0} ? 'Card-priceOld' : 'Card-price'" th:text="'₽' + ${book.getPrice()}">₽300.00</span>
                         <span class="Card-price" th:if="${book.getDiscount() > 0}" th:text="'₽' + ${book.getPrice()-book.getPrice() * book.getDiscount() / 100}">₽19.00</span>
@@ -89,8 +86,7 @@
               </div>
             </div>
             <div class="Slider-navigateWrap">
-              <div class="Slider-navigate">
-              </div>
+              <div class="Slider-navigate"></div>
             </div>
             <div class="Slider-load">
               <div class="Slider-load-text">Идет загрузка данных</div>

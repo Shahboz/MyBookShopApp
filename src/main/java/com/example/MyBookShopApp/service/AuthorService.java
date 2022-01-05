@@ -33,7 +33,7 @@ public class AuthorService {
     }
 
     public Page<Book> getPageOfAuthorBooks(String authorSlug, Integer offset, Integer limit) {
-        Pageable nextPage = PageRequest.of(offset, limit);
+        Pageable nextPage = PageRequest.of(offset/limit, limit);
         return authorRepository.findBooksBySlug(authorSlug, nextPage);
     }
 

@@ -26,7 +26,7 @@ public class BookService {
     }
 
     public Page<Book> getPageOfNewBooks(Integer offset, Integer limit, Date fromDate, Date toDate) {
-        Pageable nextPage = PageRequest.of(offset, limit);
+        Pageable nextPage = PageRequest.of(offset/limit, limit);
         if(fromDate == null && toDate == null)
             return bookRepository.findByOrderByPubDateDesc(nextPage);
         else if(fromDate == null && toDate != null)
@@ -37,34 +37,34 @@ public class BookService {
     }
 
     public Page<Book> getPageOfRecommendedBooks(Integer offset, Integer limit) {
-        Pageable nextPage = PageRequest.of(offset, limit);
+        Pageable nextPage = PageRequest.of(offset/limit, limit);
         return bookRepository.findAll(nextPage);
     }
 
     public Page<Book> getPageOfSearchResultBooks(String searchWord, Integer offset, Integer limit) {
-        Pageable nextPage = PageRequest.of(offset, limit);
+        Pageable nextPage = PageRequest.of(offset/limit, limit);
         if(searchWord == null)
             return bookRepository.findAll(nextPage);
         return bookRepository.findBookByTitleContaining(searchWord, nextPage);
     }
 
     public Page<Book> getPageOfPopularBooks(Integer offset, Integer limit) {
-        Pageable nextPage = PageRequest.of(offset, limit);
+        Pageable nextPage = PageRequest.of(offset/limit, limit);
         return bookRepository.findBooksByPopular(nextPage);
     }
 
     public Page<Book> getPageOfAuthorBooks(String authorSlug, Integer offset, Integer limit) {
-        Pageable nextPage = PageRequest.of(offset, limit);
+        Pageable nextPage = PageRequest.of(offset/limit, limit);
         return bookRepository.findBooksByAuthorNameContaining(authorSlug, nextPage);
     }
 
     public Page<Book> getPageOfGenreBooks(String genreSlug, Integer offset, Integer limit) {
-        Pageable nextPage = PageRequest.of(offset, limit);
+        Pageable nextPage = PageRequest.of(offset/limit, limit);
         return bookRepository.findBooksByGenreSlug(genreSlug, nextPage);
     }
 
     public Page<Book> getPageOfTagBooks(String tagSlug, Integer offset, Integer limit) {
-        Pageable nextPage = PageRequest.of(offset, limit);
+        Pageable nextPage = PageRequest.of(offset/limit, limit);
         return bookRepository.findBooksByTagSlug(tagSlug, nextPage);
     }
 
