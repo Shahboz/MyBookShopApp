@@ -3,6 +3,7 @@ package com.example.MyBookShopApp.controllers;
 import com.example.MyBookShopApp.entity.Author;
 import com.example.MyBookShopApp.entity.Book;
 import com.example.MyBookShopApp.service.AuthorService;
+import com.example.MyBookShopApp.service.BookService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -20,10 +21,12 @@ import java.util.Map;
 public class AuthorsController {
 
     private final AuthorService authorService;
+    private final BookService bookService;
 
     @Autowired
-    public AuthorsController(AuthorService authorService) {
+    public AuthorsController(AuthorService authorService, BookService bookService) {
         this.authorService = authorService;
+        this.bookService = bookService;
     }
 
     @ModelAttribute("authorsMap")
@@ -44,7 +47,7 @@ public class AuthorsController {
                                   @RequestParam(value = "limit",  required = false, defaultValue = "6") Integer limit) {
         if(authorSlug == null)
             return null;
-        return authorService.getPageOfAuthorBooks(authorSlug, offset, limit).getContent();
+        return bookService.getPageOfAuthorBooks(authorSlug, offset, limit).getContent();
     }
 
     @GetMapping("")

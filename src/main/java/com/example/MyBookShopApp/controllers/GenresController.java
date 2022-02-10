@@ -1,6 +1,7 @@
 package com.example.MyBookShopApp.controllers;
 
 import com.example.MyBookShopApp.entity.Genre;
+import com.example.MyBookShopApp.service.BookService;
 import com.example.MyBookShopApp.service.GenreService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -15,10 +16,12 @@ import java.util.Map;
 public class GenresController {
 
     private final GenreService genreService;
+    private final BookService bookService;
 
     @Autowired
-    public GenresController(GenreService genreService) {
+    public GenresController(GenreService genreService, BookService bookService) {
         this.genreService = genreService;
+        this.bookService = bookService;
     }
 
     @ModelAttribute("genres")
@@ -40,7 +43,7 @@ public class GenresController {
     @GetMapping("/{slug}")
     public String getGenrePage(@PathVariable(value = "slug", required = false) String genreSlug, Model model) {
         model.addAttribute("genre", genreService.getGenreBySlug(genreSlug));
-        model.addAttribute("genreBooks", genreService.getPageOfGenreBooks(genreSlug, 0, 6).getContent());
+        model.addAttribute("genreBooks", bookService.getPageOfGenreBooks(genreSlug, 0, 6).getContent());
         return "/genres/slug";
     }
 

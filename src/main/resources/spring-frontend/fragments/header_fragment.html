@@ -33,9 +33,10 @@
                             </form>
                         </div>
                     </div>
+                    <span th:if="${searchError}" th:text="${searchError.getLocalizedMessage()}" style="color: red"></span>
                 </div>
                 <div class="row-block Header-cart">
-                    <div class="CartBlock"><a class="CartBlock-block" href="/postponed.html" th:href="@{/postponed}">
+                    <div class="CartBlock"><a class="CartBlock-block" href="/postponed.html" th:href="@{/books/postponed}">
                         <svg class="CartBlock-img" xmlns="http://www.w3.org/2000/svg" height="23" width="23"
                              viewBox="0 0 512 512">
                             <g>
@@ -45,7 +46,7 @@
                                 </g>
                             </g>
                         </svg>
-                        <span class="CartBlock-amount">0</span></a><a class="CartBlock-block" href="/cart.html" th:href="@{/cart}">
+                        <span class="CartBlock-amount">0</span></a><a class="CartBlock-block" href="/cart.html" th:href="@{/books/cart}">
                         <svg class="CartBlock-img" xmlns="http://www.w3.org/2000/svg" width="30" height="23"
                              viewBox="0 0 30 23">
                             <g>
@@ -88,7 +89,7 @@
                     </li>
                     <li th:class="(${itemActive == 4} ? 'menu-item menu-item_ACTIVE' : 'menu-item')"><a class="menu-link" href="/books/popular.html" th:href="@{/books/popular}" th:text="#{menubar.popular}">Популярное</a>
                     </li>
-                    <li th:class="(${itemActive == 5} ? 'menu-item menu-item_ACTIVE' : 'menu-item')"><a class="menu-link" href="/authors/index.html" th:href="@{/authors}" th:text="#{menubar.author}">Авторы</a>
+                    <li th:class="(${itemActive == 5} ? 'menu-item menu-item_ACTIVE' : 'menu-item')"><a class="menu-link" href="/authors/index.html" th:href="@{/authors}" th:text="#{menubar.authors}">Авторы</a>
                     </li>
                 </ul>
             </nav>

@@ -30,7 +30,7 @@
             <a href="/index.html" th:href="@{/}" th:text="#{menubar.main}">Главная</a>
           </li>
           <li class="breadcrumbs-item">
-            <a href="/authors/index.html" th:href="@{/authors}" th:text="#{menubar.author}">Авторы</a>
+            <a href="/authors/index.html" th:href="@{/authors}" th:text="#{menubar.authors}">Авторы</a>
           </li>
           <li class="breadcrumbs-item breadcrumbs-item_current" th:text="${author.getName()}">
             <span>Борис Васильевич Бедный</span>
@@ -78,7 +78,7 @@
                       <div class="Card-description" th:text="${author.getName()}">Кондратенко Александр Петрович</div>
                       <div class="Card-cost">
                         <span th:class="${book.getDiscount() > 0} ? 'Card-priceOld' : 'Card-price'" th:text="'₽' + ${book.getPrice()}">₽300.00</span>
-                        <span class="Card-price" th:if="${book.getDiscount() > 0}" th:text="'₽' + ${book.getPrice()-book.getPrice() * book.getDiscount() / 100}">₽19.00</span>
+                        <span class="Card-price" th:if="${book.getDiscount() > 0}" th:text="'₽' + ${book.getDiscountPrice()}">₽19.00</span>
                       </div>
                     </div>
                   </div>

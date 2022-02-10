@@ -1,13 +1,12 @@
 package com.example.MyBookShopApp.service;
 
 import com.example.MyBookShopApp.dto.TagRepository;
-import com.example.MyBookShopApp.entity.Book;
 import com.example.MyBookShopApp.entity.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 
 @Service
@@ -24,9 +23,14 @@ public class TagService {
         return tagRepository.findTagBySlug(slugTag);
     }
 
-    public Page<Book> getPageOfBooksByTag(String slugTag, int offset, int limit) {
-        Pageable nextPage = PageRequest.of(offset/limit, limit);
-        return tagRepository.findBooksByTag(slugTag, nextPage);
+    public Map<Tag, Integer> getTags() {
+        Map<Tag, Integer> tagBooks= new HashMap<>();
+        List<Tag> tagList = tagRepository.findAll();
+        tagList.forEach(tag -> {
+            tagBooks.putIfAbsent(tag, 0);
+            tagBooks.compute(tag, (key, value) -> value + tag.getBooks().size());
+        });
+        return tagBooks;
     }
 
 }

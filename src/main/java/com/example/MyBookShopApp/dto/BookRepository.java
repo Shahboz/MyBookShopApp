@@ -1,9 +1,6 @@
 package com.example.MyBookShopApp.dto;
 
-import com.example.MyBookShopApp.entity.Author;
 import com.example.MyBookShopApp.entity.Book;
-import com.example.MyBookShopApp.entity.Genre;
-import com.example.MyBookShopApp.entity.Tag;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -36,12 +33,6 @@ public interface BookRepository extends JpaRepository<Book, Integer> {
     @Query(value = "from Book b order by b.boughtUsers + 0.7 * b.cardUsers + 0.4 * b.holdUsers desc")
     Page<Book> findBooksByPopular(Pageable nextPage);
 
-    @Query("from Author where slug = :slug")
-    Author findAuthor(@Param("slug") String authorSlug);
-
-    @Query("from Genre where slug = :slug")
-    Genre findGenre(@Param("slug") String genreSlug);
-
     // New Book REST repository commands
     List<Book> findBooksByTitleContaining(String bookTitle);
 
@@ -57,7 +48,10 @@ public interface BookRepository extends JpaRepository<Book, Integer> {
 
     Page<Book> findBookByTitleContaining(String bookTitle, Pageable nextPage);
 
-    @Query(value = "FROM Tag")
-    List<Tag> getTags();
+    Book findBookBySlugEquals(String slug);
+
+    Book findBookById(Integer bookId);
+
+    List<Book> findBooksBySlugIn(String[] slugs);
 
 }

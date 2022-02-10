@@ -1,6 +1,7 @@
 package com.example.MyBookShopApp.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
@@ -79,6 +80,9 @@ public class Book {
     @ApiModelProperty(value = "Number of users who have a book on hold", example = "6")
     private Integer holdUsers;
 
+    @OneToMany(mappedBy = "book")
+    private List<BookFile> bookFileList = new ArrayList<>();
+
     public Book(Integer id, Date pubDate, Integer isBestseller, String slug, String title, String image, String description, Integer price, Integer discount) {
         this.id = id;
         this.pubDate = pubDate;
@@ -89,6 +93,12 @@ public class Book {
         this.description = description;
         this.price = price;
         this.discount = discount;
+    }
+
+    @JsonProperty("discountPrice")
+    public Integer getDiscountPrice() {
+        Integer discountedPrice = this.price - this.price * this.discount / 100;
+        return discountedPrice;
     }
 
     @JsonIgnore
@@ -113,6 +123,7 @@ public class Book {
         }
     }
 
+    @JsonProperty("authors")
     public String getAuthorName() {
         if(this.getAuthorList().size() == 0)
             return null;

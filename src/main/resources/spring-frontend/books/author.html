@@ -52,7 +52,7 @@
                 </div>
                 <div class="Card-cost">
                   <span th:class="${book.getDiscount() > 0} ? 'Card-priceOld' : 'Card-price'" th:text="'₽' + ${book.getPrice()}">₽300.00</span>
-                  <span class="Card-price" th:if="${book.getDiscount() > 0}" th:text="'₽' + ${book.getPrice()-book.getPrice()*book.getDiscount() / 100}">₽190.00</span>
+                  <span class="Card-price" th:if="${book.getDiscount() > 0}" th:text="'₽' + ${book.getDiscountPrice()}">₽190.00</span>
                 </div>
               </div>
             </div>

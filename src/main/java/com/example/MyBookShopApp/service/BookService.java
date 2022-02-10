@@ -1,19 +1,16 @@
 package com.example.MyBookShopApp.service;
 
 import com.example.MyBookShopApp.dto.BookRepository;
-import com.example.MyBookShopApp.entity.Author;
 import com.example.MyBookShopApp.entity.Book;
-import com.example.MyBookShopApp.entity.Genre;
-import com.example.MyBookShopApp.entity.Tag;
+import com.example.MyBookShopApp.exceptions.BookstoreApiWrongParameterException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+
 
 @Service
 public class BookService {
@@ -69,8 +66,16 @@ public class BookService {
     }
 
     // New BookService methods for RESP api documentation
-    public List<Book> getBooksByTitle(String title) {
-        return bookRepository.findBooksByTitleContaining(title);
+    public List<Book> getBooksByTitle(String title) throws BookstoreApiWrongParameterException {
+        if (title.equals("") || title.length() <= 1)
+            throw new BookstoreApiWrongParameterException("Wrong values passed to one or more parameters");
+        else {
+            List<Book> bookList = bookRepository.findBooksByTitleContaining(title);
+            if (bookList.size() > 0)
+                return bookList;
+            else
+                throw new BookstoreApiWrongParameterException("No data found with specified parameters...");
+        }
     }
 
     public List<Book> getBooksWithPriceBetween(Integer priceMin, Integer priceMax) {
@@ -85,22 +90,20 @@ public class BookService {
         return bookRepository.getBooksWithMaxDiscount();
     }
 
-    public Author getAuthorBySlug(String authorSlug) {
-        return bookRepository.findAuthor(authorSlug);
+    public Book getBookBySlug(String bookSlug) {
+        return bookRepository.findBookBySlugEquals(bookSlug);
     }
 
-    public Genre getGenreBySlug(String genreSlug) {
-        return bookRepository.findGenre(genreSlug);
+    public Book getBookById(Integer bookId) {
+        return bookRepository.findBookById(bookId);
     }
 
-    public Map<Tag, Integer> getTags() {
-        Map<Tag, Integer> tagBooks= new HashMap<>();
-        List<Tag> tagList = bookRepository.getTags();
-        tagList.forEach(tag -> {
-            tagBooks.putIfAbsent(tag, 0);
-            tagBooks.compute(tag, (key, value) -> value + tag.getBooks().size());
-        });
-        return tagBooks;
+    public void save(Book bookToUpdate) {
+        bookRepository.save(bookToUpdate);
+    }
+
+    public List<Book> getBooksBySlugs(String[] slugs) {
+        return bookRepository.findBooksBySlugIn(slugs);
     }
 
 }
