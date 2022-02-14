@@ -49,16 +49,6 @@ public class MainPageController {
         return "index";
     }
 
-    @GetMapping("/signin")
-    public String getSigninPage(){
-        return "signin";
-    }
-
-    @GetMapping("/signup")
-    public String getSignupPage(){
-        return "signup";
-    }
-
     @GetMapping("/about")
     public String getAboutPage(){
         return "about";

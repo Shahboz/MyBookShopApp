@@ -35,7 +35,10 @@
           <div class="Login-ins">
             <div class="Login-step">
               <div class="form-group">
-                <label class="form-label Login-title" th:text="#{menubar.logintitle}">Введите e-mail или телефон
+                <label class="form-label Login-title">
+                  <span th:text="#{menubar.logintitle}">Введите e-mail или телефон</span>
+                  <br>
+                  <span th:if="${regOk}">Регистрация прошла успешно!</span>
                 </label>
               </div>
               <div class="form-group">
@@ -76,18 +79,21 @@
             </div>
             <div class="Login-step Login-step_hide" data-type="mail">
               <div class="form-group">
-                <label class="form-label Login-title" th:text="#{label.logintitle.email}">На Ваш e-mail отправлена ссылка для входа и код. Перейдите по ссылке или введите код ниже:
-                </label>
+                <label class="form-label Login-title" th:text="#{label.logintitle.email}">Введите пароль учетной записи или перейдите по ссылке ниже для регистрации:</label>
               </div>
               <div class="form-group form-group_key">
-                <input class="form-input" id="mailcode" name="mailcode" type="text" placeholder="Код" th:placeholder="#{siginbar.placeholder.code}" data-validate="key require" data-mask="999 999"/>
+                <input class="form-input" id="mailcode" name="mailcode" type="text" placeholder="Код" th:placeholder="#{siginbar.placeholder.code}" data-validate="key require"/>
               </div>
               <div class="form-group form-group_center">
                 <button class="btn btn_primary form-btn" type="button" name="toComeInMail" id="toComeInMail" data-send="" th:text="#{button.signin}">Войти
                 </button>
               </div>
             </div>
-            <div class="form-group form-group_center"><a class="Login-reg" href="/signup.html" th:href="@{/signup}" th:text="#{menubar.registration}">Зарегистрироваться</a>
+            <div class="form-group form-group_center">
+              <a class="Login-reg" href="/signup.html" th:href="@{/signup}" th:text="#{menubar.registration}">Зарегистрироваться</a>
+            </div>
+            <div class="form-group form-group_center">
+              <a class="Login-reg" href="/signup.html" th:href="@{/oauth2/authorization/facebook}" th:text="#{menubar.registration.facebook}">Зарегистрироваться</a>
             </div>
           </div>
         </form>
