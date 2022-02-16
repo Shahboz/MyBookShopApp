@@ -1,8 +1,11 @@
-package com.example.MyBookShopApp.entity;
+package com.example.MyBookShopApp.dto;
 
+import com.example.MyBookShopApp.entity.BookRate;
+import com.example.MyBookShopApp.entity.BookReview;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
 
 @Getter
 @Setter

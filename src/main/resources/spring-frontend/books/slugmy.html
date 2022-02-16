@@ -73,7 +73,7 @@
                     </div>
                   </button>
                 </div>
-                <div class="ProductCard-assessment">
+                <div class="ProductCard-assessment" th:if="${!isAnonymousUser}">
                   <span class="ProductCard-titleProp" th:text="#{menubar.rateTheBook} + ':'">Оцените книгу:</span>
                   <span class="Rating Rating_input" data-bookid="2121" th:attr="data-bookid = ${book.getId()}">
                     <span class="Rating-stars">
@@ -221,8 +221,8 @@
             </div>
           </div>
           <div class="Comments">
-            <strong class="Comments-title" th:text="#{label.review.write}">Написать отзыв</strong>
-            <div class="Comments-addComment">
+            <strong class="Comments-title" th:text="#{label.review.write}" th:if="${!isAnonymousUser}">Написать отзыв</strong>
+            <div class="Comments-addComment" th:if="${!isAnonymousUser}">
               <form class="form" action="#" method="post" th:attr="data-bookid = ${book.getId()}">
                 <div class="form-group">
                   <textarea class="form-textarea Comments-review" name="review" id="review" th:placeholder="#{reviewbar.placeholder}" data-validate="require"></textarea>
@@ -231,6 +231,17 @@
                   <button class="btn btn_warning" type="submit" th:text="#{button.review.send}">Отправить отзыв</button>
                 </div>
               </form>
+            </div>
+            <div th:if="${isAnonymousUser}">
+              <h3 class="Comments-title" th:text="#{label.review.anonymoususer}">Отзывы могут оставлять только авторизованные пользователи</h3>
+              <div class="form-group form-group_center">
+                <a th:href="@{/signin}">
+                  <button class="btn btn_primary form-btn" th:text="#{button.signin}">Войти</button>
+                </a>
+                <a th:href="@{/signup}">
+                  <button class="btn btn_primary form-btn" th:text="#{button.registration}">Зарегистрироваться</button>
+                </a>
+              </div>
             </div>
             <div class="Comment" th:each="bookReview : ${bookReviewData}">
               <div class="Comment-column Comment-column_pict">
@@ -261,14 +272,14 @@
                     <div class="Comment-footer">
                       <div class="Comment-appeal">
                         <button class="btn btn_white btn_like" data-btntype="check" data-check="false" data-btnradio="one1"
-                                th:attr="data-likeid=${bookReview.getReview().getId()}">
+                                th:attr="data-likeid=${bookReview.getReview().getId()}" th:disabled="${isAnonymousUser}">
                           <span class="btn-icon">
                             <img src="/assets/img/icons/comment/like.svg" alt="like.svg"/>
                           </span>
                           <span class="btn-content" th:text="${bookReview.getLikedCount()}">100</span>
                         </button>
                         <button class="btn btn_white btn_dislike" data-btntype="check" data-check="false" data-btnradio="one1"
-                                th:attr="data-likeid=${bookReview.getReview().getId()}">
+                                th:attr="data-likeid=${bookReview.getReview().getId()}" th:disabled="${isAnonymousUser}">
                           <span class="btn-icon">
                             <img src="/assets/img/icons/comment/dislike.svg" alt="dislike.svg"/>
                           </span>

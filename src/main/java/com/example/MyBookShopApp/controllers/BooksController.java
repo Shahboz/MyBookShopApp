@@ -1,5 +1,7 @@
 package com.example.MyBookShopApp.controllers;
 
+import com.example.MyBookShopApp.dto.BookReviewData;
+import com.example.MyBookShopApp.dto.BookReviewDto;
 import com.example.MyBookShopApp.dto.ResultResponse;
 import com.example.MyBookShopApp.entity.Rate;
 import com.example.MyBookShopApp.entity.*;
@@ -215,7 +217,7 @@ public class BooksController {
 
     @PostMapping(value = "/rateBook")
     @ResponseBody
-    public ResultResponse handlePostponedBookRate(@RequestParam("bookId") Integer bookId, @RequestParam("value") Integer value) {
+    public ResultResponse handlePostponedBookRate(@RequestBody BookReviewData bookRateData) {
         ResultResponse result = new ResultResponse(true, "");
         User user = userService.getUserbyId(1);
         if(user == null) {
@@ -223,10 +225,10 @@ public class BooksController {
             result.setError("Не удалось определить пользователя");
             return result;
         }
-        Book book = bookService.getBookById(bookId);
+        Book book = bookService.getBookById(bookRateData.getBookId());
         if(book == null) {
             result.setResult(false);
-            result.setError("Не найдена книга с кодом " + bookId);
+            result.setError("Не найдена книга с кодом " + bookRateData.getBookId());
             return result;
         }
         BookReview bookReview = bookReviewService.getUserBookReview(book.getId(), user.getId());
@@ -236,12 +238,12 @@ public class BooksController {
             bookRate.setBook(book);
             bookRate.setUser(user);
             bookRate.setTime(new Date());
-            bookRate.setValue(value);
+            bookRate.setValue(bookRateData.getValue());
             bookRate.setBookReview(bookReview);
             Logger.getLogger(this.getClass().getSimpleName()).info("Saving rate for book " + book.getSlug() + "(id = " + book.getId() + ")");
         } else {
             bookRate.setTime(new Date());
-            bookRate.setValue(value);
+            bookRate.setValue(bookRateData.getValue());
             Logger.getLogger(this.getClass().getSimpleName()).info("Updating rate " + bookRate.getId() + " for book " + book.getSlug() + "(id = " + book.getId() + ")");
         }
         bookRateService.save(bookRate);
@@ -251,7 +253,7 @@ public class BooksController {
 
     @PostMapping(value = "/bookReview")
     @ResponseBody
-    public ResultResponse handlePostponedBookReview(@RequestParam("bookId") Integer bookId, @RequestParam("text") String reviewText) {
+    public ResultResponse handlePostponedBookReview(@RequestBody BookReviewData reviewData) {
         ResultResponse result = new ResultResponse(true, "");
         User user = userService.getUserbyId(1);
         if (user == null) {
@@ -259,13 +261,13 @@ public class BooksController {
             result.setError("Не удалось определить пользователя");
             return result;
         }
-        Book book = bookService.getBookById(bookId);
+        Book book = bookService.getBookById(reviewData.getBookId());
         if (book == null) {
             result.setResult(false);
-            result.setError("Не найдена книга с кодом " + bookId);
+            result.setError("Не найдена книга с кодом " + reviewData.getBookId());
             return result;
         }
-        if (reviewText.isEmpty() || reviewText.length() < 10) {
+        if (reviewData.getText().isEmpty() || reviewData.getText().length() < 10) {
             result.setResult(false);
             result.setError("Напишите, пожалуйста, более развернутый отзыв");
             return result;
@@ -274,13 +276,13 @@ public class BooksController {
         if(bookReview == null) {
             bookReview = new BookReview();
             bookReview.setBook(book);
-            bookReview.setText(reviewText);
+            bookReview.setText(reviewData.getText());
             bookReview.setTime(new Date());
             bookReview.setUser(user);
             Logger.getLogger(this.getClass().getSimpleName()).info("Saving review for book " + book.getSlug() + " (id = " + book.getId() + ")");
         } else {
             bookReview.setTime(new Date());
-            bookReview.setText(reviewText);
+            bookReview.setText(reviewData.getText());
             Logger.getLogger(this.getClass().getSimpleName()).info("Updating review " + bookReview.getId() + " for book " + book.getSlug() + "(id = " + book.getId() + ")");
         }
         bookReviewService.save(bookReview);
@@ -290,7 +292,7 @@ public class BooksController {
 
     @PostMapping(value = "/rateBookReview")
     @ResponseBody
-    public ResultResponse handlePostponedBookReviewLike(@RequestParam("reviewid") Integer reviewId, @RequestParam("value") Integer value) {
+    public ResultResponse handlePostponedBookReviewLike(@RequestBody BookReviewData reviewLikeData) {
         ResultResponse result = new ResultResponse(true, "");
         User user = userService.getUserbyId(1);
         if (user == null) {
@@ -298,33 +300,33 @@ public class BooksController {
             result.setError("Не удалось определить пользователя");
             return result;
         }
-        BookReview bookReview = bookReviewService.getReviewById(reviewId);
+        BookReview bookReview = bookReviewService.getReviewById(reviewLikeData.getReviewid());
         if (bookReview == null) {
             result.setResult(false);
-            result.setError("Не найден отзыв " + reviewId);
+            result.setError("Не найден отзыв " + reviewLikeData.getReviewid());
             return result;
         }
-        if (value != -1 && value != 1) {
+        if (reviewLikeData.getValue() != -1 && reviewLikeData.getValue() != 1) {
             result.setResult(false);
-            result.setError("Некорректное значение " + value);
+            result.setError("Некорректное значение " + reviewLikeData.getValue());
             return result;
         }
         BookReviewLike bookReviewLike = bookReviewLikeService.getUserReviewLike(bookReview.getId(), user.getId());
         if (bookReviewLike == null) {
             bookReviewLike = new BookReviewLike();
             bookReviewLike.setReview(bookReview);
-            bookReviewLike.setValue(value);
+            bookReviewLike.setValue(reviewLikeData.getValue());
             bookReviewLike.setTime(new Date());
             bookReviewLike.setUser(user);
-            Logger.getLogger(this.getClass().getSimpleName()).info("Saving " + (value == 1 ? "like" : "dislike") + " for review " + bookReview.getId());
+            Logger.getLogger(this.getClass().getSimpleName()).info("Saving " + (reviewLikeData.getValue() == 1 ? "like" : "dislike") + " for review " + bookReview.getId());
         } else {
-            bookReviewLike.setValue(value);
+            bookReviewLike.setValue(reviewLikeData.getValue());
             bookReviewLike.setTime(new Date());
             Logger.getLogger(this.getClass().getSimpleName()).info("Updating values like for review " + bookReview.getId());
         }
         bookReviewLikeService.save(bookReviewLike);
         Logger.getLogger(this.getClass().getSimpleName()).info("Review " + bookReview.getId() +
-                " for book " + bookReview.getBook().getSlug() + "(id = " + bookReview.getBook().getId() + ") " + (value == 1 ? "liked" : "disliked"));
+                " for book " + bookReview.getBook().getSlug() + "(id = " + bookReview.getBook().getId() + ") " + (reviewLikeData.getValue() == 1 ? "liked" : "disliked"));
         return result;
     }
 

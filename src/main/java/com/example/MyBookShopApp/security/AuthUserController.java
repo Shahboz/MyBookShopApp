@@ -1,12 +1,14 @@
 package com.example.MyBookShopApp.security;
 
 import com.example.MyBookShopApp.dto.ResultResponse;
+import com.example.MyBookShopApp.entity.UserContact;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
+import java.util.List;
 
 
 @Controller
@@ -24,7 +26,12 @@ public class AuthUserController {
         return new RegistrationForm();
     }
 
-    @GetMapping("signin")
+    @ModelAttribute("userContacts")
+    public List<UserContact> getUserContacts() {
+        return userRegister.getUserContacts();
+    }
+
+    @GetMapping("/signin")
     public String handleSignIn() {
         return "signin";
     }
@@ -48,7 +55,7 @@ public class AuthUserController {
         return response;
     }
 
-    @PostMapping("reg")
+    @PostMapping("/reg")
     public String handleUserRegistration(RegistrationForm registrationForm, Model model) {
         userRegister.registerNewUser(registrationForm);
         model.addAttribute("regOk", true);
@@ -71,9 +78,13 @@ public class AuthUserController {
     }
 
     @GetMapping("/profile")
-    public String handleProfile(Model model) {
-        model.addAttribute("curUser", userRegister.getCurrentUser());
+    public String handleProfile(@ModelAttribute("userContacts") List<UserContact> userContacts) {
         return "profile";
+    }
+
+    @GetMapping("/myarchive")
+    public String handleMyArchive() {
+        return "myarchive";
     }
 
 //    @GetMapping("/logout")

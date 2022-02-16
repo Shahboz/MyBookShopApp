@@ -2,15 +2,11 @@ package com.example.MyBookShopApp.service;
 
 import com.example.MyBookShopApp.dto.UserRepository;
 import com.example.MyBookShopApp.entity.User;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 
-@Getter
-@Setter
 @Service
 @NoArgsConstructor
 public class UserService {
@@ -24,6 +20,14 @@ public class UserService {
 
     public User getUserbyId(Integer userId) {
         return userRepository.findUserById(userId);
+    }
+
+    public void save(User user) {
+        userRepository.save(user);
+    }
+
+    public User getUserByEmail(String email) {
+        return userRepository.findUserByEmail(email);
     }
 
 }

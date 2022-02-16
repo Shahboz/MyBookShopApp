@@ -12,6 +12,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import javax.servlet.http.Cookie;
 
 
 @Configuration
@@ -50,11 +51,18 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http
                 .csrf().disable()
                 .authorizeRequests()
-                .antMatchers("/my", "/profile").authenticated()//hasRole("USER")
+                .antMatchers("/my", "/profile", "/myarchive").authenticated()//hasRole("USER")
                 .antMatchers("/**").permitAll()
                 .and().formLogin()
                 .loginPage("/signin").failureUrl("/signin")
-                .and().logout().logoutUrl("/logout").logoutSuccessUrl("/signin").deleteCookies("token")
+                .and().logout().logoutUrl("/logout").logoutSuccessUrl("/signin")
+                .addLogoutHandler((httpServletRequest, httpServletResponse, authentication) -> {
+                    for (Cookie cookie : httpServletRequest.getCookies()) {
+                        if (cookie.getName().equals("token")) {
+                            filter.getJwtUtil().deleteToken(cookie.getValue());
+                        }
+                    }
+                }).deleteCookies("token")
                 .and().oauth2Login()
                 .and().oauth2Client();
 

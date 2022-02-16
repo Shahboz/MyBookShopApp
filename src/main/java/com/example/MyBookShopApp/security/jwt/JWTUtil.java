@@ -6,9 +6,7 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Function;
 
 
@@ -17,6 +15,7 @@ public class JWTUtil {
 
     @Value("${auth.secret}")
     private String secret;
+    private List<String> authorizedTokens = new ArrayList<>();
 
     private String createToken(Map<String, Object> claims, String username) {
         return Jwts
@@ -30,7 +29,14 @@ public class JWTUtil {
 
     public String generateToken(UserDetails userDetails) {
         Map<String, Object> claims = new HashMap<>();
-        return createToken(claims, userDetails.getUsername());
+        String token = createToken(claims, userDetails.getUsername());
+        for (String expiredToken : authorizedTokens) {
+            if (isTokenExpired(expiredToken)) {
+                authorizedTokens.removeIf(s -> authorizedTokens.contains(expiredToken));
+            }
+        }
+        authorizedTokens.add(token);
+        return token;
     }
 
     public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
@@ -55,8 +61,11 @@ public class JWTUtil {
     }
 
     public Boolean validateToken(String token, UserDetails userDetails) {
-        String username = extractUsername(token);
-        return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
+        return extractUsername(token).equals(userDetails.getUsername()) && !isTokenExpired(token) && authorizedTokens.contains(token);
+    }
+
+    public void deleteToken(String token) {
+        authorizedTokens.removeIf(s -> authorizedTokens.contains(token));
     }
 
 }

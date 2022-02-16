@@ -9,9 +9,6 @@
     <changeSet author="SSafarov (generated)" id="1622823661355-3">
         <createSequence sequenceName="book_id_seq"/>
     </changeSet>
-    <changeSet author="SSafarov (generated)" id="1622823661355-4">
-        <createSequence sequenceName="users_id_seq"/>
-    </changeSet>
     <changeSet author="SSafarov (generated)" id="1622823661355-5">
         <createTable tableName="author">
             <column autoIncrement="true" name="id" type="SERIAL">
@@ -280,6 +277,43 @@
             <column name="phone" type="VARCHAR(255)"/>
             <column name="password" type="VARCHAR(255)"/>
         </createTable>
+    </changeSet>
+
+    <changeSet id="8.6-tasks" author="SSafarov">
+
+        <createSequence sequenceName="user_contact_id_seq" startValue="50" incrementBy="1" cycle="false"/>
+        <createTable tableName="user_contact">
+            <column name="id" type="BIGINT" defaultValueSequenceNext="user_contact_id_seq">
+                <constraints primaryKey="true" primaryKeyName="user_contact_pkey"/>
+            </column>
+            <column name="user_id" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="type" type="VARCHAR(5)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="approved" type="SMALLINT" defaultValue="-1">
+                <constraints nullable="false"/>
+            </column>
+            <column name="code" type="VARCHAR(255)"/>
+            <column name="code_trials" type="INT" defaultValue="0"/>
+            <column name="code_time" type="TIMESTAMP WITHOUT TIME ZONE"/>
+            <column name="contact" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <addForeignKeyConstraint baseColumnNames="user_id" baseTableName="user_contact" constraintName="user_contact_fk1" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="users"/>
+
+        <modifyDataType tableName="users" columnName="id" newDataType="BIGINT"/>
+        <sql>
+            ALTER TABLE users ALTER COLUMN id DROP IDENTITY IF EXISTS
+        </sql>
+        <createSequence sequenceName="users_id_seq" startValue="50" incrementBy="1" cycle="false"/>
+        <addDefaultValue tableName="users" columnName="id" defaultValueSequenceNext="users_id_seq"/>
+        <addColumn tableName="users">
+            <column name="email"    type="VARCHAR2(255)"/>
+            <column name="password" type="VARCHAR2(255)"/>
+        </addColumn>
     </changeSet>
 
 </databaseChangeLog>

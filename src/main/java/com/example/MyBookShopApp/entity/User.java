@@ -1,5 +1,6 @@
 package com.example.MyBookShopApp.entity;
 
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -29,10 +30,10 @@ public class User {
 
     private String name;
 
-    public User(String hash, Date regTime, String name) {
-        this.hash = hash;
-        this.regTime = regTime;
-        this.name = name;
-    }
+    @ApiModelProperty(value = "Email user. Temporary field", example = "email@email.ru")
+    private String email;
+
+    @ApiModelProperty(value = "Password user. Temporary field")
+    private String password;
 
 }
