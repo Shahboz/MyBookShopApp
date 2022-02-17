@@ -6,6 +6,7 @@ import com.example.MyBookShopApp.dto.ResultResponse;
 import com.example.MyBookShopApp.entity.Rate;
 import com.example.MyBookShopApp.entity.*;
 import com.example.MyBookShopApp.dto.BooksPageDto;
+import com.example.MyBookShopApp.security.BookstoreUserRegister;
 import com.example.MyBookShopApp.service.*;
 import org.jboss.logging.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,26 +31,25 @@ public class BooksController {
     private final AuthorService authorService;
     private final BookReviewService bookReviewService;
     private final BookRateService bookRateService;
-    private final UserService userService;
+    private final BookstoreUserRegister userRegister;
     private final BookReviewLikeService bookReviewLikeService;
     private final ResourceStorage storage;
 
     @Autowired
-    public BooksController(BookService bookService, AuthorService authorService, BookRateService bookRateService,
-                           BookReviewService bookReviewService, UserService userService, BookReviewLikeService bookReviewLikeService,
-                           ResourceStorage storage) {
+    public BooksController(BookService bookService, AuthorService authorService, BookRateService bookRateService, BookReviewService bookReviewService,
+                           BookstoreUserRegister userRegister, BookReviewLikeService bookReviewLikeService, ResourceStorage storage) {
         this.bookService = bookService;
         this.authorService = authorService;
         this.bookRateService = bookRateService;
         this.bookReviewService = bookReviewService;
-        this.userService = userService;
+        this.userRegister = userRegister;
         this.bookReviewLikeService = bookReviewLikeService;
         this.storage = storage;
     }
 
     @ModelAttribute("popularBooks")
     public List<Book> getPopularBooks(@RequestParam(value = "offset", required = false, defaultValue = "0") Integer offset,
-                                      @RequestParam(value = "limit",  required = false, defaultValue = "6") Integer limit){
+                                      @RequestParam(value = "limit",  required = false, defaultValue = "6") Integer limit) {
         return bookService.getPageOfPopularBooks(offset, limit).getContent();
     }
 
@@ -219,7 +219,7 @@ public class BooksController {
     @ResponseBody
     public ResultResponse handlePostponedBookRate(@RequestBody BookReviewData bookRateData) {
         ResultResponse result = new ResultResponse(true, "");
-        User user = userService.getUserbyId(1);
+        User user = (User) userRegister.getCurrentUser();
         if(user == null) {
             result.setResult(false);
             result.setError("Не удалось определить пользователя");
@@ -255,7 +255,7 @@ public class BooksController {
     @ResponseBody
     public ResultResponse handlePostponedBookReview(@RequestBody BookReviewData reviewData) {
         ResultResponse result = new ResultResponse(true, "");
-        User user = userService.getUserbyId(1);
+        User user = (User) userRegister.getCurrentUser();
         if (user == null) {
             result.setResult(false);
             result.setError("Не удалось определить пользователя");
@@ -294,7 +294,7 @@ public class BooksController {
     @ResponseBody
     public ResultResponse handlePostponedBookReviewLike(@RequestBody BookReviewData reviewLikeData) {
         ResultResponse result = new ResultResponse(true, "");
-        User user = userService.getUserbyId(1);
+        User user = (User) userRegister.getCurrentUser();
         if (user == null) {
             result.setResult(false);
             result.setError("Не удалось определить пользователя");

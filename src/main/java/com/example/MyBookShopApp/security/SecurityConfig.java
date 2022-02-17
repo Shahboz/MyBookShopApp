@@ -1,30 +1,42 @@
 package com.example.MyBookShopApp.security;
 
+import com.example.MyBookShopApp.security.jwt.CustomOAuth2UserService;
 import com.example.MyBookShopApp.security.jwt.JWTRequestFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
+import javax.servlet.ServletException;
 import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
+    private CustomOAuth2UserService customOAuth2UserService;
     private final BookstoreUserDetailsService bookstoreUserDetailsService;
     private final JWTRequestFilter filter;
 
     @Autowired
-    public SecurityConfig(BookstoreUserDetailsService bookstoreUserDetailsService, JWTRequestFilter filter) {
+    public SecurityConfig(BookstoreUserDetailsService bookstoreUserDetailsService, CustomOAuth2UserService customOAuth2UserService, JWTRequestFilter filter) {
         this.bookstoreUserDetailsService = bookstoreUserDetailsService;
+        this.customOAuth2UserService = customOAuth2UserService;
         this.filter = filter;
     }
 
@@ -64,6 +76,25 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                     }
                 }).deleteCookies("token")
                 .and().oauth2Login()
+                    .userInfoEndpoint().userService(customOAuth2UserService)
+                .and().successHandler(new AuthenticationSuccessHandler() {
+
+                        @Override
+                        public void onAuthenticationSuccess(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Authentication authentication) throws IOException, ServletException {
+                            CustomOAuth2User customOAuth2User = (CustomOAuth2User) authentication.getPrincipal();
+                            bookstoreUserDetailsService.processOAuthPostLogin(customOAuth2User);
+
+                            BookstoreUserDetails userDetails = (BookstoreUserDetails) bookstoreUserDetailsService.loadUserByUsername(customOAuth2User.getEmail());
+                            Cookie cookie = new Cookie("token", filter.getJwtUtil().generateToken(userDetails));
+                            cookie.setPath("/");
+                            httpServletResponse.addCookie(cookie);
+                            UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+                            authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(httpServletRequest));
+                            SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+
+                            httpServletResponse.sendRedirect("/my");
+                        }
+                    })
                 .and().oauth2Client();
 
         // http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);

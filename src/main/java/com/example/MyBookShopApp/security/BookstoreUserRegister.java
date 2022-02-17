@@ -74,9 +74,7 @@ public class BookstoreUserRegister {
     }
 
     public ContactConfirmationResponse jwtlogin(ContactConfirmationPayload payload) {
-        System.out.println("payload = 1");
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(payload.getContact(), payload.getCode()));
-        System.out.println("payload = 2");
         BookstoreUserDetails userDetails = (BookstoreUserDetails) bookstoreUserDetailsService.loadUserByUsername(payload.getContact());
         String jwtToken = jwtUtil.generateToken(userDetails);
         ContactConfirmationResponse response = new ContactConfirmationResponse(jwtToken);
@@ -88,16 +86,21 @@ public class BookstoreUserRegister {
         if(principal instanceof BookstoreUserDetails) {
             BookstoreUserDetails userDetails = (BookstoreUserDetails) principal;
             return userDetails.getUser();
+        } else if (principal instanceof CustomOAuth2User) {
+            CustomOAuth2User oAuth2User = (CustomOAuth2User) principal;
+            return userService.getUserByEmail(oAuth2User.getEmail());
         }
         return null;
     }
 
     public List<UserContact> getUserContacts() {
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        System.out.println("user=" + principal.toString() + ", " + principal.getClass() + ", " + principal.getClass().getSimpleName());
         if(principal instanceof BookstoreUserDetails) {
             BookstoreUserDetails userDetails = (BookstoreUserDetails) principal;
             return userContactService.getUserContacts(userDetails.getUser().getId());
+        } else if (principal instanceof CustomOAuth2User) {
+            CustomOAuth2User oAuth2User = (CustomOAuth2User) principal;
+            return userContactService.getUserContacts(userService.getUserByEmail(oAuth2User.getEmail()).getId());
         }
         return null;
     }

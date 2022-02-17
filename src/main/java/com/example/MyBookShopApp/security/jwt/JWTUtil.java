@@ -1,12 +1,14 @@
 package com.example.MyBookShopApp.security.jwt;
 
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import java.util.*;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Function;
 
 
@@ -15,7 +17,9 @@ public class JWTUtil {
 
     @Value("${auth.secret}")
     private String secret;
-    private List<String> authorizedTokens = new ArrayList<>();
+    @Value("${auth.expirationTimeInSeconds}")
+    private Integer expirationTime;
+    private List<String> authorizedTokens = new CopyOnWriteArrayList<>();
 
     private String createToken(Map<String, Object> claims, String username) {
         return Jwts
@@ -23,7 +27,7 @@ public class JWTUtil {
                 .setClaims(claims)
                 .setSubject(username)
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 10))
+                .setExpiration(new Date(System.currentTimeMillis() + this.expirationTime * 1000))
                 .signWith(SignatureAlgorithm.HS256, secret).compact();
     }
 
@@ -31,7 +35,11 @@ public class JWTUtil {
         Map<String, Object> claims = new HashMap<>();
         String token = createToken(claims, userDetails.getUsername());
         for (String expiredToken : authorizedTokens) {
-            if (isTokenExpired(expiredToken)) {
+            try {
+                if (isTokenExpired(expiredToken)) {
+                    authorizedTokens.removeIf(s -> authorizedTokens.contains(expiredToken));
+                }
+            } catch (ExpiredJwtException e) {
                 authorizedTokens.removeIf(s -> authorizedTokens.contains(expiredToken));
             }
         }

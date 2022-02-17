@@ -1,22 +1,27 @@
 package com.example.MyBookShopApp.security;
 
 import com.example.MyBookShopApp.entity.User;
+import com.example.MyBookShopApp.entity.UserContact;
+import com.example.MyBookShopApp.service.UserContactService;
 import com.example.MyBookShopApp.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import java.util.Date;
 
 
 @Service
 public class BookstoreUserDetailsService implements UserDetailsService {
 
     private final UserService userService;
+    private final UserContactService userContactService;
 
     @Autowired
-    public BookstoreUserDetailsService(UserService userService) {
+    public BookstoreUserDetailsService(UserService userService, UserContactService userContactService) {
         this.userService = userService;
+        this.userContactService = userContactService;
     }
 
     @Override
@@ -25,14 +30,38 @@ public class BookstoreUserDetailsService implements UserDetailsService {
         if(user != null) {
             return new BookstoreUserDetails(user);
         } else {
-            System.out.println("s = " + s + ", User not found!");
-            System.out.println("Printing stack trace:");
-            StackTraceElement[] elements = Thread.currentThread().getStackTrace();
-            for (int i = 1; i < elements.length; i++) {
-                StackTraceElement s1 = elements[i];
-                System.out.println("\tat " + s1.getClassName() + "." + s1.getMethodName() + "(" + s1.getFileName() + ":" + s1.getLineNumber() + ")");
-            }
             throw new UsernameNotFoundException("User not found!");
+        }
+    }
+
+    public void processOAuthPostLogin(CustomOAuth2User customOAuth2User) {
+        User user = userService.getUserByEmail(customOAuth2User.getEmail());
+        if (user == null) {
+            User newUser = new User();
+            newUser.setName(customOAuth2User.getName());
+            newUser.setEmail(customOAuth2User.getEmail());
+            newUser.setBalance(0F);
+            newUser.setHash(customOAuth2User.getName());
+            newUser.setRegTime(new Date());
+            userService.save(newUser);
+
+            if (customOAuth2User.getEmail() != null && !customOAuth2User.getEmail().equals("")) {
+                UserContact emailContact = new UserContact();
+                emailContact.setUser(newUser);
+                emailContact.setType("EMAIL");
+                emailContact.setApproved(-1);
+                emailContact.setContact(customOAuth2User.getEmail());
+                userContactService.save(emailContact);
+            }
+
+            if (customOAuth2User.getPhone() != null && !customOAuth2User.getPhone().equals("")) {
+                UserContact phoneContact = new UserContact();
+                phoneContact.setUser(newUser);
+                phoneContact.setType("PHONE");
+                phoneContact.setApproved(-1);
+                phoneContact.setContact(customOAuth2User.getPhone());
+                userContactService.save(phoneContact);
+            }
         }
     }
 

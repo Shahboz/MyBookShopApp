@@ -55,7 +55,7 @@
                       <div class="form-group">
                         <label class="form-label" for="mail">E-mail</label>
                         <input class="form-input" id="mail" name="mail" type="text" value="addr@sait.com" data-validate="require mail"
-                               th:each="contact : ${userContacts}" th:value="${contact.getContact()}" th:if="${contact.getType() == 'EMAIL'}"/>
+                               th:each="contact : ${userContacts}" th:value="${contact == null ? '': contact.getContact()}" th:if="${(contact == null ? 'EMAIL': contact.getType()) == 'EMAIL'}"/>
                         <div class="Profile-btn Profile-btn_confirm">
                           <button class="btn btn_primary" type="button">Подтвердить</button>
                         </div>
@@ -63,7 +63,7 @@
                       <div class="form-group">
                         <label class="form-label" for="phone">Телефон</label>
                         <input class="form-input" id="phone" name="phone" type="text" value="+70000000000" data-mask="+7 (999) 999-99-99" data-validate="require"
-                               th:each="contact : ${userContacts}" th:value="${contact.getContact()}" th:if="${contact.getType() == 'PHONE'}"/>
+                               th:each="contact : ${userContacts}" th:value="${contact == null ? '': contact.getContact()}" th:if="${(contact == null ? 'PHONE': contact.getType()) == 'PHONE'}"/>
                         <div class="Profile-btn Profile-btn_confirm">
                           <button class="btn btn_primary" type="button">Подтвердить</button>
                         </div>
