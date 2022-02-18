@@ -1,5 +1,6 @@
 package com.example.MyBookShopApp.controllers;
 
+import com.example.MyBookShopApp.dto.SearchWordDto;
 import com.example.MyBookShopApp.entity.User;
 import com.example.MyBookShopApp.security.BookstoreUserRegister;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +26,11 @@ public class GlobalController {
     @ModelAttribute("isAnonymousUser")
     public Boolean isAnonymousUser() {
         return userRegister.getCurrentUser() == null;
+    }
+
+    @ModelAttribute("searchWordDto")
+    public SearchWordDto searchWordDto() {
+        return new SearchWordDto();
     }
 
 }

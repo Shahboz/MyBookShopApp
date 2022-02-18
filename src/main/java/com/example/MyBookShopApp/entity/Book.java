@@ -68,15 +68,15 @@ public class Book {
     @JoinTable(name = "book2tag", joinColumns = @JoinColumn(name = "book_id"), inverseJoinColumns = @JoinColumn(name = "tag_id"))
     private List<Tag> tagsList = new ArrayList<>();
 
-    @Column(columnDefinition = "serial default 0")
+    @Column(columnDefinition = "int default 0")
     @ApiModelProperty(value = "Number of users who bought the book", example = "10")
     private Integer boughtUsers;
 
-    @Column(columnDefinition = "serial default 0")
+    @Column(columnDefinition = "int default 0")
     @ApiModelProperty(value = "Number of users who have the book in the cart", example = "5")
     private Integer cardUsers;
 
-    @Column(columnDefinition = "serial default 0")
+    @Column(columnDefinition = "int default 0")
     @ApiModelProperty(value = "Number of users who have a book on hold", example = "6")
     private Integer holdUsers;
 
