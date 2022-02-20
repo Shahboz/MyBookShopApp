@@ -28,16 +28,12 @@ public class TagsController {
 
     @ModelAttribute("tag")
     public Tag getGenre(@PathVariable(value = "slug", required = false) String slugTag) {
-        if(slugTag == null)
-            return null;
-        return tagService.getTagBySlug(slugTag);
+        return slugTag == null ? null : tagService.getTagBySlug(slugTag);
     }
 
     @ModelAttribute("books")
     public List<Book> getBooks(@PathVariable(value = "slug", required = false) String slugTag) {
-        if(slugTag == null)
-            return null;
-        return bookService.getPageOfTagBooks(slugTag, 0, 6).getContent();
+        return slugTag == null ? null : bookService.getPageOfTagBooks(slugTag, 0, 6).getContent();
     }
 
     @GetMapping(value = {"/", "/{slug}"})

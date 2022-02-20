@@ -5,7 +5,7 @@ import com.example.MyBookShopApp.service.BookService;
 import com.example.MyBookShopApp.service.GenreService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
+import com.example.MyBookShopApp.entity.Book;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Map;
@@ -34,6 +34,16 @@ public class GenresController {
         return genreService.getGenreDeep();
     }
 
+    @ModelAttribute("genre")
+    public Genre getGenre(@PathVariable(value = "slug", required = false) String genreSlug) {
+        return genreSlug == null ? null : genreService.getGenreBySlug(genreSlug);
+    }
+
+    @ModelAttribute("genreBooks")
+    public List<Book> getBooksByGenre(@PathVariable(value = "slug", required = false) String genreSlug) {
+        return genreSlug == null ? null : bookService.getPageOfGenreBooks(genreSlug, 0, 6).getContent();
+    }
+
     @GetMapping("")
     public String getGenresPage(@ModelAttribute("genres") List<Genre> genres,
                                 @ModelAttribute("genresDeep") Map<Genre, Integer> genresDeep) {
@@ -41,9 +51,7 @@ public class GenresController {
     }
 
     @GetMapping("/{slug}")
-    public String getGenrePage(@PathVariable(value = "slug", required = false) String genreSlug, Model model) {
-        model.addAttribute("genre", genreService.getGenreBySlug(genreSlug));
-        model.addAttribute("genreBooks", bookService.getPageOfGenreBooks(genreSlug, 0, 6).getContent());
+    public String getGenrePage(@ModelAttribute("genre") Genre genre, @ModelAttribute("genreBooks") List<Book> bookList) {
         return "/genres/slug";
     }
 

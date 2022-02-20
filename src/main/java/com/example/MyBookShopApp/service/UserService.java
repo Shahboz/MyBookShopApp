@@ -18,10 +18,6 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
-    public User getUserbyId(Integer userId) {
-        return userRepository.findUserById(userId);
-    }
-
     public void save(User user) {
         userRepository.save(user);
     }

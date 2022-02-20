@@ -63,23 +63,17 @@ public class BooksController {
     public List<Book> getAuthorBooks(@PathVariable(value = "slug", required = false) String authorSlug,
                                      @RequestParam(value = "offset", required = false, defaultValue = "0") Integer offset,
                                      @RequestParam(value = "limit",  required = false, defaultValue = "6") Integer limit) {
-        if (authorSlug == null)
-            return null;
-        return bookService.getPageOfAuthorBooks(authorSlug, offset, limit).getContent();
+        return authorSlug == null ? null : bookService.getPageOfAuthorBooks(authorSlug, offset, limit).getContent();
     }
 
     @ModelAttribute("author")
     public Author getAuthor(@PathVariable(value = "slug", required = false) String authorSlug) {
-        if (authorSlug == null)
-            return null;
-        return authorService.getAuthorBySlug(authorSlug);
+        return authorSlug == null ? null : authorService.getAuthorBySlug(authorSlug);
     }
 
     @ModelAttribute("book")
     public Book getBook(@PathVariable(value = "slug", required = false) String bookSlug) {
-        if(bookSlug == null)
-            return null;
-        return bookService.getBookBySlug(bookSlug);
+        return bookSlug == null ? null : bookService.getBookBySlug(bookSlug);
     }
 
     @ModelAttribute("bookReviewData")
@@ -102,16 +96,12 @@ public class BooksController {
 
     @ModelAttribute("bookRate")
     public Integer calcBookRate(@PathVariable(value = "slug", required = false) String bookSlug) {
-        if (bookSlug == null)
-            return 0;
-        return bookRateService.calcBookRate(bookSlug);
+        return bookSlug == null ? 0 :  bookRateService.calcBookRate(bookSlug);
     }
 
     @ModelAttribute("bookRateCount")
     public Integer getBookRateCount(@PathVariable(value = "slug", required = false) String bookSlug) {
-        if (bookSlug == null)
-            return 0;
-        return bookRateService.getBookRateCount(bookSlug);
+        return bookSlug == null ? 0 : bookRateService.getBookRateCount(bookSlug);
     }
 
     @ModelAttribute("bookRates")
@@ -136,8 +126,7 @@ public class BooksController {
     public BooksPageDto getRecentBooksByPage(@RequestParam(value = "from", required = false) @DateTimeFormat(pattern = "dd.MM.yyyy") Date fromDate,
                                              @RequestParam(value = "to",   required = false) @DateTimeFormat(pattern = "dd.MM.yyyy") Date toDate,
                                              @RequestParam("offset") Integer offset,
-                                             @RequestParam("limit")  Integer limit
-    ) {
+                                             @RequestParam("limit")  Integer limit) {
         return new BooksPageDto(bookService.getPageOfNewBooks(offset, limit, fromDate, toDate).getContent());
     }
 
@@ -222,7 +211,7 @@ public class BooksController {
         User user = (User) userRegister.getCurrentUser();
         if(user == null) {
             result.setResult(false);
-            result.setError("Не удалось определить пользователя");
+            result.setError("Только зарегистрированные пользователи могут оценить книги!");
             return result;
         }
         Book book = bookService.getBookById(bookRateData.getBookId());
@@ -258,7 +247,7 @@ public class BooksController {
         User user = (User) userRegister.getCurrentUser();
         if (user == null) {
             result.setResult(false);
-            result.setError("Не удалось определить пользователя");
+            result.setError("Только зарегистрированные пользователи могут оставлять отзывы!");
             return result;
         }
         Book book = bookService.getBookById(reviewData.getBookId());
@@ -297,7 +286,7 @@ public class BooksController {
         User user = (User) userRegister.getCurrentUser();
         if (user == null) {
             result.setResult(false);
-            result.setError("Не удалось определить пользователя");
+            result.setError("Только зарегистрированные пользователи могут оценить комментарии!");
             return result;
         }
         BookReview bookReview = bookReviewService.getReviewById(reviewLikeData.getReviewid());

@@ -17,8 +17,10 @@ public class JWTUtil {
 
     @Value("${auth.secret}")
     private String secret;
+
     @Value("${auth.expirationTimeInSeconds}")
     private Integer expirationTime;
+
     private List<String> authorizedTokens = new CopyOnWriteArrayList<>();
 
     private String createToken(Map<String, Object> claims, String username) {

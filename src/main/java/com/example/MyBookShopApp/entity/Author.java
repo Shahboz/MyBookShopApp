@@ -43,11 +43,6 @@ public class Author {
     @JsonIgnore
     private List<AuthorBooks> bookList = new ArrayList<>();
 
-    public Author(String slug, String name) {
-        this.slug = slug;
-        this.name = name;
-    }
-
     @JsonIgnore
     public List<Book> getBooks() {
         return this.bookList.stream().map(AuthorBooks::getBook).collect(Collectors.toList());

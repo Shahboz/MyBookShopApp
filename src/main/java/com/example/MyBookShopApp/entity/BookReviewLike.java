@@ -36,12 +36,4 @@ public class BookReviewLike {
     @ApiModelProperty(notes = "1 like, -1 dislike", example = "1", required = true)
     private Integer value;
 
-    public BookReviewLike(Integer id, BookReview review, User user, Date time, Integer value) {
-        this.id = id;
-        this.review = review;
-        this.user = user;
-        this.time = time;
-        this.value = value;
-    }
-
 }

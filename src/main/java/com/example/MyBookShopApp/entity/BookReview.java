@@ -34,12 +34,4 @@ public class BookReview {
     @Column(columnDefinition = "TEXT", nullable = false)
     private String text;
 
-    public BookReview(Integer id, Book book, User user, Date time, String text) {
-        this.id = id;
-        this.book = book;
-        this.user = user;
-        this.time = time;
-        this.text = text;
-    }
-
 }

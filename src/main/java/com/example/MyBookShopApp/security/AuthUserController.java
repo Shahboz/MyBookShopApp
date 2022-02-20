@@ -26,6 +26,11 @@ public class AuthUserController {
         return new RegistrationForm();
     }
 
+    @ModelAttribute("regOk")
+    public Boolean regOk() {
+        return true;
+    }
+
     @ModelAttribute("userContacts")
     public List<UserContact> getUserContacts() {
         return userRegister.getUserContacts();
@@ -56,9 +61,8 @@ public class AuthUserController {
     }
 
     @PostMapping("/reg")
-    public String handleUserRegistration(RegistrationForm registrationForm, Model model) {
+    public String handleUserRegistration(RegistrationForm registrationForm, @ModelAttribute("regOk") Boolean regOk) {
         userRegister.registerNewUser(registrationForm);
-        model.addAttribute("regOk", true);
         return "signin";
     }
 
