@@ -41,7 +41,10 @@
           </div>
           <div class="Cards Cards_refresh">
             <div class="Card" th:each="book, iStat : ${popularBooks}">
-              <div class="Card-picture"><a href="#"><img th:src="${book.getImage()}" src="/assets/img/content/main/card.jpg" alt="card.jpg"/></a>
+              <div class="Card-picture">
+                <a href="#" th:href="@{'/books/' + ${book.getSlug()}}">
+                  <img th:src="${book.getImage()}" src="/assets/img/content/main/card.jpg" alt="card.jpg"/>
+                </a>
                 <div class="Card-sale" th:if="${book.getDiscount() > 0}" th:text="${book.getDiscount()} + '% скидка'">30% скидка</div>
                 <div class="Card-ribbon" th:if="${book.getIsBestseller() == 1}"><span class="Card-ribbonText">Бестселлер</span></div>
                 <!--
@@ -51,7 +54,8 @@
                 -->
               </div>
               <div class="Card-content">
-                <strong class="Card-title"><a href="#" th:text="${book.getTitle()}">Техника</a>
+                <strong class="Card-title">
+                  <a href="#" th:href="@{'/books/' + ${book.getSlug()}}" th:text="${book.getTitle()}">Техника</a>
                 </strong>
                 <div class="Card-description" th:text="${book.getAuthorName()}">Кондратенко Александр Петрович
                 </div>

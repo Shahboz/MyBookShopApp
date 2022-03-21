@@ -1,6 +1,7 @@
 package com.example.MyBookShopApp.security;
 
 import com.example.MyBookShopApp.dto.ResultResponse;
+import com.example.MyBookShopApp.entity.User;
 import com.example.MyBookShopApp.entity.UserContact;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -24,11 +25,6 @@ public class AuthUserController {
     @ModelAttribute("regFrom")
     public RegistrationForm getRegistrationForm() {
         return new RegistrationForm();
-    }
-
-    @ModelAttribute("regOk")
-    public Boolean regOk() {
-        return true;
     }
 
     @ModelAttribute("userContacts")
@@ -61,8 +57,9 @@ public class AuthUserController {
     }
 
     @PostMapping("/reg")
-    public String handleUserRegistration(RegistrationForm registrationForm, @ModelAttribute("regOk") Boolean regOk) {
-        userRegister.registerNewUser(registrationForm);
+    public String handleUserRegistration(RegistrationForm registrationForm, Model model) {
+        User user = userRegister.registerNewUser(registrationForm);
+        model.addAttribute("regOk", user != null);
         return "signin";
     }
 

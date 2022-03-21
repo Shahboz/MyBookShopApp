@@ -12,8 +12,8 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 import static org.springframework.security.test.web.servlet.response.SecurityMockMvcResultMatchers.authenticated;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 
 
 @SpringBootTest
@@ -32,7 +32,7 @@ public class MainPageControllerTests {
     public void mainPageAccessTest() throws Exception {
         mockMvc.perform(get("/"))
                 .andDo(print())
-                .andExpect(content().string(containsString("")))
+                .andExpect(content().string(containsString("BOOKSHOP")))
                 .andExpect(status().isOk());
     }
 
@@ -58,14 +58,14 @@ public class MainPageControllerTests {
         mockMvc.perform(get("/profile"))
                 .andDo(print())
                 .andExpect(authenticated())
-                .andExpect(xpath("/html/body/header/div[1]/div/div/div[3]/div/a[4]/span[1]").string("admin admin"));
+                .andExpect(content().string(containsString("admin admin")));
     }
 
     @Test
     public void testSearchQuery() throws Exception {
-        mockMvc.perform(get("/search/As"))
+        mockMvc.perform(get("/search/Joy"))
                 .andDo(print())
-                .andExpect(xpath("/html/body/div/div/main/div[2]/div/div[1]/div[2]/strong/a").string("Angela's Ashes"));
+                .andExpect(content().string(containsString("Bundle of Joy")));
     }
 
 }

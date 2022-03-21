@@ -29,7 +29,7 @@ p.error-browser
             </h1>
             <div class="Section">
                 <div class="search">
-                    <form class="form form_search" action="#" method="post" data-searchlimit="5">
+                    <form class="form form_search" action="#" method="post" data-searchlimit="6">
                         <input class="search-input" id="querypage" name="querypage" type="text"
                                th:placeholder="#{searchbar.placeholder}"
                                placeholder="Search over 30 million book titles" th:value="${searchWordDto.getExample()}"
@@ -66,8 +66,8 @@ p.error-browser
                     </div>
                     <div class="Cards-footer Cards-footer_center"><a class="btn btn_primary" href="#"
                                                                      data-refreshshow="search"
-                                                                     data-refreshoffset="0"
-                                                                     data-refreshlimit="5"
+                                                                     data-refreshoffset="6"
+                                                                     data-refreshlimit="6"
                                                                      th:attr="data-refreshquery=${searchWordDto.getExample()}"
                                                                      th:text="#{button.showmore}"
                                                                      data-refreshquery="Техника">Показать еще</a>

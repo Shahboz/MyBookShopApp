@@ -5,11 +5,14 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.TestPropertySource;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 import static org.junit.jupiter.api.Assertions.*;
 
 
 @SpringBootTest
+@TestPropertySource("/application-test.properties")
 class MainPageSeleniumTests {
 
     private static ChromeDriver driver;
@@ -30,7 +33,7 @@ class MainPageSeleniumTests {
     public void testMainPageAccess() throws InterruptedException {
         MainPage mainPage = new MainPage(driver);
         mainPage
-                .callPage()
+                .callMainPage()
                 .pause();
 
         assertTrue(driver.getPageSource().contains("BOOKSHOP"));
@@ -40,13 +43,31 @@ class MainPageSeleniumTests {
     public void testMainPageSearchByQuery() throws InterruptedException {
         MainPage mainPage = new MainPage(driver);
         mainPage
-                .callPage()
+                .callMainPage()
                 .pause()
                 .setUpSearchToken("As")
                 .submit()
                 .pause();
 
         assertTrue(driver.getPageSource().contains("Angela's Ashes"));
+    }
+
+    @Test
+    public void checkChaptersNavigate() throws InterruptedException {
+        MainPage mainPage = new MainPage(driver);
+        List<String> urlChapters = mainPage
+                .callMainPage()
+                .getUrlChapters();
+
+        for (String urlChapter : urlChapters) {
+            mainPage
+                    .callPage(urlChapter)
+                    .pause()
+                    .callInternPage()
+                    .pause();
+        }
+
+        assertTrue(urlChapters.size() == 5);
     }
 
 }

@@ -1,7 +1,6 @@
 package com.example.MyBookShopApp.dto;
 
 import com.example.MyBookShopApp.entity.Book;
-import org.jboss.logging.Logger;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -25,15 +24,14 @@ class BookRepositoryTests {
 
     @Test
     void findBooksByTitleContaining() {
-        String token ="As";
-        List<Book> bookListByTitle = bookRepository.findBooksByTitleContaining(token);
+        String title ="of";
+        List<Book> bookListByTitle = bookRepository.findBooksByTitleContaining(title);
 
         assertNotNull(bookListByTitle);
         assertFalse(bookListByTitle.isEmpty());
 
         for (Book book : bookListByTitle) {
-            Logger.getLogger(this.getClass().getSimpleName()).info(book.getTitle());
-            assertThat(book.getTitle()).contains(token);
+            assertThat(book.getTitle()).contains(title);
         }
     }
 
@@ -48,14 +46,13 @@ class BookRepositoryTests {
 
     @Test
     void findBooksByPriceBetween() {
-        Integer minPrice = 705, maxPrice = 710;
+        Integer minPrice = 700, maxPrice = 800;
         List<Book> bookListPriceBetween = bookRepository.findBooksByPriceBetween(minPrice, maxPrice);
 
         assertNotNull(bookListPriceBetween);
         assertFalse(bookListPriceBetween.isEmpty());
 
         for (Book book : bookListPriceBetween) {
-            Logger.getLogger(this.getClass().getSimpleName()).info(book.getPrice());
             assertThat(book.getPrice()).isBetween(minPrice, maxPrice);
         }
     }

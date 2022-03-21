@@ -14,6 +14,7 @@ import java.util.List;
 
 
 @Controller
+@RequestMapping("/search")
 public class SearchController {
 
     private final BookService bookService;
@@ -23,28 +24,23 @@ public class SearchController {
         this.bookService = bookService;
     }
 
-    @ModelAttribute("searchWordDto")
-    public SearchWordDto searchWordDto() {
-        return new SearchWordDto();
-    }
-
     @ModelAttribute("searchResults")
     public List<Book> searchResults() {
         return new ArrayList<>();
     }
 
-    @GetMapping(value = {"/search", "/search/{searchWord}"})
+    @GetMapping(value = {"", "/{searchWord}"})
     public String getSearchResults(@PathVariable(value = "searchWord", required = false) SearchWordDto searchWordDto,
                                    Model model) throws EmptySearchException {
         if (searchWordDto != null) {
             model.addAttribute("searchWordDto", searchWordDto);
-            model.addAttribute("searchResults", bookService.getPageOfSearchResultBooks(searchWordDto.getExample(), 0, 5).getContent());
+            model.addAttribute("searchResults", bookService.getPageOfSearchResultBooks(searchWordDto.getExample(), 0, 6).getContent());
             return "/search/index";
         } else
             throw new EmptySearchException("Поиск по null невозможен");
     }
 
-    @GetMapping("/search/page/{searchWord}")
+    @GetMapping("/page/{searchWord}")
     @ResponseBody
     public BooksPageDto getNextSearchPage(@RequestParam("offset") Integer offset,
                                           @RequestParam("limit") Integer limit,
