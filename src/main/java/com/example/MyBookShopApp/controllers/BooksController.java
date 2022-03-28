@@ -8,7 +8,6 @@ import com.example.MyBookShopApp.entity.*;
 import com.example.MyBookShopApp.dto.BooksPageDto;
 import com.example.MyBookShopApp.security.BookstoreUserRegister;
 import com.example.MyBookShopApp.service.*;
-import org.jboss.logging.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -19,7 +18,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
-import java.nio.file.Path;
 import java.util.*;
 
 
@@ -188,18 +186,11 @@ public class BooksController {
 
     @GetMapping("/download/{hash}")
     public ResponseEntity<ByteArrayResource> getBookFile(@PathVariable("hash") String hash) throws IOException {
-        Path path = storage.getBookFilePath(hash);
-        Logger.getLogger(this.getClass().getSimpleName()).info("book file path: " + path);
-
-        MediaType mediaType = storage.getBookFileMime(hash);
-        Logger.getLogger(this.getClass().getSimpleName()).info("book file mime type: " + mediaType);
-
         byte[] data = storage.getBookFileByteArray(hash);
-        Logger.getLogger(this.getClass().getSimpleName()).info("book file data length: " + data.length);
 
         return ResponseEntity.ok()
-                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment;filename=" + path.getFileName().toString())
-                .contentType(mediaType)
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment;filename=" + storage.getBookFilePath(hash).getFileName().toString())
+                .contentType(storage.getBookFileMime(hash))
                 .contentLength(data.length)
                 .body(new ByteArrayResource(data));
     }
@@ -229,14 +220,11 @@ public class BooksController {
             bookRate.setTime(new Date());
             bookRate.setValue(bookRateData.getValue());
             bookRate.setBookReview(bookReview);
-            Logger.getLogger(this.getClass().getSimpleName()).info("Saving rate for book " + book.getSlug() + "(id = " + book.getId() + ")");
         } else {
             bookRate.setTime(new Date());
             bookRate.setValue(bookRateData.getValue());
-            Logger.getLogger(this.getClass().getSimpleName()).info("Updating rate " + bookRate.getId() + " for book " + book.getSlug() + "(id = " + book.getId() + ")");
         }
         bookRateService.save(bookRate);
-        Logger.getLogger(this.getClass().getSimpleName()).info("Rate saved: " + bookRate.getId());
         return result;
     }
 
@@ -268,14 +256,11 @@ public class BooksController {
             bookReview.setText(reviewData.getText());
             bookReview.setTime(new Date());
             bookReview.setUser(user);
-            Logger.getLogger(this.getClass().getSimpleName()).info("Saving review for book " + book.getSlug() + " (id = " + book.getId() + ")");
         } else {
             bookReview.setTime(new Date());
             bookReview.setText(reviewData.getText());
-            Logger.getLogger(this.getClass().getSimpleName()).info("Updating review " + bookReview.getId() + " for book " + book.getSlug() + "(id = " + book.getId() + ")");
         }
         bookReviewService.save(bookReview);
-        Logger.getLogger(this.getClass().getSimpleName()).info("Review saved: " + bookReview.getId());
         return result;
     }
 
@@ -307,15 +292,11 @@ public class BooksController {
             bookReviewLike.setValue(reviewLikeData.getValue());
             bookReviewLike.setTime(new Date());
             bookReviewLike.setUser(user);
-            Logger.getLogger(this.getClass().getSimpleName()).info("Saving " + (reviewLikeData.getValue() == 1 ? "like" : "dislike") + " for review " + bookReview.getId());
         } else {
             bookReviewLike.setValue(reviewLikeData.getValue());
             bookReviewLike.setTime(new Date());
-            Logger.getLogger(this.getClass().getSimpleName()).info("Updating values like for review " + bookReview.getId());
         }
         bookReviewLikeService.save(bookReviewLike);
-        Logger.getLogger(this.getClass().getSimpleName()).info("Review " + bookReview.getId() +
-                " for book " + bookReview.getBook().getSlug() + "(id = " + bookReview.getBook().getId() + ") " + (reviewLikeData.getValue() == 1 ? "liked" : "disliked"));
         return result;
     }
 
