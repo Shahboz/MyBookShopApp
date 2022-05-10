@@ -93,7 +93,7 @@ public class AuthUserControllerTests {
         requestparams.add("pass", registrationForm.getPass());
 
         mockMvc.perform(MockMvcRequestBuilders
-                .post("/reg")
+                .post("/signup")
                 .params(requestparams))
                 .andDo(print())
                 .andExpect(status().isOk())
@@ -118,7 +118,7 @@ public class AuthUserControllerTests {
                 .findUserByEmail(registrationForm.getEmail());
 
         mockMvc.perform(MockMvcRequestBuilders
-                .post("/reg")
+                .post("/signup")
                 .params(requestparams))
                 .andDo(print())
                 .andExpect(status().isOk())

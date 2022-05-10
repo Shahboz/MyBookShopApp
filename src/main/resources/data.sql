@@ -2318,3 +2318,8 @@ insert into book_review_like (id, review_id, user_id, time, value) values (22, 5
 insert into book_review_like (id, review_id, user_id, time, value) values (23, 23, 23, '21/02/2020', 1);
 insert into book_review_like (id, review_id, user_id, time, value) values (24, 11, 11, '23/01/2021', 1);
 insert into book_review_like (id, review_id, user_id, time, value) values (25, 16, 16, '31/05/2020', 1);
+
+insert into book2user_type (id, code, name) values (1, 'KEPT', 'Отложена');
+insert into book2user_type (id, code, name) values (2, 'CART', 'В корзине');
+insert into book2user_type (id, code, name) values (3, 'PAID', 'Куплена');
+insert into book2user_type (id, code, name) values (4, 'ARCHIVED', 'В архиве');

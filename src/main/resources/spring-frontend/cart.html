@@ -26,7 +26,7 @@
     <div class="wrap">
       <main class="Middle-main">
         <h1 class="Middle-title" th:text="#{menubar.basket}">Корзина</h1>
-        <h3 th:if="${isCartEmpty}">Корзина пуста😭</h3>
+        <h3 th:if="${bookCart == null or #lists.isEmpty(bookCart)}">Корзина пуста😭</h3>
         <form class="form Cart" action="#" method="post">
           <div class="Cart-product" th:each="book : ${bookCart}">
             <div class="Cart-block Cart-block_row">
@@ -41,7 +41,7 @@
                     <a href="#" th:text="${book.getAuthorName()}">Борис Васильевич Бедный</a>
                   </div>
                   <div class="Cart-title">
-                    <a href="#" th:text="${book.getTitle()}">Жизнь</a>
+                    <a href="#" th:text="${book.getTitle()}" th:href="${book.getSlug()}">Жизнь</a>
                   </div>
                   <div class="Cart-rating">
                     <span class="Rating">
@@ -96,7 +96,7 @@
                   </div>
                   <div class="Cart-buttons">
                     <div class="Cart-btn">
-                      <button class="btn btn_primary btn_outline" data-sendstatus="KEPT" th:attr="data-bookid = 'postponed/' + ${book.getSlug()}" data-bookid="[1122]">
+                      <button class="btn btn_primary btn_outline" data-sendstatus="KEPT" th:attr="data-bookid = ${book.getSlug()}" data-bookid="[1122]">
                         <span class="btn-icon">
                           <img src="/assets/img/icons/heart.svg" alt="heart.svg"/>
                         </span>
@@ -104,7 +104,7 @@
                       </button>
                     </div>
                     <div class="Cart-btn">
-                      <button class="btn btn_danger btn_outline" data-sendstatus="UNLINK" th:attr="data-bookid = ${'cart/remove/'+ book.getSlug()}" data-bookid="[1122]">
+                      <button class="btn btn_danger btn_outline" data-sendstatus="UNLINK" th:attr="data-bookid = ${book.getSlug()}" data-bookid="[1122]">
                         <span class="btn-icon">
                           <img src="/assets/img/icons/trash.svg" alt="trash.svg"/>
                         </span>
@@ -124,10 +124,13 @@
           </div>
           <div class="Cart-total">
             <div class="Cart-block Cart-block_total">
-              <strong class="Cart-title">Итого:
-              </strong><span class="Cart-price">534 р.</span><span class="Cart-price_old">658 р.</span>
+              <strong class="Cart-title">Итого:</strong>
+              <span class="Cart-price">534 р.</span>
+              <span class="Cart-price_old">658 р.</span>
             </div>
-            <div class="Cart-block"><a class="btn btn_success btn_md" href="/order.html">Купить</a>
+            <div class="Cart-block">
+              <a class="btn btn_success btn_md" href="/order.html" th:href="@{/books/pay}">Купить</a>
+              <p class="btnError" th:if="${errorPay != null and !#strings.isEmpty(errorPay)}" th:text="${errorPay}">Текст ошибки</p>
             </div>
           </div>
         </form>

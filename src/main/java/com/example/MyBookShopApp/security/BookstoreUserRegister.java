@@ -6,11 +6,13 @@ import com.example.MyBookShopApp.entity.UserContact;
 import com.example.MyBookShopApp.security.jwt.JWTUtil;
 import com.example.MyBookShopApp.service.UserContactService;
 import com.example.MyBookShopApp.service.UserService;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import java.util.Date;
@@ -38,34 +40,57 @@ public class BookstoreUserRegister {
         this.jwtUtil = jwtUtil;
     }
 
+    public String encodePassword(String password) {
+        return StringUtils.isEmpty(password) ? "" : passwordEncoder.encode(password);
+    }
+
     public User registerNewUser(RegistrationForm registrationForm) {
-        if(userService.getUserByEmail(registrationForm.getEmail()) == null) {
-            User user = new User();
-            user.setHash(registrationForm.getName());
+        User userByEmail = userService.getUserByEmail(registrationForm.getEmail());
+        User userByPhone = userService.getUserByPhone(registrationForm.getPhone());
+        User user = userByPhone != null ? userByPhone : userByEmail;
+
+        if (userByEmail == null && userByPhone == null) {
+            user = new User();
+            user.setHash(encodePassword(registrationForm.getName()));
             user.setRegTime(new Date());
             user.setBalance(0F);
             user.setName(registrationForm.getName());
             user.setEmail(registrationForm.getEmail());
-            user.setPassword(passwordEncoder.encode(registrationForm.getPass()));
+            user.setPassword(encodePassword(registrationForm.getPass()));
             userService.save(user);
-
-            UserContact emailContact = new UserContact();
-            emailContact.setUser(user);
-            emailContact.setType("EMAIL");
-            emailContact.setApproved(-1);
-            emailContact.setContact(registrationForm.getEmail());
-            userContactService.save(emailContact);
-
-            UserContact phoneContact = new UserContact();
-            phoneContact.setUser(user);
-            phoneContact.setType("PHONE");
-            phoneContact.setApproved(-1);
-            phoneContact.setContact(registrationForm.getPhone());
-            userContactService.save(phoneContact);
-
-            return user;
+        } else {
+            // Обновим данные анонимного пользователя
+            if (!StringUtils.isEmpty(user.getName()) && user.getName().contains("anonymousUser") && StringUtils.isEmpty(user.getPassword())) {
+                user.setName(registrationForm.getName());
+                user.setHash(encodePassword(registrationForm.getName()));
+                user.setEmail(registrationForm.getEmail());
+                user.setPassword(encodePassword(registrationForm.getPass()));
+                user.setRegTime(new Date());
+                userService.save(user);
+            }
         }
-        return null;
+
+        if (!StringUtils.isEmpty(registrationForm.getEmail())) {
+            UserContact emailContact = userContactService.getUserContactByContact(registrationForm.getEmail());
+            if (emailContact == null) {
+                emailContact = new UserContact(user, "EMAIL", registrationForm.getEmail());
+            } else {
+                emailContact.setUser(user);
+            }
+            userContactService.save(emailContact);
+        }
+
+        if (!StringUtils.isEmpty(registrationForm.getPhone())) {
+            UserContact phoneContact = userContactService.getUserContactByContact(registrationForm.getPhone());
+            if (phoneContact == null) {
+                phoneContact = new UserContact(user, "PHONE", registrationForm.getPhone());
+            } else {
+                phoneContact.setUser(user);
+            }
+            userContactService.save(phoneContact);
+        }
+
+        return user;
     }
 
     public ResultResponse login(ContactConfirmationPayload payload) {
@@ -83,14 +108,23 @@ public class BookstoreUserRegister {
         return response;
     }
 
+    public ContactConfirmationResponse jwtloginByPhoneNumber(ContactConfirmationPayload payload) {
+        UserDetails userDetails = bookstoreUserDetailsService.loadUserByUsername(payload.getContact());
+        String jwtToken = jwtUtil.generateToken(userDetails);
+        ContactConfirmationResponse response = new ContactConfirmationResponse(jwtToken);
+        return response;
+    }
+
     public Object getCurrentUser() {
-        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        if(principal instanceof BookstoreUserDetails) {
-            BookstoreUserDetails userDetails = (BookstoreUserDetails) principal;
-            return userDetails.getUser();
-        } else if (principal instanceof CustomOAuth2User) {
-            CustomOAuth2User oAuth2User = (CustomOAuth2User) principal;
-            return userService.getUserByEmail(oAuth2User.getEmail());
+        if (SecurityContextHolder.getContext().getAuthentication() != null) {
+            Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            if (principal instanceof BookstoreUserDetails) {
+                BookstoreUserDetails userDetails = (BookstoreUserDetails) principal;
+                return userService.getUserById(userDetails.getUser().getId());
+            } else if (principal instanceof CustomOAuth2User) {
+                CustomOAuth2User oAuth2User = (CustomOAuth2User) principal;
+                return userService.getUserByEmail(oAuth2User.getEmail());
+            }
         }
         return null;
     }
@@ -99,12 +133,84 @@ public class BookstoreUserRegister {
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         if(principal instanceof BookstoreUserDetails) {
             BookstoreUserDetails userDetails = (BookstoreUserDetails) principal;
-            return userContactService.getUserContacts(userDetails.getUser().getId());
+            return userContactService.getApprovedUserContacts(userDetails.getUser().getId());
         } else if (principal instanceof CustomOAuth2User) {
             CustomOAuth2User oAuth2User = (CustomOAuth2User) principal;
-            return userContactService.getUserContacts(userService.getUserByEmail(oAuth2User.getEmail()).getId());
+            return userContactService.getApprovedUserContacts(userService.getUserByEmail(oAuth2User.getEmail()).getId());
         }
         return null;
+    }
+
+    public ResultResponse approveContact(ContactConfirmationPayload contactConfirmation) {
+        ResultResponse response = new ResultResponse();
+        UserContact userContact = userContactService.getUserContactByContact(contactConfirmation.getContact());
+
+        if (userContact == null) {
+            response.setResult(false);
+            response.setError("Не найден контакт");
+        } else if (userContactService.isExhausted(userContact)) {
+            response.setResult(false);
+            response.setReturn(true);
+            response.setError("Число попыток подтверждения превышено, повторите попытку через " + userContactService.getExceedMinuteRetryTimeout(userContact) + " минут");
+        } else if (userContactService.isExpired(userContact)) {
+            response.setResult(false);
+            response.setReturn(true);
+            response.setError("Код подтверждения устарел. Запросите новый код");
+        } else if (userContact.getCode().equals(contactConfirmation.getCode())) {
+            // Удаление существующих контактов
+            List<UserContact> userContacts = userContactService.getUserContactsByType(userContact.getUser().getId(), userContact.getType());
+            for (UserContact contact : userContacts) {
+                if (!contact.getContact().equalsIgnoreCase(userContact.getContact())) {
+                    userContactService.delete(contact);
+                }
+            }
+            userContact.setApproved(1);
+            userContact.setCodeTrials(userContact.getCodeTrials() + 1);
+            userContactService.save(userContact);
+
+            response.setResult(true);
+        } else {
+            response.setResult(false);
+            userContact.setCodeTrials(userContact.getCodeTrials() + 1);
+            userContactService.save(userContact);
+
+            response.setError("Код подтверждения введен неверно. У вас осталось " + userContactService.getExceedRetryCount(userContact) + " попыток");
+        }
+        return response;
+    }
+
+    public ResultResponse verifyCode(ContactConfirmationPayload contactConfirmation) {
+        ResultResponse response = new ResultResponse();
+        UserContact userContact = userContactService.getUserContactByContact(contactConfirmation.getContact());
+
+        if (userContact == null) {
+            response = null;
+        } else if (userContactService.isExhausted(userContact)) {
+            response.setResult(false);
+            response.setReturn(true);
+            if (userContact.getType().equals("EMAIL")) {
+                response.setError("Количество попыток входа по e-mail исчерпано, попробуйте войти по телефону или повторить вход по e-mail через "
+                        + userContactService.getExceedMinuteRetryTimeout(userContact) + " минут");
+            } else {
+                response.setError("Количество попыток входа по телефону исчерпано, попробуйте войти по e-mail или повторить вход по телефону через "
+                        + userContactService.getExceedMinuteRetryTimeout(userContact) + " минут");
+            }
+        } else if (userContactService.isExpired(userContact)) {
+            response.setResult(false);
+            response.setReturn(true);
+            response.setError("Код подтверждения устарел. Запросите новый код");
+        } else {
+            userContact.setCodeTrials(userContact.getCodeTrials() + 1);
+            userContactService.save(userContact);
+
+            if (userContact.getCode().equals(contactConfirmation.getCode())) {
+                response.setResult(true);
+            } else {
+                response.setResult(false);
+                response.setError("Код подтверждения введён неверно. У вас осталось " + userContactService.getExceedRetryCount(userContact) + " попыток");
+            }
+        }
+        return response;
     }
 
 }

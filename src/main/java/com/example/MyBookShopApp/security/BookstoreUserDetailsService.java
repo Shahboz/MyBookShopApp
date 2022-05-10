@@ -4,6 +4,7 @@ import com.example.MyBookShopApp.entity.User;
 import com.example.MyBookShopApp.entity.UserContact;
 import com.example.MyBookShopApp.service.UserContactService;
 import com.example.MyBookShopApp.service.UserService;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -29,6 +30,10 @@ public class BookstoreUserDetailsService implements UserDetailsService {
         User user = userService.getUserByEmail(s);
         if(user != null) {
             return new BookstoreUserDetails(user);
+        }
+        user = userService.getUserByPhone(s);
+        if (user != null) {
+            return new PhoneNumberUserDetails(user);
         } else {
             throw new UsernameNotFoundException("User not found!");
         }
@@ -45,7 +50,7 @@ public class BookstoreUserDetailsService implements UserDetailsService {
             newUser.setRegTime(new Date());
             userService.save(newUser);
 
-            if (customOAuth2User.getEmail() != null && !customOAuth2User.getEmail().equals("")) {
+            if (!StringUtils.isEmpty(customOAuth2User.getEmail())) {
                 UserContact emailContact = new UserContact();
                 emailContact.setUser(newUser);
                 emailContact.setType("EMAIL");
@@ -54,7 +59,7 @@ public class BookstoreUserDetailsService implements UserDetailsService {
                 userContactService.save(emailContact);
             }
 
-            if (customOAuth2User.getPhone() != null && !customOAuth2User.getPhone().equals("")) {
+            if (!StringUtils.isEmpty(customOAuth2User.getPhone())) {
                 UserContact phoneContact = new UserContact();
                 phoneContact.setUser(newUser);
                 phoneContact.setType("PHONE");

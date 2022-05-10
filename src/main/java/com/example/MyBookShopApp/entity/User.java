@@ -36,4 +36,14 @@ public class User {
     @ApiModelProperty(value = "Password user. Temporary field")
     private String password;
 
+    public User(Integer id, String hash, Date regTime, Float balance, String name, String email, String password) {
+        this.id = id;
+        this.hash = hash;
+        this.regTime = regTime;
+        this.balance = balance;
+        this.name = name;
+        this.email = email;
+        this.password = password;
+    }
+
 }

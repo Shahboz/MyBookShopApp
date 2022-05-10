@@ -45,27 +45,43 @@
           <div class="Tabs-wrap">
             <div class="Tabs-block" id="basic">
               <div class="Profile">
-                <form class="form Profile-form" action="#" method="post">
+                <form class="form Profile-form" th:action="@{/profile/save}" method="post">
                   <div class="row">
                     <div class="row-block">
                       <div class="form-group">
                         <label class="form-label" for="name">Имя</label>
                         <input class="form-input" id="name" name="name" type="text" value="Михаил" th:value="${currentUser.getName()}"/>
                       </div>
-                      <div class="form-group">
+                      <div class="form-group form-group">
                         <label class="form-label" for="mail">E-mail</label>
-                        <input class="form-input" id="mail" name="mail" type="text" value="addr@sait.com" data-validate="require mail"
-                               th:each="contact : ${userContacts}" th:value="${contact == null ? '': contact.getContact()}" th:if="${(contact == null ? 'EMAIL': contact.getType()) == 'EMAIL'}"/>
+                        <div class="form-group form-group_row">
+                          <input class="form-input form-input_mail" id="mail" name="mail" type="text" value="addr@sait.com" data-validate="require mail"
+                                 th:each="contact : ${userContacts}" th:value="${contact == null ? '': contact.getContact()}"
+                                 th:if="(${contact} == null ? 'EMAIL': ${contact.getType()}) == 'EMAIL' or ${#lists.size(userContacts)} == 1"
+                                 th:placeholder="#{siginbar.placeholder.emailfield}"/>
+                          <div class="form-group form-group_key">
+                            <input class="form-input form-input_code" id="mailCode" name="mailCode" type="hidden" data-mask="999 999"
+                                   th:placeholder="#{siginbar.placeholder.codefromemail}"/>
+                          </div>
+                        </div>
                         <div class="Profile-btn Profile-btn_confirm">
-                          <button class="btn btn_primary" type="button">Подтвердить</button>
+                          <button class="btn btn_primary" type="button" name="submitChangeEmail" id="submitChangeEmail">Подтвердить</button>
                         </div>
                       </div>
-                      <div class="form-group">
+                      <div class="form-group form-group">
                         <label class="form-label" for="phone">Телефон</label>
-                        <input class="form-input" id="phone" name="phone" type="text" value="+70000000000" data-mask="+7 (999) 999-99-99" data-validate="require"
-                               th:each="contact : ${userContacts}" th:value="${contact == null ? '': contact.getContact()}" th:if="${(contact == null ? 'PHONE': contact.getType()) == 'PHONE'}"/>
+                        <div class="form-group form-group_row">
+                          <input class="form-input form-input_phone" id="phone" name="phone" type="text" data-mask="+7 (999) 999-99-99" data-validate="require"
+                                   th:each="contact : ${userContacts}" th:value="${contact} == null ? '': ${contact.getContact()}"
+                                   th:if="(${contact} == null ? 'PHONE': ${contact.getType()}) == 'PHONE' or ${#lists.size(userContacts)} == 1"
+                                   th:placeholder="#{siginbar.placeholder.phonefield}"/>
+                          <div class="form-group form-group_key">
+                            <input class="form-input form-input_code" id="phoneCode" name="phoneCode" type="hidden" data-mask="999 999"
+                                    th:placeholder="#{siginbar.placeholder.codefromphone}"/>
+                          </div>
+                        </div>
                         <div class="Profile-btn Profile-btn_confirm">
-                          <button class="btn btn_primary" type="button">Подтвердить</button>
+                          <button class="btn btn_primary" type="button" name="submitChangePhone" id="submitChangePhone">Подтвердить</button>
                         </div>
                       </div>
                     </div>
@@ -80,10 +96,11 @@
                       </div>
                       <div class="form-group">
                         <div class="Profile-btn">
-                          <button class="btn btn_danger" type="button">Отменить</button>
+                          <button class="btn btn_danger" type="button" onclick="location.href='/profile/cancel'">Отменить</button>
                           <button class="btn btn_primary" type="submit">Сохранить</button>
                         </div>
-                        <div class="Profile-success">Профиль успешно сохранен</div>
+                        <div class="Profile-success" th:if="${isSaved}">Профиль успешно сохранен</div>
+                        <div class="btnError" th:if="${errorText} != null and !${#strings.isEmpty(errorText)}" th:text="${errorText}">Ошибка</div>
                       </div>
                     </div>
                   </div>
@@ -101,59 +118,30 @@
                         <th>Описание</th>
                       </tr>
                     </thead>
-                    <tbody>
+                    <tbody th:each="transaction : ${transactions}">
                       <tr>
-                        <td>15 мая 2017 10:03</td>
+                        <td th:text="${transaction.getTime()}">15 мая 2017 10:03</td>
                         <td>
                           <span class="Transactions_textSuccess">
-                            <strong>+500 р.</strong>
+                            <strong th:text="${transaction.getValue()} + ' р.'">+500 р.</strong>
                           </span>
                         </td>
-                        <td>Пополнение счета</td>
-                      </tr>
-                      <tr>
-                        <td>5 марта 2017 13:40</td>
-                        <td>
-                          <span class="Transactions_textSuccess">
-                            <strong>-480 р.</strong>
-                          </span>
-                        </td>
-                        <td>Покупка книги&#32;
-                          <a href="/books/slug.html">История Беларуси</a>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td>1 февраля 2017 04:10</td>
-                        <td>
-                          <span class="Transactions_textSuccess">
-                            <strong>+10 000 р.</strong>
-                          </span>
-                        </td>
-                        <td>Пополнение с помощью WebMoney</td>
-                      </tr>
-                      <tr>
-                        <td>1 января 2017 09:33</td>
-                        <td>
-                          <span class="Transactions_textSuccess">
-                            <strong>+7 896 р.</strong>
-                          </span>
-                        </td>
-                        <td>Пополнение с помощью Яндекс.Деньги</td>
+                        <td th:text="${transaction.getDescription()}">Пополнение счета</td>
                       </tr>
                     </tbody>
                   </table>
                 </div>
-                <div class="Transactions-footer Transactions-footer_center">
-                  <a class="btn btn_primary Transactions-get" href="#" data-transactionoffset="4" data-transactionlimit="10" data-transactionsort="asc">Показать еще</a>
+                <div class="Transactions-footer Transactions-footer_center" th:if="${#lists.size(transactions) == 50}">
+                  <a class="btn btn_primary Transactions-get" href="#" data-transactionoffset="50" data-transactionlimit="50" data-transactionsort="desc">Показать еще</a>
                 </div>
               </div>
             </div>
             <div class="Tabs-block" id="topup">
-              <form class="form Topup" action="#" method="post" data-sendHash="34534535">
+              <form class="form Topup" action="#" method="post" th:attr="data-hash = ${currentUser.getHash()}">
                 <div class="Topup-wrap">
                   <strong class="Topup-title">Введите сумму, на которую хотите пополнить свой счет:</strong>
                   <div class="form-group form-group_row Topup-group">
-                    <input class="form-input" id="sum" name="sum" type="text"/>
+                    <input class="form-input" id="sum" name="sum" type="number" data-validate="require" min="1"/>
                     <span>рублей</span>
                   </div>
                   <div class="form-group">

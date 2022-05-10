@@ -11,7 +11,8 @@ import lombok.Setter;
 public class ResultResponse {
 
     private Boolean result;
-    private String error;
+    private Boolean Return;
+    private String  error;
 
     public ResultResponse(Boolean result, String error) {
         this.result = result;

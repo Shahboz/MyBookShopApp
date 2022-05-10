@@ -26,7 +26,7 @@
     <div class="wrap">
       <main class="Middle-main">
         <h1 class="Middle-title" th:text="#{menubar.postponed}">Отложенное</h1>
-        <h3 th:if="${isPostponedEmpty}">Очень печально, что книги не понравились😪</h3>
+        <h3 th:if="${bookPostponed == null or #lists.isEmpty(bookPostponed)}">Очень печально, что книги не понравились😪</h3>
         <form class="form Cart Cart_postponed" action="#" method="post">
           <div class="Cart-product" th:each="book : ${bookPostponed}">
             <div class="Cart-block Cart-block_row">
@@ -104,7 +104,7 @@
                       </button>
                     </div>
                     <div class="Cart-btn">
-                      <button class="btn btn_danger btn_outline" data-sendstatus="UNLINK" data-bookid="[1122]" th:attr="data-bookid = 'postponed/remove/'+ ${book.getSlug()}">
+                      <button class="btn btn_danger btn_outline" data-sendstatus="UNLINK" data-bookid="[1122]" th:attr="data-bookid = ${book.getSlug()}">
                         <span class="btn-icon">
                           <img src="/assets/img/icons/trash.svg" alt="trash.svg"/>
                         </span>

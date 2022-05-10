@@ -11,4 +11,12 @@ public interface UserContactRepository extends JpaRepository<UserContact, Intege
     @Query(value = "select c from User u left join UserContact c on u.id = c.user.id where u.id = :userId")
     List<UserContact> findUserContactsByUserId(Integer userId);
 
+    List<UserContact> findUserContactsByUserIdAndApproved(Integer userId, Integer approved);
+
+    UserContact findUserContactByContact(String contact);
+
+    List<UserContact> findUserContactsByUserIdAndType(Integer userId, String contactType);
+
+    void deleteUserContactsByUserIdAndApproved(Integer userId, Integer approved);
+
 }

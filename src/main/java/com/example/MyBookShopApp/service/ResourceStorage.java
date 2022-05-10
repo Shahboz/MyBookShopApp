@@ -1,7 +1,8 @@
-package com.example.MyBookShopApp.entity;
+package com.example.MyBookShopApp.service;
 
 import com.example.MyBookShopApp.aspect.annotations.BookFileInfo;
 import com.example.MyBookShopApp.dto.BookFileRepository;
+import com.example.MyBookShopApp.entity.BookFile;
 import liquibase.util.file.FilenameUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -20,10 +21,10 @@ import java.nio.file.Paths;
 public class ResourceStorage {
 
     @Value("${upload.path}")
-    String uploadPath;
+    private String uploadPath;
 
     @Value("${download.path}")
-    String downloadPath;
+    private String downloadPath;
 
     private final BookFileRepository bookFileRepository;
 

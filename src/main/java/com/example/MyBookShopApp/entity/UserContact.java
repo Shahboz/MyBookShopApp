@@ -42,4 +42,13 @@ public class UserContact {
     @Column(nullable = false)
     private String contact;
 
+    public UserContact(User user, String type, String contact) {
+        this.user = user;
+        this.type = type;
+        this.approved = 0;
+        this.codeTrials = 0;
+        this.codeTime = new Date(0L);
+        this.contact = contact;
+    }
+
 }
