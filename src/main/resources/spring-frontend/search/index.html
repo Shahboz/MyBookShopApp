@@ -25,8 +25,7 @@ p.error-browser
 <div class="Middle Middle_search">
     <div class="wrap">
         <main class="Middle-main">
-            <h1 class="Middle-title">Поиск
-            </h1>
+            <h1 class="Middle-title">Поиск</h1>
             <div class="Section">
                 <div class="search">
                     <form class="form form_search" action="#" method="post" data-searchlimit="6">
@@ -40,9 +39,7 @@ p.error-browser
             </div>
             <div class="Section Section_close">
                 <header class="Section-header">
-                    <h2 class="Section-title Middle-searchHeader"
-                        th:text="${'Найдено книг: ' + searchResults.size()}">Найдено 40 книг
-                    </h2>
+                    <h2 class="Section-title Middle-searchHeader" th:text="${'Найдено книг: ' + searchResults.size()}">Найдено 40 книг</h2>
                 </header>
                 <div class="Cards Cards_search Cards_refresh">
                     <div class="Card" th:each="book : ${searchResults}">
