@@ -6,6 +6,7 @@ import com.example.MyBookShopApp.entity.Book;
 import com.example.MyBookShopApp.entity.google.api.books.Item;
 import com.example.MyBookShopApp.entity.google.api.books.Root;
 import com.example.MyBookShopApp.exceptions.BookstoreApiWrongParameterException;
+import org.apache.commons.lang3.time.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
@@ -14,6 +15,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -21,13 +23,18 @@ import java.util.List;
 @Service
 public class BookService {
 
-    private BookRepository bookRepository;
-    private RestTemplate restTemplate;
+    private final BookRepository bookRepository;
+    private final RestTemplate restTemplate;
+    private final UserBooksService userBooksService;
+    private final UserViewedBooksService userViewedBooksService;
 
     @Autowired
-    public BookService(BookRepository bookRepository, RestTemplate restTemplate) {
+    public BookService(BookRepository bookRepository, RestTemplate restTemplate, UserBooksService userBooksService,
+                       UserViewedBooksService userViewedBooksService) {
         this.bookRepository = bookRepository;
         this.restTemplate = restTemplate;
+        this.userBooksService = userBooksService;
+        this.userViewedBooksService = userViewedBooksService;
     }
 
     public Page<Book> getPageOfNewBooks(Integer offset, Integer limit, Date fromDate, Date toDate) {
@@ -41,9 +48,12 @@ public class BookService {
         return bookRepository.findAllByPubDateBetweenOrderByPubDateDesc(fromDate, toDate, nextPage);
     }
 
-    public Page<Book> getPageOfRecommendedBooks(Integer offset, Integer limit) {
+    public Page<Book> getPageOfRecommendedBooks(Integer userId, Integer offset, Integer limit) {
         Pageable nextPage = PageRequest.of(offset/limit, limit);
-        return bookRepository.findAll(nextPage);
+        userViewedBooksService.setBeginPeriod(DateUtils.truncate(new Date(), Calendar.MONTH));
+        userViewedBooksService.setEndPeriod(new Date());
+        Integer countUserBooks = userId == null ? 0 : userBooksService.getCountUserBooks(userId) + userViewedBooksService.getCountOfViewedBooks(userId);
+        return userId == null || countUserBooks == 0 ? bookRepository.findRecommendBooksByRate(nextPage) : bookRepository.findRecommendBooksByUser(userId, nextPage);
     }
 
     public Page<Book> getPageOfSearchResultBooks(String searchWord, Integer offset, Integer limit) {

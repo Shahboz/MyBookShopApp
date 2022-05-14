@@ -114,6 +114,9 @@
                     <li th:class="(${itemActive == 5} ? 'menu-item menu-item_ACTIVE' : 'menu-item')">
                         <a class="menu-link" href="/authors/index.html" th:href="@{/authors}" th:text="#{menubar.authors}">Авторы</a>
                     </li>
+                    <li th:if="${!isAnonymousUser}" th:class="(${itemActive == 6} ? 'menu-item menu-item_ACTIVE' : 'menu-item')">
+                        <a class="menu-link" th:href="@{/books/view}" th:text="#{menubar.view}">Просмотренные</a>
+                    </li>
                 </ul>
             </nav>
         </div>

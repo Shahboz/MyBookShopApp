@@ -2,11 +2,18 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
   <th:block th:fragment="printNode" th:each="genre : ${genres}">
       <th:block th:if="${genre} != null" th:switch="${genresDeep.get(genre)}-(${genre.getChild().size()} > 0 ? ${curDeep} : ${genresDeep.get(genre)})">
-          <div th:case="0" class="Tag"><a th:href="'/genres/' + ${genre.getSlug()}" th:text="${genre.getName()}">Лёгкое чтение<span class="undefined-amount">(15638)</span></a></div>
-          <div th:case="*"
-               th:class="(${genresDeep.get(genre)}-${curDeep}) == 1 ? 'Tags' : 'Tags Tags_embed'">
+          <div th:case="0" class="Tag">
+              <a th:href="'/genres/' + ${genre.getSlug()}" th:text="${genre.getName()}">Лёгкое чтение
+                  <span class="undefined-amount">(15638)</span>
+              </a>
+          </div>
+          <div th:case="*" th:class="(${genresDeep.get(genre)}-${curDeep}) == 1 ? 'Tags' : 'Tags Tags_embed'">
               <div th:class="Tags-title">
-                  <div class="Tag"><a th:href="'/genres/' + ${genre.getSlug()}" th:text="${genre.getName()}">Лёгкое чтение<span class="undefined-amount">(15638)</span></a></div>
+                  <div class="Tag">
+                      <a th:href="'/genres/' + ${genre.getSlug()}" th:text="${genre.getName()}">Лёгкое чтение
+                          <span class="undefined-amount">(15638)</span>
+                      </a>
+                  </div>
               </div>
               <th:block th:if="${genre.getChild().size()>0}"
                         th:replace="~{fragments/genre_fragment :: printNode(genres=${genre.getChild()}, curDeep=${curDeep}+1, genresDeep=${genresDeep})}">

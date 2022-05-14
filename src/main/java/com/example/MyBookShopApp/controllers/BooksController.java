@@ -8,6 +8,7 @@ import com.example.MyBookShopApp.entity.*;
 import com.example.MyBookShopApp.dto.BooksPageDto;
 import com.example.MyBookShopApp.security.BookstoreUserRegister;
 import com.example.MyBookShopApp.service.*;
+import org.apache.commons.lang3.time.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -32,10 +33,12 @@ public class BooksController {
     private final BookstoreUserRegister userRegister;
     private final BookReviewLikeService bookReviewLikeService;
     private final ResourceStorage storage;
+    private final UserViewedBooksService userViewedBooksService;
 
     @Autowired
     public BooksController(BookService bookService, AuthorService authorService, BookRateService bookRateService, BookReviewService bookReviewService,
-                           BookstoreUserRegister userRegister, BookReviewLikeService bookReviewLikeService, ResourceStorage storage) {
+                           BookstoreUserRegister userRegister, BookReviewLikeService bookReviewLikeService, ResourceStorage storage,
+                           UserViewedBooksService userViewedBooksService) {
         this.bookService = bookService;
         this.authorService = authorService;
         this.bookRateService = bookRateService;
@@ -43,12 +46,22 @@ public class BooksController {
         this.userRegister = userRegister;
         this.bookReviewLikeService = bookReviewLikeService;
         this.storage = storage;
+        this.userViewedBooksService = userViewedBooksService;
     }
 
     @ModelAttribute("popularBooks")
     public List<Book> getPopularBooks(@RequestParam(value = "offset", required = false, defaultValue = "0") Integer offset,
                                       @RequestParam(value = "limit",  required = false, defaultValue = "6") Integer limit) {
         return bookService.getPageOfPopularBooks(offset, limit).getContent();
+    }
+
+    @ModelAttribute("viewBooks")
+    public List<Book> getViewedBooks(@RequestParam(value = "offset", required = false, defaultValue = "0") Integer offset,
+                                     @RequestParam(value = "limit",  required = false, defaultValue = "6") Integer limit) {
+        User currentUser = (User) userRegister.getCurrentUser();
+        userViewedBooksService.setBeginPeriod(DateUtils.truncate(new Date(), Calendar.MONTH));
+        userViewedBooksService.setEndPeriod(new Date());
+        return currentUser == null ? null : userViewedBooksService.getPageOfViewedBooks(currentUser.getId(), offset, limit).getContent();
     }
 
     @ModelAttribute("recentBooks")
@@ -116,7 +129,8 @@ public class BooksController {
     @GetMapping(value = "/recommended", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public BooksPageDto getRecommendedBooksByPage(@RequestParam("offset") Integer offset, @RequestParam("limit") Integer limit) {
-        return new BooksPageDto(bookService.getPageOfRecommendedBooks(offset, limit).getContent());
+        User currentUser = (User) userRegister.getCurrentUser();
+        return new BooksPageDto(bookService.getPageOfRecommendedBooks(currentUser == null ? null : currentUser.getId(), offset, limit).getContent());
     }
 
     @GetMapping(value = "/recent", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -132,6 +146,15 @@ public class BooksController {
     @ResponseBody
     public BooksPageDto getPopularBooksByPage(@RequestParam("offset") Integer offset, @RequestParam("limit") Integer limit) {
         return new BooksPageDto(bookService.getPageOfPopularBooks(offset, limit).getContent());
+    }
+
+    @GetMapping(value = "/view", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public BooksPageDto getViewBooksByPage(@RequestParam("offset") Integer offset, @RequestParam("limit") Integer limit) {
+        User currentUser = (User) userRegister.getCurrentUser();
+        userViewedBooksService.setBeginPeriod(DateUtils.truncate(new Date(), Calendar.MONTH));
+        userViewedBooksService.setEndPeriod(new Date());
+        return currentUser == null ? null : new BooksPageDto(userViewedBooksService.getPageOfViewedBooks(currentUser.getId(), offset, limit).getContent());
     }
 
     @GetMapping(value = "/author/{slug}", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -162,6 +185,11 @@ public class BooksController {
         return "/books/popular";
     }
 
+    @GetMapping(value = "/view", produces = MediaType.TEXT_HTML_VALUE)
+    public String getViewedPage(@ModelAttribute("viewBooks") List<Book> viewedBooks) {
+        return "/books/view";
+    }
+
     @GetMapping(value = "/author/{slug}", produces = MediaType.TEXT_HTML_VALUE)
     public String getAuthorBooks(@ModelAttribute("authorBooks") List<Book> authorBooks,
                                  @ModelAttribute("author") Author author) {
@@ -171,7 +199,20 @@ public class BooksController {
     @GetMapping(value = "/{slug}", produces = MediaType.TEXT_HTML_VALUE)
     public String getBookPage(@ModelAttribute("book") Book book, @ModelAttribute("bookReviewData") List<BookReviewDto> bookReviewData,
                               @ModelAttribute("bookRates") Rate[] rates, @ModelAttribute("bookRateCount") Integer bookRateCount,
-                              @ModelAttribute("bookRate") Integer bookRate) {
+                              @ModelAttribute("bookRate") Integer bookRate, @PathVariable("slug") String bookSlug) {
+        User currentUser = (User) userRegister.getCurrentUser();
+        if (book != null && currentUser != null) {
+            UserViewedBooks userViewedBook = userViewedBooksService.getUserViewedBook(currentUser.getId(), book.getId());
+            if (userViewedBook == null) {
+                userViewedBook = new UserViewedBooks();
+                userViewedBook.setUser(currentUser);
+                userViewedBook.setBook(book);
+                userViewedBook.setTime(new Date());
+            } else {
+                userViewedBook.setTime(new Date());
+            }
+            userViewedBooksService.save(userViewedBook);
+        }
         return "/books/slugmy";
     }
 

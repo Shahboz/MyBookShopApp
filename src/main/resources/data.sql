@@ -2074,7 +2074,7 @@ insert into book2genre (id, book_id, genre_id) values (15, 835, 18);
 insert into book2genre (id, book_id, genre_id) values (16, 830, 10);
 insert into book2genre (id, book_id, genre_id) values (17, 170, 13);
 insert into book2genre (id, book_id, genre_id) values (18, 497, 33);
-insert into book2genre (id, book_id, genre_id) values (19, 502, 18);
+insert into book2genre (id, book_id, genre_id) values (19, 114, 18);
 insert into book2genre (id, book_id, genre_id) values (20, 680, 3);
 insert into book2genre (id, book_id, genre_id) values (21, 309, 23);
 insert into book2genre (id, book_id, genre_id) values (22, 430, 5);

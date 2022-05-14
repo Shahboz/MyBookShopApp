@@ -170,14 +170,6 @@
         <addForeignKeyConstraint baseColumnNames="tag_id"  baseTableName="book2tag" constraintName="book2tag_fk2" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="tags"/>
     </changeSet>
 
-    <changeSet author="SSafarov" id="1622823661355-22">
-        <addColumn tableName="book">
-            <column name="bought_users" type="SERIAL" defaultValue="0"/>
-            <column name="card_users"   type="SERIAL" defaultValue="0"/>
-            <column name="hold_users"   type="SERIAL" defaultValue="0"/>
-        </addColumn>
-    </changeSet>
-
     <changeSet author="SSafarov" id="7.2">
         <createTable tableName="book_file">
             <column autoIncrement="true" name="id" type="SERIAL">
@@ -372,6 +364,32 @@
         <addForeignKeyConstraint baseColumnNames="user_id" baseTableName="balance_transaction" constraintName="balance_transaction_fk1" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="users"/>
         <addForeignKeyConstraint baseColumnNames="book_id" baseTableName="balance_transaction" constraintName="balance_transaction_fk2" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="book"/>
 
+    </changeSet>
+
+    <changeSet id="final_part_1_task_1" author="SSafarov">
+        <createSequence sequenceName="book2user_view_id_seq" startValue="50" incrementBy="1" cycle="false"/>
+        <createTable tableName="book2user_view">
+            <column name="id" type="BIGINT" defaultValueSequenceNext="book2user_view_id_seq">
+                <constraints primaryKey="true" primaryKeyName="book2user_view_pkey"/>
+            </column>
+            <column name="user_id" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="book_id" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="time" type="TIMESTAMP WITH TIME ZONE">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <addForeignKeyConstraint baseColumnNames="user_id" baseTableName="book2user_view" constraintName="book2user_view_fk1" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="users"/>
+        <addForeignKeyConstraint baseColumnNames="book_id" baseTableName="book2user_view" constraintName="book2user_view_fk2" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="book"/>
+
+        <createView viewName="userRecommendBooks" replaceIfExists="true">
+            select b2u.book_id, b2u.user_id from book2user b2u join book2user_type b2ut on b2ut.id = b2u.type_id where b2ut.code in ('PAID', 'CART', 'KEPT')
+            union
+            select b2uv.book_id, b2uv.user_id from book2user_view b2uv where b2uv.time between date_trunc('MONTH', CURRENT_TIMESTAMP) and CURRENT_TIMESTAMP
+        </createView>
     </changeSet>
 
 </databaseChangeLog>

@@ -15,4 +15,6 @@ public interface UserBooksRepository extends JpaRepository<UserBooks, Integer> {
     @Query(value = "select ub.book from UserBooks ub where ub.user.id = :userId and ub.type.code = :bookTypeCode")
     List<Book> findUserBooksByUserBookType(Integer userId, String bookTypeCode);
 
+    Integer countUserBooksByUserId(Integer userId);
+
 }

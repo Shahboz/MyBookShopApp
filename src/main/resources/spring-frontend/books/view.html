@@ -1,0 +1,79 @@
+
+<!--END-->
+<!--END--><!DOCTYPE html><!--[if IE 7]>
+<html class="ie7" lang="ru">
+<![endif]-->
+<!--[if IE 8]>
+<html class="ie8" lang="ru">
+<![endif]-->
+<!--[if IE 9]>
+<html class="ie9" lang="ru">
+<![endif]-->
+<!--[if gt IE 9]><!-->
+<html lang="ru" xmlns:th="http://www.thymeleaf.org"> <!--<![endif]-->
+<head th:replace="~{fragments/head_fragment :: headFragment(45035206)}"></head>
+<body class="Site">
+  <!--if lt IE 8
+  p.error-browser
+      | Ваш браузер&nbsp;
+      em устарел!&nbsp;
+      a(href="http://browsehappy.com/") Выберите новую версию
+          +s
+          | браузера здесь&nbsp;
+      | для правильного отображения сайта.
+  -->
+  <header th:replace="~{fragments/header_fragment :: headFragment(itemActive=6)}"></header>
+  <div class="Middle">
+    <div class="wrap">
+      <main class="Middle-main">
+        <ul class="breadcrumbs">
+          <li class="breadcrumbs-item">
+            <a href="/index.html" th:href="@{/}" th:text="#{menubar.main}">Главная</a>
+          </li>
+          <li class="breadcrumbs-item">
+            <a href="/genres/index.html" th:href="@{/genres}" th:text="#{menubar.books}">Книги</a>
+          </li>
+          <li class="breadcrumbs-item breadcrumbs-item_current">
+            <span th:text="#{menubar.view}">Просмотренные</span>
+          </li>
+        </ul>
+        <div class="Section">
+          <div class="Section-header">
+            <h1 class="Section-title" th:text="#{menubar.view}">Просмотренные</h1>
+          </div>
+          <div class="Cards Cards_refresh">
+            <div class="Card" th:each="book, iStat : ${viewBooks}">
+              <div class="Card-picture">
+                <a href="#" th:href="@{'/books/' + ${book.getSlug()}}">
+                  <img th:src="${book.getImage()}" src="/assets/img/content/main/card.jpg" alt="card.jpg"/>
+                </a>
+                <div class="Card-sale" th:if="${book.getDiscount() > 0}" th:text="${book.getDiscount()} + '% скидка'">30% скидка</div>
+                <div class="Card-ribbon" th:if="${book.getIsBestseller() == 1}"><span class="Card-ribbonText">Бестселлер</span></div>
+                <!--
+                <a th:if="${(iStat.index+1) % 6 == 0}" class="Card-status" title="Куплена"><img src="/assets/img/icons/check.svg" alt="check.svg"/></a>
+                <a th:if="${(iStat.index+1) % 7 == 0}" class="Card-status" title="Отложена"><img src="/assets/img/icons/heart.svg" alt="heart.svg"/></a>
+                <a th:if="${(iStat.index+1) % 8 == 0}" class="Card-status" title="В корзине"><img src="/assets/img/icons/shopping-basket.svg" alt="shopping-basket.svg"/></a>
+                -->
+              </div>
+              <div class="Card-content">
+                <strong class="Card-title">
+                  <a href="#" th:href="@{'/books/' + ${book.getSlug()}}" th:text="${book.getTitle()}">Техника</a>
+                </strong>
+                <div class="Card-description" th:text="${book.getAuthorName()}">Кондратенко Александр Петрович</div>
+                <div class="Card-cost">
+                  <span th:class="${book.getDiscount() > 0} ? 'Card-priceOld' : 'Card-price'" th:text="'₽' + ${book.getPrice()}">₽300.00</span>
+                  <span class="Card-price" th:if="${book.getDiscount() > 0}" th:text="'₽' + ${book.getDiscountPrice()}">₽19.00</span>
+                </div>
+              </div>
+            </div>
+            <div class="Cards-footer Cards-footer_center">
+              <a class="btn btn_primary" href="#" data-refreshshow="viewed" data-refreshoffset="6" data-refreshlimit="6" th:text="#{button.showmore}">Показать еще</a>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+  <footer th:replace="~{fragments/footer_fragment :: footFragment}"></footer>
+  <script src="/assets/plg/jQuery/jquery-3.5.1.min.js"></script>
+</body></html>
