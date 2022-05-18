@@ -2,8 +2,6 @@ package com.example.MyBookShopApp.controllers;
 
 import com.example.MyBookShopApp.entity.Book;
 import com.example.MyBookShopApp.entity.Tag;
-import com.example.MyBookShopApp.entity.User;
-import com.example.MyBookShopApp.security.BookstoreUserRegister;
 import com.example.MyBookShopApp.service.BookService;
 import com.example.MyBookShopApp.service.TagService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,19 +17,16 @@ public class MainPageController {
 
     private final BookService bookService;
     private final TagService tagService;
-    private final BookstoreUserRegister userRegister;
 
     @Autowired
-    public MainPageController(BookService bookService, TagService tagService, BookstoreUserRegister userRegister) {
+    public MainPageController(BookService bookService, TagService tagService) {
         this.bookService = bookService;
         this.tagService = tagService;
-        this.userRegister = userRegister;
     }
 
     @ModelAttribute("recommendedBooks")
     public List<Book> getRecommendedBooks(){
-        User currentUser = (User) userRegister.getCurrentUser();
-        return bookService.getPageOfRecommendedBooks(currentUser == null ? null : currentUser.getId(), 0, 6).getContent();
+        return bookService.getPageOfRecommendedBooks(0, 6).getContent();
     }
 
     @ModelAttribute("newBooks")

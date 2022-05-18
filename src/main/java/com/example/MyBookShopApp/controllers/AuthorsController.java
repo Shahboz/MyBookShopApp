@@ -36,18 +36,14 @@ public class AuthorsController {
 
     @ModelAttribute("author")
     public Author author(@PathVariable(value = "slug", required = false) String authorSlug) {
-        if(authorSlug == null)
-            return null;
-        return authorService.getAuthorBySlug(authorSlug);
+        return authorSlug == null ? null : authorService.getAuthorBySlug(authorSlug);
     }
 
     @ModelAttribute("authorBooks")
     public List<Book> authorBooks(@PathVariable(value = "slug", required = false) String authorSlug,
                                   @RequestParam(value = "offset", required = false, defaultValue = "0") Integer offset,
                                   @RequestParam(value = "limit",  required = false, defaultValue = "6") Integer limit) {
-        if(authorSlug == null)
-            return null;
-        return bookService.getPageOfAuthorBooks(authorSlug, offset, limit).getContent();
+        return authorSlug == null ? null : bookService.getPageOfAuthorBooks(authorSlug, offset, limit).getContent();
     }
 
     @GetMapping("")

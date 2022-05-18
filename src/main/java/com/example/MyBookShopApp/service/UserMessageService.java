@@ -1,6 +1,7 @@
 package com.example.MyBookShopApp.service;
 
 
+import com.example.MyBookShopApp.dto.UserMessageDto;
 import com.example.MyBookShopApp.dto.UserMessageRepository;
 import com.example.MyBookShopApp.entity.UserMessage;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,8 +18,9 @@ public class UserMessageService {
         this.userMessageRepository = userMessageRepository;
     }
 
-    public void save(UserMessage userMessage) {
-        userMessageRepository.save(userMessage);
+    public void saveMessage(UserMessageDto userMessage) {
+        UserMessage message = new UserMessage();
+        userMessageRepository.save(message);
     }
 
 }

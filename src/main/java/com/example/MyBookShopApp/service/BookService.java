@@ -3,10 +3,11 @@ package com.example.MyBookShopApp.service;
 import com.example.MyBookShopApp.dto.BookRepository;
 import com.example.MyBookShopApp.entity.Author;
 import com.example.MyBookShopApp.entity.Book;
+import com.example.MyBookShopApp.entity.User;
 import com.example.MyBookShopApp.entity.google.api.books.Item;
 import com.example.MyBookShopApp.entity.google.api.books.Root;
 import com.example.MyBookShopApp.exceptions.BookstoreApiWrongParameterException;
-import org.apache.commons.lang3.time.DateUtils;
+import com.example.MyBookShopApp.security.BookstoreUserRegister;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
@@ -15,7 +16,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -25,16 +25,13 @@ public class BookService {
 
     private final BookRepository bookRepository;
     private final RestTemplate restTemplate;
-    private final UserBooksService userBooksService;
-    private final UserViewedBooksService userViewedBooksService;
+    private final BookstoreUserRegister userRegister;
 
     @Autowired
-    public BookService(BookRepository bookRepository, RestTemplate restTemplate, UserBooksService userBooksService,
-                       UserViewedBooksService userViewedBooksService) {
+    public BookService(BookRepository bookRepository, RestTemplate restTemplate, BookstoreUserRegister userRegister) {
         this.bookRepository = bookRepository;
         this.restTemplate = restTemplate;
-        this.userBooksService = userBooksService;
-        this.userViewedBooksService = userViewedBooksService;
+        this.userRegister = userRegister;
     }
 
     public Page<Book> getPageOfNewBooks(Integer offset, Integer limit, Date fromDate, Date toDate) {
@@ -48,12 +45,11 @@ public class BookService {
         return bookRepository.findAllByPubDateBetweenOrderByPubDateDesc(fromDate, toDate, nextPage);
     }
 
-    public Page<Book> getPageOfRecommendedBooks(Integer userId, Integer offset, Integer limit) {
+    public Page<Book> getPageOfRecommendedBooks(Integer offset, Integer limit) {
         Pageable nextPage = PageRequest.of(offset/limit, limit);
-        userViewedBooksService.setBeginPeriod(DateUtils.truncate(new Date(), Calendar.MONTH));
-        userViewedBooksService.setEndPeriod(new Date());
-        Integer countUserBooks = userId == null ? 0 : userBooksService.getCountUserBooks(userId) + userViewedBooksService.getCountOfViewedBooks(userId);
-        return userId == null || countUserBooks == 0 ? bookRepository.findRecommendBooksByRate(nextPage) : bookRepository.findRecommendBooksByUser(userId, nextPage);
+        User currentUser = (User) userRegister.getCurrentUser();
+        Integer countUserBooks = (currentUser == null ? 0 : bookRepository.getCountUserRecommendedBooks(currentUser.getId()));
+        return currentUser == null || countUserBooks == 0 ? bookRepository.findRecommendBooksByRate(nextPage) : bookRepository.findRecommendBooksByUser(currentUser.getId(), nextPage);
     }
 
     public Page<Book> getPageOfSearchResultBooks(String searchWord, Integer offset, Integer limit) {

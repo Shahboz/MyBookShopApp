@@ -53,7 +53,7 @@ public class BookServiceTests {
                 .when(bookRepository)
                 .findAll(PageRequest.of(0, 5));
 
-        List<Book> bookList = bookService.getPageOfRecommendedBooks(null, 0, 5).getContent();
+        List<Book> bookList = bookService.getPageOfRecommendedBooks(0, 5).getContent();
 
         assertNotNull(bookList);
         assertTrue(!bookList.isEmpty());

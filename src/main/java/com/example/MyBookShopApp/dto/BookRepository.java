@@ -47,6 +47,9 @@ public interface BookRepository extends JpaRepository<Book, Integer> {
             "ORDER BY COALESCE(r.rate, 0) DESC, b.pub_date DESC", nativeQuery = true)
     Page<Book> findRecommendBooksByRate(Pageable nextPage);
 
+    @Query(value = "select count(urb.book_id) from \"userRecommendBooks\" urb where urb.user_id = :userId", nativeQuery = true)
+    Integer getCountUserRecommendedBooks(Integer userId);
+
     @Query(value = "SELECT b.* FROM book b JOIN " +
             "(SELECT b2a_ab.book_id FROM \"userRecommendBooks\" urb " +
             " JOIN book2author b2a ON b2a.book_id = urb.book_id " +

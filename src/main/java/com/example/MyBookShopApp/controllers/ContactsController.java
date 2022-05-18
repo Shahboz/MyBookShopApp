@@ -1,7 +1,6 @@
 package com.example.MyBookShopApp.controllers;
 
 import com.example.MyBookShopApp.dto.UserMessageDto;
-import com.example.MyBookShopApp.entity.UserMessage;
 import com.example.MyBookShopApp.service.UserMessageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -53,9 +52,8 @@ public class ContactsController {
     }
 
     @PostMapping("")
-    public String handlePostMessage(UserMessageDto userMessage) {
-        UserMessage message = new UserMessage();
-        messageService.save(message);
+    public String handlePostMessage(UserMessageDto userMessageDto) {
+        messageService.saveMessage(userMessageDto);
         return "contacts";
     }
 

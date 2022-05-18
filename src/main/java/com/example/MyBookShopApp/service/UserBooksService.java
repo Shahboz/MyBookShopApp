@@ -42,8 +42,4 @@ public class UserBooksService {
         return userBooksRepository.findUserBooksByUserBookType(userId, userBookTypeCode);
     }
 
-    public Integer getCountUserBooks(Integer userId) {
-        return userBooksRepository.countUserBooksByUserId(userId);
-    }
-
 }
