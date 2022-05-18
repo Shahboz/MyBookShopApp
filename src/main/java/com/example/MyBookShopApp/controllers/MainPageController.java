@@ -64,9 +64,4 @@ public class MainPageController {
         return "faq";
     }
 
-    @GetMapping("/contacts")
-    public String getContactsPage(){
-        return "contacts";
-    }
-
 }

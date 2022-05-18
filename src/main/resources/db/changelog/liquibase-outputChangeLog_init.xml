@@ -392,4 +392,78 @@
         </createView>
     </changeSet>
 
+    <changeSet id="final_part_1_task_2" author="SSafarov">
+        <createSequence sequenceName="file_download_id_seq" startValue="50" incrementBy="1" cycle="false"/>
+        <createTable tableName="file_download">
+            <column name="id" type="BIGINT" defaultValueSequenceNext="file_download_id_seq">
+                <constraints primaryKey="true" primaryKeyName="file_download_pkey"/>
+            </column>
+            <column name="user_id" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="book_id" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="count" type="INT" defaultValue="1">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <addForeignKeyConstraint baseColumnNames="user_id" baseTableName="file_download" constraintName="file_download_fk1" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="users"/>
+        <addForeignKeyConstraint baseColumnNames="book_id" baseTableName="file_download" constraintName="file_download_fk2" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="book"/>
+
+        <createSequence sequenceName="document_id_seq" startValue="50" incrementBy="1" cycle="false"/>
+        <createTable tableName="document">
+            <column name="id" type="BIGINT" defaultValueSequenceNext="document_id_seq">
+                <constraints primaryKey="true" primaryKeyName="document_pkey"/>
+            </column>
+            <column name="sort_index" type="INT" defaultValue="0">
+                <constraints nullable="false"/>
+            </column>
+            <column name="slug" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="title" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="text" type="TEXT">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <createSequence sequenceName="faq_id_seq" startValue="50" incrementBy="1" cycle="false"/>
+        <createTable tableName="faq">
+            <column name="id" type="BIGINT" defaultValueSequenceNext="faq_id_seq">
+                <constraints primaryKey="true" primaryKeyName="faq_pkey"/>
+            </column>
+            <column name="sort_index" type="INT" defaultValue="0">
+                <constraints nullable="false"/>
+            </column>
+            <column name="question" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="answer" type="TEXT">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <createSequence sequenceName="message_id_seq" startValue="50" incrementBy="1" cycle="false"/>
+        <createTable tableName="message">
+            <column name="id" type="BIGINT" defaultValueSequenceNext="message_id_seq">
+                <constraints primaryKey="true" primaryKeyName="message_pkey"/>
+            </column>
+            <column name="time" type="TIMESTAMP WITH TIME ZONE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="user_id" type="INT"/>
+            <column name="email" type="VARCHAR2(255)"/>
+            <column name="name" type="VARCHAR2(255)"/>
+            <column name="subject" type="VARCHAR2(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="text" type="TEXT">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
 </databaseChangeLog>

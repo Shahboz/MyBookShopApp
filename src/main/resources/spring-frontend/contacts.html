@@ -26,56 +26,58 @@
   <div class="Middle">
     <div class="Middle-top">
       <div class="wrap">
-        <h1 class="Middle-title" th:text="#{menubar.contacts}">Контакты
-        </h1>
+        <h1 class="Middle-title" th:text="#{menubar.contacts}">Контакты</h1>
       </div>
     </div>
     <div class="wrap">
       <main class="Middle-main">
         <ul class="breadcrumbs">
-          <li class="breadcrumbs-item"><a href="/index.html" th:href="@{/}" th:text="#{menubar.main}">Главная</a>
+          <li class="breadcrumbs-item">
+            <a href="/index.html" th:href="@{/}" th:text="#{menubar.main}">Главная</a>
           </li>
-          <li class="breadcrumbs-item breadcrumbs-item_current"><span th:text="#{menubar.contacts}">Контакты</span>
+          <li class="breadcrumbs-item breadcrumbs-item_current">
+            <span th:text="#{menubar.contacts}">Контакты</span>
           </li>
         </ul>
         <div class="Contacts">
           <div class="row">
             <div class="row-block">
-              <h2>Контакты
-              </h2>
+              <h2 th:text="#{footbar.contacts}">Контакты</h2>
               <div class="Contacts-prop">
-                <strong class="Contacts-propTitle">Телефон:
-                </strong><span class="Contacts-propContent">8 (800) 484-48-48</span>
+                <strong class="Contacts-propTitle" th:text="#{label.phone} + ':'">Телефон:</strong>
+                <span class="Contacts-propContent" th:text="${appPhone}">8 (800) 484-48-48</span>
               </div>
               <div class="Contacts-prop">
-                <strong class="Contacts-propTitle">E-mail:
-                </strong><span class="Contacts-propContent">test@test.ru</span>
+                <strong class="Contacts-propTitle" th:text="#{label.email} + ':'">E-mail:</strong>
+                <span class="Contacts-propContent" th:text="${appEmail}">test@test.ru</span>
               </div>
               <div class="Contacts-prop">
-                <strong class="Contacts-propTitle">Телеграм-бот:
-                </strong><span class="Contacts-propContent">@testBookShop</span>
+                <strong class="Contacts-propTitle" th:text="#{label.telegram.bot} + ':'">Телеграм-бот:</strong>
+                <span class="Contacts-propContent" th:text="${appTelegram}">@testBookShop</span>
               </div>
             </div>
             <div class="row-block">
               <div class="Contacts-form">
-                <h2>Напишите нам:
-                </h2>
+                <h2 th:text="#{label.contact.write} + ':'">Напишите нам:</h2>
                 <form class="form" action="#" method="post">
                   <div class="form-group">
-                    <input class="form-input" id="name" name="name" type="text" placeholder="Введите Имя" data-validate="require"/>
+                    <input class="form-input" id="name" name="name" type="text" data-validate="require"
+                           placeholder="Введите Имя" th:placeholder="#{siginbar.placeholder.name}"/>
                   </div>
                   <div class="form-group">
-                    <input class="form-input form-input_mail" id="mail" name="mail" type="text" placeholder="Введите e-mail" data-validate="mail require"/>
+                    <input class="form-input form-input_mail" id="mail" name="mail" type="text" data-validate="mail require"
+                           placeholder="Введите e-mail" th:placeholder="#{siginbar.placeholder.emailfield}"/>
                   </div>
                   <div class="form-group">
-                    <input class="form-input" id="topic" name="topic" type="text" placeholder="Введите тему" data-validate="require"/>
+                    <input class="form-input" id="topic" name="topic" type="text" data-validate="require"
+                           placeholder="Введите тему" th:placeholder="#{siginbar.placeholder.subjectfield}"/>
                   </div>
                   <div class="form-group">
-                    <textarea class="form-textarea Contacts-message" name="message" id="message" placeholder="Введите сообщение" data-validate="require"></textarea>
+                    <textarea class="form-textarea Contacts-message" name="message" id="message" data-validate="require"
+                              placeholder="Введите сообщение" th:placeholder="#{siginbar.placeholder.messagefield}"></textarea>
                   </div>
                   <div class="form-group">
-                    <button class="btn btn_primary form-btn" type="submit" name="sendMessage" id="sendMessage">Отправить
-                    </button>
+                    <button class="btn btn_primary form-btn" type="submit" name="sendMessage" id="sendMessage" th:text="#{button.review.send}">Отправить</button>
                   </div>
                 </form>
               </div>
