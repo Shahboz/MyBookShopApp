@@ -1,4 +1,3 @@
-
 <!--END-->
 <!--END--><!DOCTYPE html><!--[if IE 7]>
 <html class="ie7" lang="ru">
@@ -25,8 +24,7 @@
   <div class="Middle Middle_form">
     <div class="Middle-top">
       <div class="wrap">
-        <h1 class="Middle-title" th:text="#{menubar.registration}">Регистрация
-        </h1>
+        <h1 class="Middle-title" th:text="#{menubar.registration}">Регистрация</h1>
       </div>
     </div>
     <div class="wrap">
@@ -40,37 +38,33 @@
               </div>
               <div class="form-group form-group_row">
                 <div class="form-group">
-                  <input class="form-input form-input_phone" id="phone" name="phone" type="text" placeholder="Введите телефон" data-mask="+7 (999) 999-99-99" data-validate="require"
+                  <input class="form-input form-input_phone" id="phone" name="phone" type="text" data-mask="+7 (999) 999-99-99" data-validate="require"
                          th:field="*{phone}" th:placeholder="#{siginbar.placeholder.phonefield}"/>
                 </div>
                 <div class="form-group form-group_key">
-                  <input class="form-input form-input_code" id="phoneCode" name="phoneCode" type="text" placeholder="Код из СМС" data-mask="999 999" data-validate="require key"
+                  <input class="form-input form-input_code" id="phoneCode" name="phoneCode" type="text" data-mask="999 999" data-validate="require key"
                          th:placeholder="#{siginbar.placeholder.codefromphone}"/>
                 </div>
                 <div class="form-group">
-                  <button class="btn btn_success btn_sm form-btn" type="button" name="submitPhone" disabled="disabled" id="submitPhone" th:text="#{button.submit}">Подтвердить
-                  </button>
+                  <button class="btn btn_success btn_sm form-btn" type="button" name="submitPhone" disabled="disabled" id="submitPhone" th:text="#{button.submit}">Подтвердить</button>
                 </div>
               </div>
               <div class="form-group form-group_row">
                 <div class="form-group">
-                  <input class="form-input form-input_mail" id="mail" name="mail" type="text" placeholder="Введите e-mail" data-validate="mail require"
+                  <input class="form-input form-input_mail" id="mail" name="mail" type="text" data-validate="mail require"
                          th:field="*{email}" th:placeholder="#{siginbar.placeholder.emailfield}"/>
                 </div>
                 <div class="form-group form-group_key">
-                  <input class="form-input form-input_code" id="mailCode" name="mailCode" type="text" placeholder="Код из письма" data-mask="999 999" data-validate="require key" th:placeholder="#{siginbar.placeholder.codefromemail}"/>
+                  <input class="form-input form-input_code" id="mailCode" name="mailCode" type="text" data-mask="999 999" data-validate="require key" th:placeholder="#{siginbar.placeholder.codefromemail}"/>
                 </div>
                 <div class="form-group">
-                  <button class="btn btn_success btn_sm form-btn" type="button" name="submitMail" disabled="disabled" id="submitMail" th:text="#{button.submit}">Подтвердить
-                  </button>
+                  <button class="btn btn_success btn_sm form-btn" type="button" name="submitMail" disabled="disabled" id="submitMail" th:text="#{button.submit}">Подтвердить</button>
                 </div>
               </div>
-
               <div class="form-group">
-                <input class="form-input form-input_password" id="pass" name="pass" type="text" placeholder="Введите пароль" data-validate="password require"
+                <input class="form-input form-input_password" id="pass" name="pass" type="text" data-validate="password require"
                        th:field="*{pass}" th:placeholder="#{siginbar.placeholder.passwordfield}"/>
               </div>
-
               <div class="form-group form-group_center">
                 <button class="btn btn_primary form-btn" type="submit" name="registration" id="registration"
                         disabled="disabled" th:text="#{button.registration}">Зарегистрироваться</button>

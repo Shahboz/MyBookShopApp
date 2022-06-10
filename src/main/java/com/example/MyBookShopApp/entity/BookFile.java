@@ -25,20 +25,16 @@ public class BookFile {
     @ApiModelProperty(example = "123456ASD", required = true)
     private String hash;
 
-    @Column(name = "type_id", nullable = false)
-    @ApiModelProperty(example = "1", required = true)
-    private Integer typeId;
+    @ManyToOne
+    @JoinColumn(name = "type_id", referencedColumnName = "id")
+    private FileType type;
 
     @Column(nullable = false)
     @ApiModelProperty(example = "book_files.pdf", required = true)
     private String path;
 
     @ManyToOne
-    @JoinColumn(name = "book_id", referencedColumnName = "id")
+    @JoinTable(name = "book2file", joinColumns = {@JoinColumn(name = "file_id")}, inverseJoinColumns = {@JoinColumn(name = "book_id")})
     private Book book;
-
-    public String getBookFileExtensionString() {
-        return BookFileType.getExtentionStringByTypeId(this.typeId);
-    }
 
 }

@@ -1,4 +1,3 @@
-
 <!--END-->
 <!--END--><!DOCTYPE html><!--[if IE 7]>
 <html class="ie7" lang="ru">
@@ -42,32 +41,11 @@
             <h1 class="Section-title" th:text="#{menubar.view}">Просмотренные</h1>
           </div>
           <div class="Cards Cards_refresh">
-            <div class="Card" th:each="book, iStat : ${viewBooks}">
-              <div class="Card-picture">
-                <a href="#" th:href="@{'/books/' + ${book.getSlug()}}">
-                  <img th:src="${book.getImage()}" src="/assets/img/content/main/card.jpg" alt="card.jpg"/>
-                </a>
-                <div class="Card-sale" th:if="${book.getDiscount() > 0}" th:text="${book.getDiscount()} + '% скидка'">30% скидка</div>
-                <div class="Card-ribbon" th:if="${book.getIsBestseller() == 1}"><span class="Card-ribbonText">Бестселлер</span></div>
-                <!--
-                <a th:if="${(iStat.index+1) % 6 == 0}" class="Card-status" title="Куплена"><img src="/assets/img/icons/check.svg" alt="check.svg"/></a>
-                <a th:if="${(iStat.index+1) % 7 == 0}" class="Card-status" title="Отложена"><img src="/assets/img/icons/heart.svg" alt="heart.svg"/></a>
-                <a th:if="${(iStat.index+1) % 8 == 0}" class="Card-status" title="В корзине"><img src="/assets/img/icons/shopping-basket.svg" alt="shopping-basket.svg"/></a>
-                -->
-              </div>
-              <div class="Card-content">
-                <strong class="Card-title">
-                  <a href="#" th:href="@{'/books/' + ${book.getSlug()}}" th:text="${book.getTitle()}">Техника</a>
-                </strong>
-                <div class="Card-description" th:text="${book.getAuthorName()}">Кондратенко Александр Петрович</div>
-                <div class="Card-cost">
-                  <span th:class="${book.getDiscount() > 0} ? 'Card-priceOld' : 'Card-price'" th:text="'₽' + ${book.getPrice()}">₽300.00</span>
-                  <span class="Card-price" th:if="${book.getDiscount() > 0}" th:text="'₽' + ${book.getDiscountPrice()}">₽19.00</span>
-                </div>
-              </div>
-            </div>
-            <div class="Cards-footer Cards-footer_center">
-              <a class="btn btn_primary" href="#" data-refreshshow="viewed" data-refreshoffset="6" data-refreshlimit="6" th:text="#{button.showmore}">Показать еще</a>
+            <h3 th:if="${#lists.size(viewBooks) == 0}" th:text="#{label.book.viewed.empty}">Просмотренных книг нет</h3>
+            <th:block th:each="book : ${viewBooks}" th:insert="~{fragments/book_fragment :: printBook(book=${book})}"></th:block>
+            <div class="Cards-footer Cards-footer_center" th:if="${#lists.size(viewBooks) == refreshLimit}">
+              <a class="btn btn_primary" href="#" data-refreshshow="viewed" th:text="#{button.showmore}"
+                 th:attr="data-refreshoffset=${refreshOffset}, data-refreshlimit=${refreshLimit}">Показать еще</a>
             </div>
           </div>
         </div>

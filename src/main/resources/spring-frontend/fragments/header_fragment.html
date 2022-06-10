@@ -23,7 +23,7 @@
                     </div>
                     <div class="Header-search">
                         <div class="search">
-                            <form class="form form_search" action="#" method="post" data-searchlimit="5" th:object="${searchWordDto}">
+                            <form class="form form_search" action="#" method="post" th:attr="data-searchlimit=${searchLimit}" th:object="${searchWordDto}">
                                 <input class="search-input" id="query" name="query" type="text" value="" th:field="*{example}"
                                        placeholder="Search over 30 million book titles" th:placeholder="#{searchbar.placeholder}"/>
                                 <button class="search-button" type="submit" name="search" id="search" th:text="#{searchbar.text}">Поиск</button>
@@ -43,7 +43,7 @@
                                 </g>
                                 <g> </g> <g> </g> <g> </g> <g> </g> <g> </g> <g> </g> <g> </g> <g> </g> <g> </g> <g> </g> <g> </g> <g> </g> <g> </g> <g> </g> <g> </g>
                             </svg>
-                            <span class="CartBlock-amount">0</span>
+                            <span class="CartBlock-amount" th:text="${#lists.size(boughtBooks)}">0</span>
                         </a>
                         <a class="CartBlock-block" href="/postponed.html" th:href="@{/books/postponed}">
                             <svg class="CartBlock-img" xmlns="http://www.w3.org/2000/svg" height="23" width="23" viewBox="0 0 512 512">
@@ -53,7 +53,7 @@
                                     </g>
                                 </g>
                             </svg>
-                        <span class="CartBlock-amount">0</span>
+                        <span class="CartBlock-amount" th:text="${#lists.size(keptBooks)}">0</span>
                         </a>
                         <a class="CartBlock-block" href="/cart.html" th:href="@{/books/cart}">
                             <svg class="CartBlock-img" xmlns="http://www.w3.org/2000/svg" width="30" height="23" viewBox="0 0 30 23">
@@ -63,7 +63,7 @@
                                     </g>
                                 </g>
                             </svg>
-                            <span class="CartBlock-amount">0</span>
+                            <span class="CartBlock-amount" th:text="${#lists.size(cartBooks)}">0</span>
                         </a>
                         <a th:class="${isAnonymousUser} ? 'CartBlock-block' : 'CartBlock-block CartBlock-block_text'" class="CartBlock-block" href="/signin.html" th:href="@{/profile}">
                             <svg class="CartBlock-img" xmlns="http://www.w3.org/2000/svg" width="22" height="23" viewBox="0 0 22 23" th:if="${isAnonymousUser}">

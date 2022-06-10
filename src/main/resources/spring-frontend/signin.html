@@ -1,4 +1,3 @@
-
 <!--END-->
 <!--END--><!DOCTYPE html><!--[if IE 7]>
 <html class="ie7" lang="ru">
@@ -25,8 +24,7 @@
   <div class="Middle Middle_form">
     <div class="Middle-top">
       <div class="wrap">
-        <h1 class="Middle-title" th:text="#{menubar.login}">Вход
-        </h1>
+        <h1 class="Middle-title" th:text="#{menubar.login}">Вход</h1>
       </div>
     </div>
     <div class="wrap">
@@ -60,8 +58,8 @@
                 </div>
               </div>
               <div class="form-group">
-                <input class="form-input form-input_phone" id="phone" name="phone" type="text" placeholder="Введите телефон" data-mask="+7 (999) 999-99-99" data-validate="require" th:placeholder="#{siginbar.placeholder.phonefield}"/>
-                <input class="form-input form-input_mail" id="mail" name="mail" type="text" placeholder="Введите e-mail" data-validate="mail require" th:placeholder="#{siginbar.placeholder.emailfield}"/>
+                <input class="form-input form-input_phone" id="phone" name="phone" type="text" data-mask="+7 (999) 999-99-99" data-validate="require" th:placeholder="#{siginbar.placeholder.phonefield}"/>
+                <input class="form-input form-input_mail" id="mail" name="mail" type="text" data-validate="mail require" th:placeholder="#{siginbar.placeholder.emailfield}"/>
               </div>
               <div class="form-group form-group_center">
                 <button class="btn btn_primary form-btn" type="button" name="sendauth" id="sendauth" data-type="phone" data-send="" th:text="#{button.next}">Далее</button>
@@ -72,11 +70,10 @@
                 <label class="form-label Login-title" th:text="#{label.logintitle.phone}">На Ваш телефон отправлено сообщение с кодом для входа. Введите его:</label>
               </div>
               <div class="form-group form-group_key">
-                <input class="form-input" id="phonecode" name="phonecode" type="text" placeholder="Код" th:placeholder="#{siginbar.placeholder.code}" data-validate="key require" data-mask="999 999"/>
+                <input class="form-input" id="phonecode" name="phonecode" type="text" th:placeholder="#{siginbar.placeholder.code}" data-validate="key require" data-mask="999 999"/>
               </div>
               <div class="form-group form-group_center">
-                <button class="btn btn_primary form-btn" type="button" name="toComeInPhone" id="toComeInPhone" data-send="" th:text="#{button.signin}">Войти
-                </button>
+                <button class="btn btn_primary form-btn" type="button" name="toComeInPhone" id="toComeInPhone" data-send="" th:text="#{button.signin}">Войти</button>
               </div>
             </div>
             <div class="Login-step Login-step_hide" data-type="mail">
@@ -84,7 +81,7 @@
                 <label class="form-label Login-title" th:text="#{label.logintitle.email}">Введите пароль учетной записи или перейдите по ссылке ниже для регистрации:</label>
               </div>
               <div class="form-group form-group_key">
-                <input class="form-input" id="mailcode" name="mailcode" type="text" placeholder="Код" th:placeholder="#{siginbar.placeholder.code}" data-validate="key require"/>
+                <input class="form-input" id="mailcode" name="mailcode" type="text" th:placeholder="#{siginbar.placeholder.code}" data-validate="key require"/>
               </div>
               <div class="form-group form-group_center">
                 <button class="btn btn_primary form-btn" type="button" name="toComeInMail" id="toComeInMail" data-send="" th:text="#{button.signin}">Войти</button>

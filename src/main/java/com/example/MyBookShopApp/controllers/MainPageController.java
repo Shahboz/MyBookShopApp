@@ -26,17 +26,17 @@ public class MainPageController {
 
     @ModelAttribute("recommendedBooks")
     public List<Book> getRecommendedBooks(){
-        return bookService.getPageOfRecommendedBooks(0, 6).getContent();
+        return bookService.getPageOfRecommendedBooks(0, bookService.getRefreshLimit()).getContent();
     }
 
     @ModelAttribute("newBooks")
     public List<Book> getNewBooks() {
-        return bookService.getPageOfNewBooks(0, 6, null, null).getContent();
+        return bookService.getPageOfNewBooks(0, bookService.getRefreshLimit(), null, null).getContent();
     }
 
     @ModelAttribute("popularBooks")
     public List<Book> getPopularBooks() {
-        return bookService.getPageOfPopularBooks(0, 6).getContent();
+        return bookService.getPageOfPopularBooks(0, bookService.getRefreshLimit()).getContent();
     }
 
     @ModelAttribute("tagBooks")
@@ -52,11 +52,6 @@ public class MainPageController {
     @GetMapping("/about")
     public String getAboutPage(){
         return "about";
-    }
-
-    @GetMapping("/faq")
-    public String getFaqPage(){
-        return "faq";
     }
 
 }

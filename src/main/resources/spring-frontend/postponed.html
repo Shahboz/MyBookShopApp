@@ -1,4 +1,3 @@
-
 <!--END-->
 <!--END--><!DOCTYPE html><!--[if IE 7]>
 <html class="ie7" lang="ru">
@@ -26,8 +25,8 @@
     <div class="wrap">
       <main class="Middle-main">
         <h1 class="Middle-title" th:text="#{menubar.postponed}">Отложенное</h1>
-        <h3 th:if="${bookPostponed == null or #lists.isEmpty(bookPostponed)}">Очень печально, что книги не понравились😪</h3>
         <form class="form Cart Cart_postponed" action="#" method="post">
+          <div class="Cart-messageInfo" th:if="${bookPostponed == null or #lists.isEmpty(bookPostponed)}">Отложенных книг нет</div>
           <div class="Cart-product" th:each="book : ${bookPostponed}">
             <div class="Cart-block Cart-block_row">
               <div class="Cart-block Cart-block_pict">
@@ -115,9 +114,9 @@
                 </div>
                 <div class="Cart-block Cart-block_price">
                   <div class="Cart-priceTitle">Цена:</div>
-                  <div class="Cart-price Cart-price_old" th:text="${book.getPrice()}">150 р.</div>
+                  <div class="Cart-price Cart-price_old" th:if="${book.getDiscount() > 0}" th:text="${book.getPrice()}">150 р.</div>
                   <div class="Cart-price" th:text="${book.getDiscountPrice()}">100 р.</div>
-                  <div class="Cart-sale" th:text="${'-' + book.getDiscount()}">-30%</div>
+                  <div class="Cart-sale" th:if="${book.getDiscount() > 0}" th:text="'-' + ${book.getDiscount()} + '%'">-30%</div>
                 </div>
               </div>
             </div>
@@ -125,7 +124,8 @@
           <div class="Cart-total">
             <div class="Cart-block Cart-block_total"></div>
             <div class="Cart-block">
-              <button class="btn btn_success btn_md Cart-buyAll" data-sendstatus="CART" data-bookid="[1111, 1122, 1133]" th:text="#{button.buyall}">Купить все</button>
+              <button class="btn btn_success btn_md Cart-buyAll" data-sendstatus="CART" th:text="#{button.buyall}"
+                      th:if="${!#lists.isEmpty(bookPostponed)}" th:attr="data-bookid=${#strings.listJoin(bookPostponed.![getSlug()], ',')}">Купить все</button>
             </div>
           </div>
         </form>

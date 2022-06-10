@@ -1,20 +1,25 @@
 package com.example.MyBookShopApp.service;
 
 import com.example.MyBookShopApp.dto.BookRepository;
-import com.example.MyBookShopApp.entity.Author;
-import com.example.MyBookShopApp.entity.Book;
-import com.example.MyBookShopApp.entity.User;
+import com.example.MyBookShopApp.entity.*;
 import com.example.MyBookShopApp.entity.google.api.books.Item;
 import com.example.MyBookShopApp.entity.google.api.books.Root;
 import com.example.MyBookShopApp.exceptions.BookstoreApiWrongParameterException;
 import com.example.MyBookShopApp.security.BookstoreUserRegister;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.multipart.MultipartFile;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -23,15 +28,41 @@ import java.util.List;
 @Service
 public class BookService {
 
+    @Value("${book.refresh.offset}")
+    private Integer refreshOffset;
+
+    @Value("${book.refresh.limit}")
+    private Integer refreshLimit;
+
+    @Value("${book.search.limit}")
+    private Integer searchLimit;
+
     private final BookRepository bookRepository;
     private final RestTemplate restTemplate;
     private final BookstoreUserRegister userRegister;
+    private final BookFileService bookFileService;
+    private final FileDownloadService fileDownloadService;
 
     @Autowired
-    public BookService(BookRepository bookRepository, RestTemplate restTemplate, BookstoreUserRegister userRegister) {
+    public BookService(BookRepository bookRepository, RestTemplate restTemplate, BookstoreUserRegister userRegister,
+                       BookFileService bookFileService, FileDownloadService fileDownloadService) {
         this.bookRepository = bookRepository;
         this.restTemplate = restTemplate;
         this.userRegister = userRegister;
+        this.bookFileService = bookFileService;
+        this.fileDownloadService = fileDownloadService;
+    }
+
+    public Integer getRefreshOffset() {
+        return refreshOffset;
+    }
+
+    public Integer getRefreshLimit() {
+        return refreshLimit;
+    }
+
+    public Integer getSearchLimit() {
+        return searchLimit;
     }
 
     public Page<Book> getPageOfNewBooks(Integer offset, Integer limit, Date fromDate, Date toDate) {
@@ -112,12 +143,54 @@ public class BookService {
         return bookRepository.findBookById(bookId);
     }
 
-    public void save(Book bookToUpdate) {
-        bookRepository.save(bookToUpdate);
+    public Integer getBookCountByTitle(String bookSlug) {
+        return bookRepository.countByTitleContaining(bookSlug);
     }
 
     public List<Book> getBooksBySlugs(String[] slugs) {
         return bookRepository.findBooksBySlugIn(slugs);
+    }
+
+    public void saveBookImage(MultipartFile file, String bookSlug) throws IOException {
+        String savePath = bookFileService.saveBookImage(file, bookSlug);
+        Book bookToUpdate = bookRepository.findBookBySlugEquals(bookSlug);
+        if (bookToUpdate != null) {
+            bookToUpdate.setImage(savePath);
+            bookRepository.save(bookToUpdate);
+        }
+    }
+
+    public Boolean limitDownloadExceded(String bookSlug) {
+        return StringUtils.isEmpty(bookSlug) ? false : fileDownloadService.isLimitDownloadExceeded(bookRepository.findBookBySlugEquals(bookSlug));
+    }
+
+    public ResponseEntity<ByteArrayResource> downloadBookFile(String fileHash) throws IOException {
+        Book bookByFilHash = bookFileService.getBookByFileHash(fileHash);
+        if (bookByFilHash != null && !fileDownloadService.isLimitDownloadExceeded(bookByFilHash)) {
+            if (fileDownloadService.saveDownloadBook(bookByFilHash)) {
+                byte[] data = bookFileService.getBookFileByteArray(fileHash);
+
+                return ResponseEntity.ok()
+                        .header(HttpHeaders.CONTENT_DISPOSITION, "attachment;filename=" + bookFileService.getBookFilePath(fileHash).getFileName().toString())
+                        .contentType(bookFileService.getBookFileMime(fileHash))
+                        .contentLength(data.length)
+                        .body(new ByteArrayResource(data));
+            }
+        }
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+    }
+
+    public List<BookFileDto> getBookFilesData(String bookSlug) throws IOException {
+        List<BookFileDto> bookFileDtoList = new ArrayList<>();
+        List<BookFile> bookFiles = bookFileService.getBookFilesByBookSlug(bookSlug);
+        if (bookFiles != null) {
+            for (BookFile bookFile : bookFiles) {
+                Double fileSize = Math.ceil(bookFileService.getBookFileByteArray(bookFile.getHash()).length / 1024.0);
+                BookFileDto bookFileDto = new BookFileDto(bookFile, fileSize.intValue());
+                bookFileDtoList.add(bookFileDto);
+            }
+        }
+        return bookFileDtoList;
     }
 
     @Value("${google.books.api.key}")

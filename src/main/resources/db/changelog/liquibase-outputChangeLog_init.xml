@@ -171,6 +171,17 @@
     </changeSet>
 
     <changeSet author="SSafarov" id="7.2">
+        <createSequence sequenceName="book_file_type_id_seq" startValue="50" incrementBy="1" cycle="false"/>
+        <createTable tableName="book_file_type">
+            <column name="id" type="BIGINT" defaultValueSequenceNext="book_file_type_id_seq">
+                <constraints primaryKey="true" primaryKeyName="book_file_type_pkey"/>
+            </column>
+            <column name="name" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="description" type="TEXT"/>
+        </createTable>
+
         <createTable tableName="book_file">
             <column autoIncrement="true" name="id" type="SERIAL">
                 <constraints primaryKey="true" primaryKeyName="book_file_pkey"/>
@@ -184,11 +195,19 @@
             <column name="path" type="VARCHAR(255)">
                 <constraints nullable="false"/>
             </column>
+        </createTable>
+        <addForeignKeyConstraint baseColumnNames="type_id" baseTableName="book_file" constraintName="book_file_fk1" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="book_file_type"/>
+
+        <createTable tableName="book2file">
             <column name="book_id" type="INT">
                 <constraints nullable="false"/>
             </column>
+            <column name="file_id" type="INT">
+                <constraints nullable="false"/>
+            </column>
         </createTable>
-        <addForeignKeyConstraint baseColumnNames="book_id" baseTableName="book_file" constraintName="book2file_fk1" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="book"/>
+        <addForeignKeyConstraint baseColumnNames="book_id" baseTableName="book2file" constraintName="book2file_fk1" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="book"/>
+        <addForeignKeyConstraint baseColumnNames="file_id" baseTableName="book2file" constraintName="book2file_fk2" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="book_file"/>
     </changeSet>
 
     <changeSet author="SSafarov" id="7.6-task_3">

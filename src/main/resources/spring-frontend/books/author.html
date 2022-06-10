@@ -1,4 +1,3 @@
-
 <!--END-->
 <!--END--><!DOCTYPE html><!--[if IE 7]>
 <html class="ie7" lang="ru">
@@ -27,37 +26,24 @@
     <div class="wrap">
       <main class="Middle-main">
         <ul class="breadcrumbs">
-          <li class="breadcrumbs-item"><a href="/index.html" th:href="@{/}">Главная</a>
+          <li class="breadcrumbs-item">
+            <a href="/index.html" th:href="@{/}">Главная</a>
           </li>
-          <li class="breadcrumbs-item"><a href="/genres/index.html" th:href="@{/genres}">Книги</a>
+          <li class="breadcrumbs-item">
+            <a href="/genres/index.html" th:href="@{/genres}">Книги</a>
           </li>
-          <li class="breadcrumbs-item breadcrumbs-item_current" th:text="${author.getName()}"><span>Борис Васильевич Бедный</span>
+          <li class="breadcrumbs-item breadcrumbs-item_current" th:text="${author.getName()}">
+            <span>Борис Васильевич Бедный</span>
           </li>
         </ul>
-        <h1 class="Middle-title" th:text="${author.getName()}">Борис Васильевич Бедный
-        </h1>
+        <h1 class="Middle-title" th:text="${author.getName()}">Борис Васильевич Бедный</h1>
         <div class="Section">
           <div class="Cards Cards_refresh">
             <!-- Ставим заглушку authorBooks, так как страница еще не рабочая-->
-            <div class="Card" th:each="book : ${authorBooks}">
-              <div class="Card-picture">
-                <a href="#"><img th:src="${book.getImage()}" alt="card.jpg"/></a>
-                <div class="Card-sale" th:if="${book.getDiscount() > 0}" th:text="${book.getDiscount()} + '% скидка'">30% скидка</div>
-                <div class="Card-ribbon" th:if="${book.getIsBestseller() == 1}"><span class="Card-ribbonText" >Бестселлер</span></div>
-              </div>
-              <div class="Card-content">
-                <strong class="Card-title"><a href="#" th:text="${book.getTitle()}">Техника</a>
-                </strong>
-                <div class="Card-description" th:text="${book.getAuthorName()}">Кондратенко Александр Петрович
-                </div>
-                <div class="Card-cost">
-                  <span th:class="${book.getDiscount() > 0} ? 'Card-priceOld' : 'Card-price'" th:text="'₽' + ${book.getPrice()}">₽300.00</span>
-                  <span class="Card-price" th:if="${book.getDiscount() > 0}" th:text="'₽' + ${book.getDiscountPrice()}">₽190.00</span>
-                </div>
-              </div>
-            </div>
-            <div class="Cards-footer Cards-footer_center">
-              <a class="btn btn_primary" href="#" data-refreshshow="author" data-refreshoffset="6" data-refreshlimit="6" th:attr="data-refreshid=${author.getSlug()}" th:text="#{button.showmore}">Показать еще</a>
+            <th:block th:each="book : ${authorBooks}" th:insert="~{fragments/book_fragment :: printBook(book=${book})}"></th:block>
+            <div class="Cards-footer Cards-footer_center" th:if="${#lists.size(authorBooks) == refreshLimit}">
+              <a class="btn btn_primary" href="#" th:text="#{button.showmore}" data-refreshshow="author"
+                 th:attr="data-refreshoffset=${refreshOffset}, data-refreshlimit=${refreshLimit}, data-refreshid=${author.getSlug()}">Показать еще</a>
             </div>
           </div>
         </div>

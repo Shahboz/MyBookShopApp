@@ -20,8 +20,7 @@ public interface BookRepository extends JpaRepository<Book, Integer> {
 
     Page<Book> findByPubDateGreaterThanEqualOrderByPubDateDesc(Date fromDate, Pageable nextPage);
 
-    @Query(value = "select new com.example.MyBookShopApp.entity.Book(b.id, b.pubDate, b.isBestseller, b.slug, b.title, b.image, b.description, b.price, b.discount) " +
-            "from Book b inner join AuthorBooks a2b on b.id = a2b.book.id inner join Author a on a2b.author.id = a.id where a.slug = :authorSlug")
+    @Query(value = "select b from Book b inner join AuthorBooks a2b on b.id = a2b.book.id inner join Author a on a2b.author.id = a.id where a.slug = :authorSlug")
     Page<Book> findBooksByAuthorNameContaining(@Param("authorSlug") String authorName, Pageable nextPage);
 
     @Query(value = "select b from Book b inner join b.genresList g where g.slug = :genreSlug")
@@ -82,6 +81,8 @@ public interface BookRepository extends JpaRepository<Book, Integer> {
     List<Book> getBooksWithMaxDiscount();
 
     Page<Book> findBookByTitleContaining(String bookTitle, Pageable nextPage);
+
+    Integer countByTitleContaining(String bookTitle);
 
     Book findBookBySlugEquals(String slug);
 

@@ -90,16 +90,16 @@
                     <div class="row-block" th:if="${!isAnonymousUser}">
                         <ul class="menu menu_vt Footer-menu">
                             <li class="menu-item">
-                                <a class="menu-link" href="/my.html" th:href="@{/my}">Мои книги (55)</a>
+                                <a class="menu-link" href="/my.html" th:href="@{/my}" th:text="#{footbar.mybooks} + '(' + ${#lists.size(boughtBooks)} + ')'">Мои книги (55)</a>
                             </li>
                             <li class="menu-item">
-                                <a class="menu-link" href="/cart.html"th:href="@{/books/cart}">Корзина (7)</a>
+                                <a class="menu-link" href="/cart.html"th:href="@{/books/cart}" th:text="#{footbar.basket} + '(' + ${#lists.size(cartBooks)} + ')'">Корзина (7)</a>
                             </li>
                             <li class="menu-item">
-                                <a class="menu-link" href="/postponed.html" th:href="@{/books/postponed}">Отложено (2)</a>
+                                <a class="menu-link" href="/postponed.html" th:href="@{/books/postponed}" th:text="#{footbar.postponed} + '(' + ${#lists.size(keptBooks)} + ')'">Отложено (2)</a>
                             </li>
                             <li class="menu-item">
-                                <a class="menu-link" href="/profile.html" th:href="@{/profile}">Мой профиль</a>
+                                <a class="menu-link" href="/profile.html" th:href="@{/profile}" th:text="#{footbar.myprofile}">Мой профиль</a>
                             </li>
                         </ul>
                     </div>

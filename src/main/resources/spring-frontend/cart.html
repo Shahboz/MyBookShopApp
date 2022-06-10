@@ -1,4 +1,3 @@
-
 <!--END-->
 <!--END--><!DOCTYPE html><!--[if IE 7]>
 <html class="ie7" lang="ru">
@@ -26,8 +25,8 @@
     <div class="wrap">
       <main class="Middle-main">
         <h1 class="Middle-title" th:text="#{menubar.basket}">Корзина</h1>
-        <h3 th:if="${bookCart == null or #lists.isEmpty(bookCart)}">Корзина пуста😭</h3>
         <form class="form Cart" action="#" method="post">
+          <div class="Cart-messageInfo" th:if="${bookCart == null or #lists.isEmpty(bookCart)}">Корзина пуста</div>
           <div class="Cart-product" th:each="book : ${bookCart}">
             <div class="Cart-block Cart-block_row">
               <div class="Cart-block Cart-block_pict">
@@ -38,7 +37,8 @@
               <div class="Cart-block Cart-block_row">
                 <div class="Cart-block Cart-block_info">
                   <div class="Cart-author">
-                    <a href="#" th:text="${book.getAuthorName()}">Борис Васильевич Бедный</a>
+                    <a th:each="author, iStat : ${book.getAuthors()}" th:text="${author.getName()} + ${iStat.count == iStat.size ? '' : ',  '}"
+                       th:href="'/authors/' + ${author.getSlug()}">Борис Васильевич Бедный</a>
                   </div>
                   <div class="Cart-title">
                     <a href="#" th:text="${book.getTitle()}" th:href="${book.getSlug()}">Жизнь</a>
@@ -115,9 +115,9 @@
                 </div>
                 <div class="Cart-block Cart-block_price">
                   <div class="Cart-priceTitle">Цена:</div>
-                  <div class="Cart-price Cart-price_old" th:text="${book.getPrice()}">150 р.</div>
+                  <div class="Cart-price Cart-price_old" th:if="${book.getDiscount() > 0}" th:text="${book.getPrice()}">150 р.</div>
                   <div class="Cart-price" th:text="${book.getDiscountPrice()}">100 р.</div>
-                  <div class="Cart-sale" th:text="${'-' + book.getDiscount()}">-30%</div>
+                  <div class="Cart-sale"  th:if="${book.getDiscount() > 0}" th:text="'-' + ${book.getDiscount()} + '%'">-30%</div>
                 </div>
               </div>
             </div>
@@ -125,8 +125,8 @@
           <div class="Cart-total">
             <div class="Cart-block Cart-block_total">
               <strong class="Cart-title">Итого:</strong>
-              <span class="Cart-price">534 р.</span>
-              <span class="Cart-price_old">658 р.</span>
+              <span class="Cart-price" th:text="${sumCartDiscount} + ' р.'">534 р.</span>
+              <span class="Cart-price_old" th:if="${sumCartDiscount != sumCart}" th:text="${sumCart} + ' р.'">658 р.</span>
             </div>
             <div class="Cart-block">
               <a class="btn btn_success btn_md" href="/order.html" th:href="@{/books/pay}">Купить</a>

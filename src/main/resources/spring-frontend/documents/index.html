@@ -1,4 +1,3 @@
-
 <!--END-->
 <!--END--><!DOCTYPE html><!--[if IE 7]>
 <html class="ie7" lang="ru">
@@ -22,28 +21,28 @@
           | браузера здесь&nbsp;
       | для правильного отображения сайта.
   -->
-  <header th:replace="~{fragments/header_fragment :: headFragment(itemActive=1)}"></header>
-  <div class="Middle">
+<header th:replace="~{fragments/header_fragment :: headFragment(itemActive=1)}"></header>
+<div class="Middle">
     <div class="wrap">
-      <main class="Middle-main">
-        <h1 class="Middle-title" th:text="#{footbar.documents}">Документы</h1>
-        <div class="Section">
-          <div class="Documents">
-            <div class="Documents-wrap" th:each="doc : ${documents}">
-                <a class="Documents-item" href="/documents/slug.html" th:href="@{'/documents/' + ${doc.getSlug()}}">
-                    <div class="Documents-image">
-                        <img src="/assets/img/content/documents/1.jpg" alt="1.jpg"/>
+        <main class="Middle-main">
+            <h1 class="Middle-title" th:text="#{footbar.documents}">Документы</h1>
+            <div class="Section">
+                <div class="Documents">
+                    <div class="Documents-wrap" th:each="document : ${documents}">
+                        <a class="Documents-item" href="/documents/slug.html" th:href="@{'/documents/' + ${document.getSlug()}}">
+                            <div class="Documents-image">
+                                <img src="/assets/img/content/documents/2.jpg" alt="2.jpg" th:href="@{'/documents/' + ${document.getSlug()}}"/>
+                            </div>
+                            <div class="Documents-content">
+                                <strong class="Documents-title" th:text="${document.getTitle()}" th:href="@{'/documents/' + ${document.getSlug()}}">Публичная оферта</strong>
+                                <p th:href="@{'/documents/' + ${document.getSlug()}}"
+                                    th:text="${#strings.substring(document.getText(), #strings.indexOf(document.getText(), '<p>') + 3, (#strings.indexOf(document.getText(), '</p>') > 400 ? 400 : #strings.indexOf(document.getText(), '</p>')))}">Первый абзац</p>
+                            </div>
+                        </a>
                     </div>
-                    <div class="Documents-content">
-                        <strong class="Documents-title" th:text="${doc.getTitle()}">Публичная оферта</strong>
-                        <p>Согласно закону, публичная оферта – это предложение, которое, во-первых, адресовано неопределенному кругу лиц, во-вторых, содержит все существенные условия договора, и, в-третьих, достаточно определенно выражает намерение предприятия-оферента считать себя заключившим договор с любым</p>
-                        <p>Согласно закону, публичная оферта – это предложение, которое, во-первых, адресовано неопределенному кругу лиц, во-вторых, содержит все существенные условия договора, и, в-третьих, достаточно определенно выражает намерение предприятия-оферента считать себя заключившим договор с любым</p>
-                    </div>
-                </a>
+                </div>
             </div>
-          </div>
-        </div>
-      </main>
+        </main>
     </div>
   </div>
   <footer th:replace="~{fragments/footer_fragment :: footFragment}"></footer>
@@ -53,7 +52,6 @@
   'Это два',
   'Это три'
   )
-  
   -->
   <!--br-->
   <!--br-->

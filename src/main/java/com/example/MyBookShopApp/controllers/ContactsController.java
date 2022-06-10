@@ -1,9 +1,10 @@
 package com.example.MyBookShopApp.controllers;
 
+import com.example.MyBookShopApp.dto.ResultResponse;
 import com.example.MyBookShopApp.dto.UserMessageDto;
 import com.example.MyBookShopApp.service.UserMessageService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.ui.Model;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -15,15 +16,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequestMapping("/contacts")
 public class ContactsController {
 
-    @Value("${appContact.phoneNumber}")
-    private String appPhone;
-
-    @Value("${appEmail.email}")
-    private String appEmail;
-
-    @Value("${appContact.telegram.bot}")
-    private String telegramBot;
-
     private final UserMessageService messageService;
 
     @Autowired
@@ -33,17 +25,22 @@ public class ContactsController {
 
     @ModelAttribute("appEmail")
     public String getAppEmail() {
-        return appEmail;
+        return messageService.getAppEmail();
     }
 
     @ModelAttribute("appPhone")
     public String getAppPhone() {
-        return appPhone;
+        return messageService.getAppPhone();
     }
 
     @ModelAttribute("appTelegram")
     public String getTelegramBot() {
-        return telegramBot;
+        return messageService.getTelegramBot();
+    }
+
+    @ModelAttribute("userMessageDto")
+    public UserMessageDto getUserMessageDto() {
+        return new UserMessageDto();
     }
 
     @GetMapping("")
@@ -52,9 +49,13 @@ public class ContactsController {
     }
 
     @PostMapping("")
-    public String handlePostMessage(UserMessageDto userMessageDto) {
-        messageService.saveMessage(userMessageDto);
-        return "contacts";
+    public String handlePostMessage(@ModelAttribute("userMessageDto") UserMessageDto userMessageDto, Model model) {
+        ResultResponse resultResponse = messageService.saveMessage(userMessageDto);
+        if (!resultResponse.getResult()) {
+            model.addAttribute("errorMessage", resultResponse.getError());
+            return "contacts";
+        }
+        return "redirect:/contacts";
     }
 
 }

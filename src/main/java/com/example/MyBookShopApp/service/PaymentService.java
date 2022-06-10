@@ -59,7 +59,6 @@ public class PaymentService {
                 user.setBalance(user.getBalance() - paymentSumTotal);
                 userService.save(user);
 
-                UserBookType paidType = userBooksService.getUserBookType("PAID");
                 for (Book book : bookList) {
                     // Сохранение транзакции
                     Transaction transaction = new Transaction();
@@ -68,16 +67,15 @@ public class PaymentService {
                     transaction.setTime(new Date());
                     transaction.setValue(-book.getDiscountPrice());
                     transaction.setDescription("Покупка книги '" + book.getTitle() + "'");
-                    transactionService.save(transaction);
 
                     // Сохранение книги пользователя
-                    UserBooks userBooks = userBooksService.getUserBookByType(user.getId(), book.getId(), "CART");
-                    userBooks.setType(paidType);
-                    userBooks.setTime(new Date());
-                    userBooksService.save(userBooks);
+                    result = userBooksService.changeBookStatus("PAID", book);
+                    if (result.getResult()) {
+                        transactionService.save(transaction);
+                    } else {
+                        break;
+                    }
                 }
-
-                result.setResult(true);
             } else {
                 result.setResult(false);
                 result.setError("Не хватает средств на счету. Пополните счет на сумму " + (int) (paymentSumTotal - user.getBalance()) + " рублей!");

@@ -27,11 +27,14 @@
     <div class="wrap">
       <main class="Middle-main">
         <ul class="breadcrumbs">
-          <li class="breadcrumbs-item"><a th:href="@{/}" th:text="#{menubar.main}" href="/index.html">Главная</a>
+          <li class="breadcrumbs-item">
+            <a th:href="@{/}" th:text="#{menubar.main}" href="/index.html">Главная</a>
           </li>
-          <li class="breadcrumbs-item"><a th:href="@{/genres}" th:text="#{menubar.books}" href="/genres/index.html">Книги</a>
+          <li class="breadcrumbs-item">
+            <a th:href="@{/genres}" th:text="#{menubar.books}" href="/genres/index.html">Книги</a>
           </li>
-          <li class="breadcrumbs-item breadcrumbs-item_current"><span th:text="${book.getTitle()}">Мара и морок</span>
+          <li class="breadcrumbs-item breadcrumbs-item_current">
+            <span th:text="${book.getTitle()}">Мара и морок</span>
           </li>
         </ul>
         <div class="Product">
@@ -41,7 +44,7 @@
                 <div class="ProductCard-photo" id="uploadButton">
                   <img th:src="${book.getImage()}" src="/assets/img/content/main/card.jpg" alt="card.jpg"/>
                 </div>
-                <input type="file" name="file" id="dialog" style="display: none" accept="image/*">
+                <input type="bookFile" name="bookFile" id="dialog" style="display: none" accept="image/*">
               </form>
             </div>
             <div class="ProductCard-desc">
@@ -49,7 +52,8 @@
                 <h1 class="ProductCard-title" th:text="${book.getTitle()}">Мара и морок</h1>
                 <div class="ProductCard-author">
                   <span class="ProductCard-titleProp" th:text="#{menubar.author} + ':'">Автор:</span>&#32;
-                  <a th:each="author: ${book.getAuthors()}" th:text="${author.getName()} + ' '" th:href="'/authors/' + ${author.getSlug()}">Лия Арден</a>
+                  <a th:each="author, iStat : ${book.getAuthors()}" th:text="${author.getName()} + ${iStat.count == iStat.size ? '' : ',  '}"
+                     th:href="'/authors/' + ${author.getSlug()}">Лия Арден</a>
                 </div>
                 <div class="ProductCard-rating">
                   <span class="ProductCard-titleProp" th:text="#{menubar.rate} + ':'">Рейтинг:</span>
@@ -132,7 +136,8 @@
                 </div>
                 <div class="ProductCard-tags">
                   <span class="ProductCard-titleProp" th:text="#{menubar.tags} + ':'">Тэги:</span>
-                  <a th:each="tag : ${book.getTags()}" th:text="${tag.getName()} + ' '" th:href="'/tags/' + ${tag.getSlug()}" href="/tags/">Современные</a>
+                  <a th:each="tag, iStat : ${book.getTags()}" th:text="${tag.getName()} + ${iStat.count == iStat.size ? '' : ',  '}"
+                     th:href="'/tags/' + ${tag.getSlug()}">Современные</a>
                 </div>
                 <div class="ProductCard-cost">
                   <span class="ProductCard-titleProp" th:text="#{menubar.price} + ':'">Цена:</span>
@@ -156,22 +161,22 @@
                 <!--    +Amount._product-->
                 <div class="ProductCard-cartElement">
                   <button class="btn btn_primary btn_outline" data-sendstatus="KEPT"
-                          th:attr="data-bookid = ${book.getSlug()}" data-bookid="[1111]"
+                          th:attr="data-bookid = ${book.getSlug()}, data-alttext=${#lists.contains(keptBooks, book)} ? #{button.postpone} : #{button.postpone.back}"
                           data-btntype="check" data-btnradio="buyblock" data-check="false" data-alttext="Отложена">
                     <span class="btn-icon">
                       <img src="/assets/img/icons/heart.svg" alt="heart.svg"/>
                     </span>
-                    <span class="btn-content" th:text="#{button.postpone}">Отложить</span>
+                    <span class="btn-content" th:text="${#lists.contains(keptBooks, book)} ? #{button.postpone.back} : #{button.postpone}">Отложить</span>
                   </button>
                 </div>
                 <div class="ProductCard-cartElement">
                   <button class="btn btn_primary btn_outline" data-sendstatus="CART"
-                          th:attr="data-bookid = ${book.getSlug()}" data-bookid="[1111]"
+                          th:attr="data-bookid=${book.getSlug()}, data-alttext=${#lists.contains(cartBooks, book)} ? #{button.buy} : #{button.buy.basket}"
                           data-btntype="check" data-btnradio="buyblock" data-check="false" data-alttext="В корзине">
                     <span class="btn-icon">
                       <img src="/assets/img/icons/shopping-basket.svg" alt="shopping-basket.svg"/>
                     </span>
-                    <span class="btn-content" th:text="#{button.buy}">Купить</span>
+                    <span class="btn-content" th:text="${#lists.contains(cartBooks, book)} ? #{button.buy.basket} : #{button.buy}">Купить</span>
                   </button>
                 </div>
               </div>
@@ -187,19 +192,31 @@
                   </a>
                 </div>
                 <div class="ProductCard-cartElement">
-                  <button class="btn btn_primary btn_outline" data-sendstatus="ARCHIVED" data-bookid="[1111]" data-btntype="check" data-btnradio="buyblock"
-                          data-check="false" data-alttext="Вернуть из архива">
+                  <button class="btn btn_primary btn_outline" data-sendstatus="ARCHIVED" data-btntype="check" data-btnradio="buyblock" data-check="false"
+                          th:attr="data-bookid=${book.getSlug()}, data-alttext=${#lists.contains(archivedBooks, book)} ? #{button.archive} : #{button.archive.back}">
                     <span class="btn-icon">
                       <img src="/assets/img/icons/archive.svg" alt="archive.svg"/>
                     </span>
-                    <span class="btn-content" th:text="#{button.archive}">В архив</span>
+                    <span class="btn-content" th:text="${#lists.contains(archivedBooks, book)} ? #{button.archive.back} : #{button.archive}">В архив</span>
                   </button>
                 </div>
                 <div id="myPopup">
                   <p>Ссылки для скачивания</p>
-                  <div th:each="bookFile : ${book.getBookFileList()}">
-                    <a href="#" th:href="${'/books/download/' + bookFile.getHash()}" th:text="${bookFile.getBookFileExtensionString()}"></a>
-                  </div>
+                  <table th:if="${!isLimitDownloadExceeded}" border="0">
+                    <tr th:each="bookFile : ${bookFilesData}">
+                      <td th:text="${bookFile.getBookFile().getType().getName()}"></td>
+                      <td th:text="${bookFile.getBookFile().getType().getDescription()}"></td>
+                      <td th:text="${bookFile.getFileSize()} + ' КБ'"></td>
+                      <td>
+                        <button type="button" class="btn_info"
+                                th:onclick="'window.location.href = \''+@{'/books/download/' + ${bookFile.getFile().getHash()}}+'\''"
+                                th:text="#{button.download}"></button>
+                      </td>
+                    </tr>
+                  </table>
+                  <p th:if="${isLimitDownloadExceeded}">Вы превысили лимит скачивания данной книги.&#32;
+                    <a th:href="@{/contacts}">Обратитесь в техподдержку,&#32;</a><span> если хотите скачать книгу снова</span>
+                  </p>
                   <span id="myPopup_close" class="close">❎</span>
                 </div>
                 <div id="myOverlay"></div>

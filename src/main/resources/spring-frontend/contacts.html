@@ -1,4 +1,3 @@
-
 <!--END-->
 <!--END--><!DOCTYPE html><!--[if IE 7]>
 <html class="ie7" lang="ru">
@@ -59,26 +58,25 @@
             <div class="row-block">
               <div class="Contacts-form">
                 <h2 th:text="#{label.contact.write} + ':'">Напишите нам:</h2>
-                <form class="form" action="#" method="post">
-                  <div class="form-group">
-                    <input class="form-input" id="name" name="name" type="text" data-validate="require"
-                           placeholder="Введите Имя" th:placeholder="#{siginbar.placeholder.name}"/>
+                <form class="form" action="#" th:action="@{/contacts}" method="post" th:object="${userMessageDto}">
+                  <div class="form-group" th:if="${isAnonymousUser}">
+                    <input class="form-input" id="name" name="name" type="text" data-validate="require" th:placeholder="#{siginbar.placeholder.name}" th:field="*{name}"/>
                   </div>
-                  <div class="form-group">
+                  <div class="form-group" th:if="${isAnonymousUser}">
                     <input class="form-input form-input_mail" id="mail" name="mail" type="text" data-validate="mail require"
-                           placeholder="Введите e-mail" th:placeholder="#{siginbar.placeholder.emailfield}"/>
+                           th:placeholder="#{siginbar.placeholder.emailfield}" th:field="*{mail}"/>
                   </div>
                   <div class="form-group">
-                    <input class="form-input" id="topic" name="topic" type="text" data-validate="require"
-                           placeholder="Введите тему" th:placeholder="#{siginbar.placeholder.subjectfield}"/>
+                    <input class="form-input" id="topic" name="topic" type="text" data-validate="require" th:placeholder="#{siginbar.placeholder.subjectfield}" th:field="*{topic}"/>
                   </div>
                   <div class="form-group">
                     <textarea class="form-textarea Contacts-message" name="message" id="message" data-validate="require"
-                              placeholder="Введите сообщение" th:placeholder="#{siginbar.placeholder.messagefield}"></textarea>
+                              th:placeholder="#{siginbar.placeholder.messagefield}" th:field="*{message}"></textarea>
                   </div>
                   <div class="form-group">
                     <button class="btn btn_primary form-btn" type="submit" name="sendMessage" id="sendMessage" th:text="#{button.review.send}">Отправить</button>
                   </div>
+                  <div class="form-error" th:if="${!#strings.isEmpty(errorMessage)}" th:text="${errorMessage}">Текст ошибки</div>
                 </form>
               </div>
             </div>

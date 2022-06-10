@@ -7,7 +7,6 @@ import com.example.MyBookShopApp.entity.UserViewedBooks;
 import com.example.MyBookShopApp.security.BookstoreUserRegister;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -29,10 +28,15 @@ public class UserViewedBooksService {
     public void saveBookView(Book book) {
         User currentUser = (User) userRegister.getCurrentUser();
         if (book != null && currentUser != null) {
-            UserViewedBooks userViewedBook = new UserViewedBooks();
-            userViewedBook.setUser(currentUser);
-            userViewedBook.setBook(book);
-            userViewedBook.setTime(new Date());
+            UserViewedBooks userViewedBook = userViewedBookRepository.findUserViewedBooksByUserIdAndBookId(currentUser.getId(), book.getId());
+            if (userViewedBook == null) {
+                userViewedBook = new UserViewedBooks();
+                userViewedBook.setUser(currentUser);
+                userViewedBook.setBook(book);
+                userViewedBook.setTime(new Date());
+            } else {
+                userViewedBook.setTime(new Date());
+            }
             userViewedBookRepository.save(userViewedBook);
         }
     }

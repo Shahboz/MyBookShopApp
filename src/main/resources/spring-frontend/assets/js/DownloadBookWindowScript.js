@@ -3,6 +3,7 @@ $(document).ready(function () {
         event.preventDefault();
         $('#myOverlay').fadeIn(297,function () {
             $('#myPopup').css('display', 'block').animate({opacity:1}, 198);
+            $('#myPopup').css('width',  '40%');
         });
     });
 

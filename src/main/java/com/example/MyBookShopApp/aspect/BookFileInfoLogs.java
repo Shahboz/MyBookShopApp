@@ -31,7 +31,7 @@ public class BookFileInfoLogs {
         if (!Files.exists(Paths.get(uploadPath)))
             logger.info("Directory " + uploadPath + " will be created.");
         else
-            logger.info("File " + file.getOriginalFilename() + " will be copied to directory " + uploadPath + ".");
+            logger.info("BookFile " + file.getOriginalFilename() + " will be copied to directory " + uploadPath + ".");
     }
 
     @AfterReturning(pointcut = "bookFileInfo() && args(file, bookSlug)")

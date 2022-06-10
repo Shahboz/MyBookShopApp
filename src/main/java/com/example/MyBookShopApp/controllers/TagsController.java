@@ -33,7 +33,7 @@ public class TagsController {
 
     @ModelAttribute("books")
     public List<Book> getBooks(@PathVariable(value = "slug", required = false) String slugTag) {
-        return slugTag == null ? null : bookService.getPageOfTagBooks(slugTag, 0, 6).getContent();
+        return slugTag == null ? null : bookService.getPageOfTagBooks(slugTag, 0, bookService.getRefreshLimit()).getContent();
     }
 
     @GetMapping(value = {"/", "/{slug}"})

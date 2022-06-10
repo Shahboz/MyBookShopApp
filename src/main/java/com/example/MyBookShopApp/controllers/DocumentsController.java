@@ -3,6 +3,7 @@ package com.example.MyBookShopApp.controllers;
 import com.example.MyBookShopApp.entity.Document;
 import com.example.MyBookShopApp.service.DocumentService;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -17,6 +18,7 @@ public class DocumentsController {
 
     private final DocumentService documentService;
 
+    @Autowired
     public DocumentsController(DocumentService documentService) {
         this.documentService = documentService;
     }

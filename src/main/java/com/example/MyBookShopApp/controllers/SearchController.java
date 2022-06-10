@@ -30,11 +30,11 @@ public class SearchController {
     }
 
     @GetMapping(value = {"", "/{searchWord}"})
-    public String getSearchResults(@PathVariable(value = "searchWord", required = false) SearchWordDto searchWordDto,
-                                   Model model) throws EmptySearchException {
+    public String getSearchResults(@PathVariable(value = "searchWord", required = false) SearchWordDto searchWordDto, Model model) throws EmptySearchException {
         if (searchWordDto != null) {
             model.addAttribute("searchWordDto", searchWordDto);
-            model.addAttribute("searchResults", bookService.getPageOfSearchResultBooks(searchWordDto.getExample(), 0, 6).getContent());
+            model.addAttribute("searchCount", bookService.getBookCountByTitle(searchWordDto.getExample()));
+            model.addAttribute("searchResults", bookService.getPageOfSearchResultBooks(searchWordDto.getExample(), 0, bookService.getRefreshLimit()).getContent());
             //model.addAttribute("searchResults", bookService.getPageOfGoogleBooksApiSearchResult(searchWordDto.getExample(), 0, 6));
             return "/search/index";
         } else

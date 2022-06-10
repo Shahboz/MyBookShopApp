@@ -11,7 +11,7 @@ import javax.persistence.*;
 @Setter
 @NoArgsConstructor
 @Table(name = "file_download")
-public class BookFileDownload {
+public class FileDownload {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

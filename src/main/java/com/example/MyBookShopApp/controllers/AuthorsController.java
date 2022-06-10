@@ -40,10 +40,8 @@ public class AuthorsController {
     }
 
     @ModelAttribute("authorBooks")
-    public List<Book> authorBooks(@PathVariable(value = "slug", required = false) String authorSlug,
-                                  @RequestParam(value = "offset", required = false, defaultValue = "0") Integer offset,
-                                  @RequestParam(value = "limit",  required = false, defaultValue = "6") Integer limit) {
-        return authorSlug == null ? null : bookService.getPageOfAuthorBooks(authorSlug, offset, limit).getContent();
+    public List<Book> getAuthorBooks(@PathVariable(value = "slug", required = false) String authorSlug) {
+        return authorSlug == null ? null : bookService.getPageOfAuthorBooks(authorSlug, 0, bookService.getRefreshLimit()).getContent();
     }
 
     @GetMapping("")

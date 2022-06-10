@@ -28,46 +28,23 @@ p.error-browser
             <h1 class="Middle-title">Поиск</h1>
             <div class="Section">
                 <div class="search">
-                    <form class="form form_search" action="#" method="post" data-searchlimit="6">
+                    <form class="form form_search" action="#" method="post" th:attr="data-searchlimit=${searchLimit}">
                         <input class="search-input" id="querypage" name="querypage" type="text"
-                               th:placeholder="#{searchbar.placeholder}"
-                               placeholder="Search over 30 million book titles" th:value="${searchWordDto.getExample()}"
-                               value="Техника"/>
+                               th:placeholder="#{searchbar.placeholder}" th:value="${searchWordDto.getExample()}"/>
                         <button class="search-button" type="submit" name="searchpage" id="searchpage" th:text="#{searchbar.text}">Поиск</button>
                     </form>
                 </div>
             </div>
             <div class="Section Section_close">
                 <header class="Section-header">
-                    <h2 class="Section-title Middle-searchHeader" th:text="${'Найдено книг: ' + searchResults.size()}">Найдено 40 книг</h2>
+                    <h2 class="Section-title Middle-searchHeader"
+                        th:text="${searchCount} > 0 ? 'Найдено книг: ' + ${searchCount} : 'По вашему запросу книги не найдены'">Найдено 40 книг</h2>
                 </header>
                 <div class="Cards Cards_search Cards_refresh">
-                    <div class="Card" th:each="book : ${searchResults}">
-                        <div class="Card-picture">
-                            <a href="#">
-                                <img  th:src="${book.getImage()}" src="/assets/img/content/main/card.jpg" alt="card.jpg"/>
-                                <div class="Card-sale" th:if="${book.getDiscount() > 0}" th:text="${book.getDiscount()} + '% скидка'">30% скидка</div>
-                            </a>
-                        </div>
-                        <div class="Card-ribbon" th:if="${book.getIsBestseller() == 1}"><span class="Card-ribbonText">Бестселлер</span></div>
-                        <div class="Card-content">
-                            <strong class="Card-title"><a href="#" th:text="${book.getTitle()}">Техника</a>
-                            </strong>
-                            <div class="Card-description" th:text="${book.getAuthorName()}">Кондратенко Александр Петрович
-                            </div>
-                            <div class="Card-cost">
-                                <span th:class="${book.getDiscount() > 0} ? 'Card-priceOld' : 'Card-price'" th:text="'₽' + ${book.getPrice()}">₽300.00</span>
-                                <span class="Card-price" th:if="${book.getDiscount() > 0}" th:text="'₽' + ${book.getDiscountPrice()}">₽19.00</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="Cards-footer Cards-footer_center"><a class="btn btn_primary" href="#"
-                                                                     data-refreshshow="search"
-                                                                     data-refreshoffset="6"
-                                                                     data-refreshlimit="6"
-                                                                     th:attr="data-refreshquery=${searchWordDto.getExample()}"
-                                                                     th:text="#{button.showmore}"
-                                                                     data-refreshquery="Техника">Показать еще</a>
+                    <th:block th:each="book : ${searchResults}" th:insert="~{fragments/book_fragment :: printBook(book=${book})}"></th:block>
+                    <div class="Cards-footer Cards-footer_center" th:if="${#lists.size(searchResults) == refreshLimit}">
+                        <a class="btn btn_primary" href="#" data-refreshshow="search" th:text="#{button.showmore}"
+                           th:attr="data-refreshquery=${searchWordDto.getExample()}, data-refreshoffset=${refreshOffset}, data-refreshlimit=${refreshLimit}">Показать еще</a>
                     </div>
                 </div>
             </div>

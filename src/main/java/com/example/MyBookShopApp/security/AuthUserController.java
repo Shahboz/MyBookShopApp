@@ -35,8 +35,7 @@ public class AuthUserController {
 
     @Autowired
     public AuthUserController(BookstoreUserRegister userRegister, SmsService smsService, PaymentService paymentService,
-                              TransactionService transactionService, UserContactService userContactService,
-                              UserService userService) {
+                              TransactionService transactionService, UserContactService userContactService, UserService userService) {
         this.userRegister = userRegister;
         this.smsService = smsService;
         this.paymentService = paymentService;
@@ -51,12 +50,24 @@ public class AuthUserController {
     }
 
     @ModelAttribute("transactions")
-    public List<Transaction> getUserTransactions(@RequestParam(value = "offset", required = false, defaultValue = "0") Integer offset,
-                                                 @RequestParam(value = "limit", required = false, defaultValue = "50") Integer limit) {
+    public List<Transaction> getUserTransactions() {
         User user = (User) userRegister.getCurrentUser();
-        if (user == null)
-            return null;
-        return transactionService.getPageOfUserTransactions(user.getId(), offset, limit, "desc").getContent();
+        return user == null ? null : transactionService.getPageOfUserTransactions(user.getId(), 0, transactionService.getTransactionLimit(), transactionService.getTransactionSort()).getContent();
+    }
+
+    @ModelAttribute("dataSort")
+    public String getDataTransactionSort() {
+        return transactionService.getTransactionSort();
+    }
+
+    @ModelAttribute("dataOffset")
+    public Integer getDataTransactionOffset() {
+        return transactionService.getTransactionOffset();
+    }
+
+    @ModelAttribute("dataLimit")
+    public Integer getDataTransactionLimit() {
+        return transactionService.getTransactionLimit();
     }
 
     @GetMapping(value = "/transactions", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -65,9 +76,8 @@ public class AuthUserController {
                                                          @RequestParam("limit") Integer limit,
                                                          @RequestParam("sort") String sort) {
         User user = (User) userRegister.getCurrentUser();
-        if (user == null)
-            return null;
-        return new TransactionsPageDto(transactionService.getPageOfUserTransactions(user.getId(), offset, limit, sort).getContent());
+        List<Transaction> transactions = transactionService.getPageOfUserTransactions(user.getId(), offset, limit, sort).getContent();
+        return user == null ? null : new TransactionsPageDto(transactions);
     }
 
     @GetMapping("/signin")
@@ -146,7 +156,8 @@ public class AuthUserController {
 
     @GetMapping("/profile")
     public String handleProfile(@ModelAttribute("userContacts") List<UserContact> userContacts,
-                                @ModelAttribute("transactions") List<Transaction> transactions) {
+                                @ModelAttribute("transactions") List<Transaction> transactions, @ModelAttribute("dataSort") String dataSort,
+                                @ModelAttribute("dataOffset") Integer dataOffset, @ModelAttribute("dataLimit") Integer dataLimit) {
         return "profile";
     }
 
@@ -219,7 +230,7 @@ public class AuthUserController {
         return resultResponse;
     }
 
-    @GetMapping("/myarchive")
+    @GetMapping("/my/archive")
     public String handleMyArchive() {
         return "myarchive";
     }

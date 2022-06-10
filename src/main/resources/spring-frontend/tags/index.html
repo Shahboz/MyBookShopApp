@@ -1,4 +1,3 @@
-
 <!--END-->
 <!--END--><!DOCTYPE html><!--[if IE 7]>
 <html class="ie7" lang="ru">
@@ -27,45 +26,25 @@
     <div class="wrap">
       <main class="Middle-main">
         <ul class="breadcrumbs">
-          <li class="breadcrumbs-item"><a href="/index.html" th:href="@{/}" th:text="#{menubar.main}">Главная</a>
+          <li class="breadcrumbs-item">
+            <a href="/index.html" th:href="@{/}" th:text="#{menubar.main}">Главная</a>
           </li>
-          <li class="breadcrumbs-item breadcrumbs-item_current"><span th:text="${tag.getName()}">Психологическая проза</span>
+          <li class="breadcrumbs-item breadcrumbs-item_current">
+            <span th:text="${tag.getName()}">Психологическая проза</span>
           </li>
         </ul>
         <div class="Section">
           <div class="Section-header">
             <h1 class="Section-title" th:text="${tag.getName()}">Психологическая проза</h1>
-            <div class="Section-header-links"><a class="Section-header-link" th:href="@{/#tags}">Все тэги</a>
+            <div class="Section-header-links">
+              <a class="Section-header-link" th:href="@{/#tags}">Все тэги</a>
             </div>
           </div>
           <div class="Cards Cards_refresh">
-            <div class="Card" th:each="book : ${books}">
-              <div class="Card-picture">
-                <a href="#">
-                  <img th:src="${book.getImage()}" alt="card.jpg"/>
-                  <div class="Card-sale" th:if="${book.getDiscount() > 0}" th:text="${book.getDiscount()} + '% скидка'">30% скидка</div>
-                  <div class="Card-ribbon" th:if="${book.getIsBestseller() == 1}"><span class="Card-ribbonText">Бестселлер</span></div>
-                </a>
-              </div>
-              <div class="Card-content">
-                <strong class="Card-title"><a href="#" th:text="${book.getTitle()}">Техника</a>
-                </strong>
-                <div class="Card-description" th:text="${book.getAuthorName()}">Кондратенко Александр Петрович
-                </div>
-                <div class="Card-cost">
-                  <span th:class="${book.getDiscount() > 0} ? 'Card-priceOld' : 'Card-price'" th:text="'₽' + ${book.getPrice()}">₽300.00</span>
-                  <span class="Card-price" th:if="${book.getDiscount() > 0}" th:text="'₽' + ${book.getDiscountPrice()}">₽19.00</span>
-                </div>
-              </div>
-            </div>
-            <div class="Cards-footer Cards-footer_center">
-              <a class="btn btn_primary"
-                 href="#"
-                 data-refreshshow="tag"
-                 th:attr="data-refreshid=${tag.getSlug()}"
-                 data-refreshoffset="6"
-                 data-refreshlimit="6"
-                 th:text="#{button.showmore}">Показать еще</a>
+            <th:block th:each="book : ${books}" th:insert="~{fragments/book_fragment :: printBook(book=${book})}"></th:block>
+            <div class="Cards-footer Cards-footer_center" th:if="${#lists.size(books) == refreshLimit}">
+              <a class="btn btn_primary" href="#" data-refreshshow="tag" th:text="#{button.showmore}"
+                 th:attr="data-refreshid=${tag.getSlug()}, data-refreshoffset=${refreshOffset}, data-refreshlimit=${refreshLimit}">Показать еще</a>
             </div>
           </div>
         </div>

@@ -41,7 +41,7 @@ public class GenresController {
 
     @ModelAttribute("genreBooks")
     public List<Book> getBooksByGenre(@PathVariable(value = "slug", required = false) String genreSlug) {
-        return genreSlug == null ? null : bookService.getPageOfGenreBooks(genreSlug, 0, 6).getContent();
+        return genreSlug == null ? null : bookService.getPageOfGenreBooks(genreSlug, 0, bookService.getRefreshLimit()).getContent();
     }
 
     @GetMapping("")

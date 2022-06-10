@@ -13,4 +13,7 @@ public interface UserViewedBooksRepository extends JpaRepository<UserViewedBooks
     @Query(value = "select vb.book from UserViewedBooks vb where vb.user.id = :userId and vb.time between date_trunc('MONTH', current_timestamp) and current_timestamp order by vb.time desc")
     Page<Book> findUserViewedBooksByUserId(Integer userId, Pageable nextPage);
 
+    @Query(value = "from UserViewedBooks vb where vb.user.id = :userId and vb.book.id = :bookId and vb.time between date_trunc('MONTH', current_timestamp) and current_timestamp")
+    UserViewedBooks findUserViewedBooksByUserIdAndBookId(Integer userId, Integer bookId);
+
 }
