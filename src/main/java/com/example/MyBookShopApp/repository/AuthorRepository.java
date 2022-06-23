@@ -1,4 +1,4 @@
-package com.example.MyBookShopApp.dto;
+package com.example.MyBookShopApp.repository;
 
 import com.example.MyBookShopApp.entity.Author;
 import org.springframework.data.jpa.repository.JpaRepository;

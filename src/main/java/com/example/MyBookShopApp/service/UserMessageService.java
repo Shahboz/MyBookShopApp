@@ -2,7 +2,7 @@ package com.example.MyBookShopApp.service;
 
 import com.example.MyBookShopApp.dto.ResultResponse;
 import com.example.MyBookShopApp.dto.UserMessageDto;
-import com.example.MyBookShopApp.dto.UserMessageRepository;
+import com.example.MyBookShopApp.repository.UserMessageRepository;
 import com.example.MyBookShopApp.entity.User;
 import com.example.MyBookShopApp.entity.UserMessage;
 import com.example.MyBookShopApp.security.BookstoreUserRegister;

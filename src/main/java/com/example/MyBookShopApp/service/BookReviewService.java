@@ -2,7 +2,7 @@ package com.example.MyBookShopApp.service;
 
 import com.example.MyBookShopApp.dto.BookReviewData;
 import com.example.MyBookShopApp.dto.BookReviewDto;
-import com.example.MyBookShopApp.dto.BookReviewRepository;
+import com.example.MyBookShopApp.repository.BookReviewRepository;
 import com.example.MyBookShopApp.dto.ResultResponse;
 import com.example.MyBookShopApp.entity.Book;
 import com.example.MyBookShopApp.entity.BookReview;

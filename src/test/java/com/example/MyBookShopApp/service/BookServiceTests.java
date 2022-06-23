@@ -1,6 +1,6 @@
 package com.example.MyBookShopApp.service;
 
-import com.example.MyBookShopApp.dto.BookRepository;
+import com.example.MyBookShopApp.repository.BookRepository;
 import com.example.MyBookShopApp.entity.Book;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;

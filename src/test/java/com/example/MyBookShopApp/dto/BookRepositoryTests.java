@@ -1,6 +1,7 @@
 package com.example.MyBookShopApp.dto;
 
 import com.example.MyBookShopApp.entity.Book;
+import com.example.MyBookShopApp.repository.BookRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;

@@ -1,6 +1,6 @@
 package com.example.MyBookShopApp.service;
 
-import com.example.MyBookShopApp.dto.BookRepository;
+import com.example.MyBookShopApp.repository.BookRepository;
 import com.example.MyBookShopApp.entity.*;
 import com.example.MyBookShopApp.entity.google.api.books.Item;
 import com.example.MyBookShopApp.entity.google.api.books.Root;

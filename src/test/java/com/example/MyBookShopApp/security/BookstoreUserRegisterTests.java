@@ -1,7 +1,7 @@
 package com.example.MyBookShopApp.security;
 
-import com.example.MyBookShopApp.dto.UserContactRepository;
-import com.example.MyBookShopApp.dto.UserRepository;
+import com.example.MyBookShopApp.repository.UserContactRepository;
+import com.example.MyBookShopApp.repository.UserRepository;
 import com.example.MyBookShopApp.entity.User;
 import com.example.MyBookShopApp.entity.UserContact;
 import org.hamcrest.CoreMatchers;

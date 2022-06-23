@@ -1,8 +1,8 @@
 package com.example.MyBookShopApp.service;
 
 import com.example.MyBookShopApp.dto.ResultResponse;
-import com.example.MyBookShopApp.dto.UserBookTypeRepository;
-import com.example.MyBookShopApp.dto.UserBooksRepository;
+import com.example.MyBookShopApp.repository.UserBookTypeRepository;
+import com.example.MyBookShopApp.repository.UserBooksRepository;
 import com.example.MyBookShopApp.entity.Book;
 import com.example.MyBookShopApp.entity.User;
 import com.example.MyBookShopApp.entity.UserBookType;

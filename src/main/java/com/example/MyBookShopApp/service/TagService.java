@@ -1,6 +1,6 @@
 package com.example.MyBookShopApp.service;
 
-import com.example.MyBookShopApp.dto.TagRepository;
+import com.example.MyBookShopApp.repository.TagRepository;
 import com.example.MyBookShopApp.entity.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

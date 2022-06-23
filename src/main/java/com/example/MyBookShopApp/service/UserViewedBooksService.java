@@ -1,6 +1,6 @@
 package com.example.MyBookShopApp.service;
 
-import com.example.MyBookShopApp.dto.UserViewedBooksRepository;
+import com.example.MyBookShopApp.repository.UserViewedBooksRepository;
 import com.example.MyBookShopApp.entity.Book;
 import com.example.MyBookShopApp.entity.User;
 import com.example.MyBookShopApp.entity.UserViewedBooks;

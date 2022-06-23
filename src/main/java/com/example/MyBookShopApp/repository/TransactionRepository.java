@@ -1,4 +1,4 @@
-package com.example.MyBookShopApp.dto;
+package com.example.MyBookShopApp.repository;
 
 import com.example.MyBookShopApp.entity.Transaction;
 import org.springframework.data.domain.Page;

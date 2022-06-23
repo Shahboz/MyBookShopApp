@@ -1,6 +1,6 @@
 package com.example.MyBookShopApp.service;
 
-import com.example.MyBookShopApp.dto.FileDownloadRepository;
+import com.example.MyBookShopApp.repository.FileDownloadRepository;
 import com.example.MyBookShopApp.entity.Book;
 import com.example.MyBookShopApp.entity.FileDownload;
 import com.example.MyBookShopApp.entity.User;

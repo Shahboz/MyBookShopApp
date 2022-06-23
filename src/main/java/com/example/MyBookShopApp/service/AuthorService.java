@@ -1,6 +1,6 @@
 package com.example.MyBookShopApp.service;
 
-import com.example.MyBookShopApp.dto.AuthorRepository;
+import com.example.MyBookShopApp.repository.AuthorRepository;
 import com.example.MyBookShopApp.entity.Author;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

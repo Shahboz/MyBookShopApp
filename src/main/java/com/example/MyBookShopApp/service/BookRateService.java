@@ -1,6 +1,6 @@
 package com.example.MyBookShopApp.service;
 
-import com.example.MyBookShopApp.dto.BookRateRepository;
+import com.example.MyBookShopApp.repository.BookRateRepository;
 import com.example.MyBookShopApp.dto.ResultResponse;
 import com.example.MyBookShopApp.entity.Book;
 import com.example.MyBookShopApp.entity.BookRate;

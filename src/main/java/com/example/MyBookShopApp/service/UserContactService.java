@@ -1,6 +1,6 @@
 package com.example.MyBookShopApp.service;
 
-import com.example.MyBookShopApp.dto.UserContactRepository;
+import com.example.MyBookShopApp.repository.UserContactRepository;
 import com.example.MyBookShopApp.entity.UserContact;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;

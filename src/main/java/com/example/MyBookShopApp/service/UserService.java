@@ -1,6 +1,6 @@
 package com.example.MyBookShopApp.service;
 
-import com.example.MyBookShopApp.dto.UserRepository;
+import com.example.MyBookShopApp.repository.UserRepository;
 import com.example.MyBookShopApp.entity.User;
 import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;

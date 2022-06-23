@@ -2,7 +2,7 @@ package com.example.MyBookShopApp.service;
 
 
 import com.example.MyBookShopApp.aspect.annotations.BookFileInfo;
-import com.example.MyBookShopApp.dto.BookFileRepository;
+import com.example.MyBookShopApp.repository.BookFileRepository;
 import com.example.MyBookShopApp.entity.Book;
 import com.example.MyBookShopApp.entity.BookFile;
 import liquibase.util.file.FilenameUtils;

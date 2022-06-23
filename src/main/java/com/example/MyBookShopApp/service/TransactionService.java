@@ -1,6 +1,6 @@
 package com.example.MyBookShopApp.service;
 
-import com.example.MyBookShopApp.dto.TransactionRepository;
+import com.example.MyBookShopApp.repository.TransactionRepository;
 import com.example.MyBookShopApp.entity.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
