@@ -1,5 +1,7 @@
 package com.example.MyBookShopApp.service;
 
+import com.example.MyBookShopApp.entity.Role;
+import com.example.MyBookShopApp.repository.RoleRepository;
 import com.example.MyBookShopApp.repository.UserRepository;
 import com.example.MyBookShopApp.entity.User;
 import lombok.NoArgsConstructor;
@@ -12,10 +14,12 @@ import org.springframework.stereotype.Service;
 public class UserService {
 
     private UserRepository userRepository;
+    private RoleRepository roleRepository;
 
     @Autowired
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository, RoleRepository roleRepository) {
         this.userRepository = userRepository;
+        this.roleRepository = roleRepository;
     }
 
     public void save(User user) {
@@ -36,6 +40,10 @@ public class UserService {
 
     public User getUserById(Integer userId) {
         return userRepository.findUserById(userId);
+    }
+
+    public Role getUserRoleByName(String roleName) {
+        return roleRepository.findRoleByName(roleName);
     }
 
 }

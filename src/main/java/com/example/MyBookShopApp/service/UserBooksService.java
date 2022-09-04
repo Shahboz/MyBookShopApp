@@ -50,9 +50,12 @@ public class UserBooksService {
         return currentUser == null ? new ArrayList<>() : userBooksRepository.findUserBooksByUserBookType(currentUser.getId(), "ARCHIVED");
     }
 
-    public ResultResponse changeBookStatus(String status, Book book) {
+    public List<Book> getUserBooks(User user, String bookTypeCode) {
+        return user == null ? new ArrayList<>() : userBooksRepository.findUserBooksByUserBookType(user.getId(), bookTypeCode);
+    }
+
+    public ResultResponse changeBookStatus(String status, Book book, User user) {
         ResultResponse result = new ResultResponse();
-        User currentUser = (User) userRegister.getCurrentUser();
 
         if (StringUtils.isEmpty(status)) {
             result.setResult(false);
@@ -60,11 +63,11 @@ public class UserBooksService {
         } else if (book == null) {
           result.setResult(false);
           result.setError("Книга не найдена");
-        } else if (currentUser != null) {
+        } else if (user != null) {
             // Удаление из корзины/отложенных
             if (status.equalsIgnoreCase("UNLINK")) {
-                UserBooks userCartBook = userBooksRepository.findUserBooksByUserIdAndBookSlugAndUserBookTypeCode(currentUser.getId(), book.getSlug(), "CART");
-                UserBooks userKeptBook = userBooksRepository.findUserBooksByUserIdAndBookSlugAndUserBookTypeCode(currentUser.getId(), book.getSlug(), "KEPT");
+                UserBooks userCartBook = userBooksRepository.findUserBooksByUserIdAndBookSlugAndUserBookTypeCode(user.getId(), book.getSlug(), "CART");
+                UserBooks userKeptBook = userBooksRepository.findUserBooksByUserIdAndBookSlugAndUserBookTypeCode(user.getId(), book.getSlug(), "KEPT");
                 if (userCartBook != null) {
                     userBooksRepository.delete(userCartBook);
                 } else if (userKeptBook != null) {
@@ -72,13 +75,13 @@ public class UserBooksService {
                 }
                 result.setResult(true);
             } else if (status.equalsIgnoreCase("CART") || status.equalsIgnoreCase("KEPT")) {
-                UserBooks userPaidBook = userBooksRepository.findUserBooksByUserIdAndBookSlugAndUserBookTypeCode(currentUser.getId(), book.getSlug(), "PAID");
-                UserBooks userArchivedBook = userBooksRepository.findUserBooksByUserIdAndBookSlugAndUserBookTypeCode(currentUser.getId(), book.getSlug(), "ARCHIVED");
+                UserBooks userPaidBook = userBooksRepository.findUserBooksByUserIdAndBookSlugAndUserBookTypeCode(user.getId(), book.getSlug(), "PAID");
+                UserBooks userArchivedBook = userBooksRepository.findUserBooksByUserIdAndBookSlugAndUserBookTypeCode(user.getId(), book.getSlug(), "ARCHIVED");
                 if (userPaidBook == null && userArchivedBook == null) {
                     UserBookType userBookType = bookTypeRepository.findUserBookTypeByCode(status);
                     UserBooks userBook;
-                    UserBooks userCartBook = userBooksRepository.findUserBooksByUserIdAndBookSlugAndUserBookTypeCode(currentUser.getId(), book.getSlug(), "CART");
-                    UserBooks userKeptBook = userBooksRepository.findUserBooksByUserIdAndBookSlugAndUserBookTypeCode(currentUser.getId(), book.getSlug(), "KEPT");
+                    UserBooks userCartBook = userBooksRepository.findUserBooksByUserIdAndBookSlugAndUserBookTypeCode(user.getId(), book.getSlug(), "CART");
+                    UserBooks userKeptBook = userBooksRepository.findUserBooksByUserIdAndBookSlugAndUserBookTypeCode(user.getId(), book.getSlug(), "KEPT");
                     // Книга в корзине
                     if (userCartBook != null) {
                         userBook = userCartBook;
@@ -86,7 +89,7 @@ public class UserBooksService {
                         userBook = userKeptBook;
                     } else {
                         userBook = new UserBooks();
-                        userBook.setUser(currentUser);
+                        userBook.setUser(user);
                         userBook.setBook(book);
                     }
                     userBook.setType(userBookType);
@@ -100,9 +103,9 @@ public class UserBooksService {
                     result.setResult(false);
                     result.setError("Книга уже куплена");
                 }
-            } else if (status.equalsIgnoreCase("ARCHIVED")) {
-                UserBooks userPaidBook = userBooksRepository.findUserBooksByUserIdAndBookSlugAndUserBookTypeCode(currentUser.getId(), book.getSlug(), "PAID");
-                UserBooks userArchivedBook = userBooksRepository.findUserBooksByUserIdAndBookSlugAndUserBookTypeCode(currentUser.getId(), book.getSlug(), "ARCHIVED");
+            } else if (status.equalsIgnoreCase("ARCHIVED") && user.hasRole("REGISTER")) {
+                UserBooks userPaidBook = userBooksRepository.findUserBooksByUserIdAndBookSlugAndUserBookTypeCode(user.getId(), book.getSlug(), "PAID");
+                UserBooks userArchivedBook = userBooksRepository.findUserBooksByUserIdAndBookSlugAndUserBookTypeCode(user.getId(), book.getSlug(), "ARCHIVED");
                 if (userPaidBook != null) {
                     UserBookType archiveType = bookTypeRepository.findUserBookTypeByCode("ARCHIVED");
                     userPaidBook.setType(archiveType);
@@ -119,9 +122,9 @@ public class UserBooksService {
                     result.setResult(false);
                     result.setError("Книга не куплена/не архивирована");
                 }
-            } else if (status.equalsIgnoreCase("PAID")) {
-                UserBooks userCartBook = userBooksRepository.findUserBooksByUserIdAndBookSlugAndUserBookTypeCode(currentUser.getId(), book.getSlug(), "CART");
-                UserBooks userArchivedBook = userBooksRepository.findUserBooksByUserIdAndBookSlugAndUserBookTypeCode(currentUser.getId(), book.getSlug(), "ARCHIVED");
+            } else if (status.equalsIgnoreCase("PAID") && user.hasRole("REGISTER")) {
+                UserBooks userCartBook = userBooksRepository.findUserBooksByUserIdAndBookSlugAndUserBookTypeCode(user.getId(), book.getSlug(), "CART");
+                UserBooks userArchivedBook = userBooksRepository.findUserBooksByUserIdAndBookSlugAndUserBookTypeCode(user.getId(), book.getSlug(), "ARCHIVED");
                 if (userCartBook == null && userArchivedBook == null) {
                     result.setResult(false);
                     result.setError("Книга не найдена в корзине");

@@ -3,6 +3,7 @@ package com.example.MyBookShopApp.controllers;
 import com.example.MyBookShopApp.dto.ResultResponse;
 import com.example.MyBookShopApp.entity.*;
 import com.example.MyBookShopApp.security.BookstoreUserRegister;
+import com.example.MyBookShopApp.security.RegistrationForm;
 import com.example.MyBookShopApp.service.*;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,13 +30,16 @@ public class BookshopCardController {
     private final UserBooksService userBooksService;
     private final PaymentService paymentService;
     private final BookstoreUserRegister userRegister;
+    private final UserService userService;
 
     @Autowired
-    public BookshopCardController(BookService bookService, UserBooksService userBooksService, PaymentService paymentService, BookstoreUserRegister userRegister) {
+    public BookshopCardController(BookService bookService, UserBooksService userBooksService, PaymentService paymentService,
+                                  BookstoreUserRegister userRegister, UserService userService) {
         this.bookService = bookService;
         this.userBooksService = userBooksService;
         this.paymentService = paymentService;
         this.userRegister = userRegister;
+        this.userService = userService;
     }
 
     @ModelAttribute(name = "bookCart")
@@ -48,47 +52,12 @@ public class BookshopCardController {
         return null;
     }
 
-    private String[] getSlugFromString(String contents) {
-        contents = contents.startsWith("/") ? contents.substring(1) : contents;
-        contents = contents.endsWith("/") ? contents.substring(0, contents.length() - 1) : contents;
-        return contents.split("/");
-    }
-
-    private String addBookToCookie(String bookSlug, String cookieValue) {
-        String value = cookieValue;
-        if (StringUtils.isEmpty(cookieValue)) {
-            value = bookSlug;
-        } else if (!cookieValue.contains(bookSlug)) {
-            StringJoiner stringJoiner = new StringJoiner("/");
-            stringJoiner.add(cookieValue).add(bookSlug);
-            value = stringJoiner.toString();
-        }
-        return value;
-    }
-
-    private String deleteBookFromCookie(String bookSlug, String cookieValue) {
-        String value = cookieValue;
-        if (!StringUtils.isEmpty(cookieValue) && cookieValue.contains(bookSlug)) {
-            ArrayList<String> cookieBooks = new ArrayList<>(Arrays.asList(cookieValue.split("/")));
-            cookieBooks.remove(bookSlug);
-            value = String.join("/", cookieBooks);
-        }
-        return value;
-    }
-
     @GetMapping("/cart")
-    public String getCartPage(@CookieValue(value = "cartContents", required = false) String cartContents, Model model) {
-        Integer sumCartDiscount = 0, sumCart = 0;
-        List<Book> bookCart = null;
-        if (userRegister.getCurrentUser() != null) {
-            bookCart = userBooksService.getUserCartBooks();
-            sumCartDiscount = bookCart.stream().mapToInt(Book::getDiscountPrice).sum();
-            sumCart = bookCart.stream().mapToInt(Book::getPrice).sum();
-        } else if (!StringUtils.isEmpty(cartContents)) {
-            bookCart = bookService.getBooksBySlugs(getSlugFromString(cartContents));
-            sumCartDiscount = bookCart.stream().mapToInt(Book::getDiscountPrice).sum();
-            sumCart = bookCart.stream().mapToInt(Book::getPrice).sum();
-        }
+    public String getCartPage(@CookieValue(value = "anonymousUser", required = false) String userHash, Model model) {
+        User currentUser = userRegister.getCurrentUser() != null ? (User) userRegister.getCurrentUser() : userService.getUserByHash(userHash);
+        List<Book> bookCart = userBooksService.getUserBooks(currentUser, "CART");
+        Integer sumCart = bookCart.stream().mapToInt(Book::getPrice).sum();
+        Integer sumCartDiscount = bookCart.stream().mapToInt(Book::getDiscountPrice).sum();
         model.addAttribute("sumCart", sumCart);
         model.addAttribute("sumCartDiscount", sumCartDiscount);
         model.addAttribute("bookCart", bookCart);
@@ -96,13 +65,9 @@ public class BookshopCardController {
     }
 
     @GetMapping("/postponed")
-    public String getPostponedPage(@CookieValue(value = "postponedContents", required = false) String postponedContents, Model model) {
-        List<Book> bookPostponed = null;
-        if (userRegister.getCurrentUser() != null) {
-            bookPostponed = userBooksService.getUserKeptBooks();
-        } else if (!StringUtils.isEmpty(postponedContents)) {
-            bookPostponed = bookService.getBooksBySlugs(getSlugFromString(postponedContents));
-        }
+    public String getPostponedPage(@CookieValue(value = "anonymousUser", required = false) String userHash, Model model) {
+        User currentUser = userRegister.getCurrentUser() != null ? (User) userRegister.getCurrentUser() : userService.getUserByHash(userHash);
+        List<Book> bookPostponed = userBooksService.getUserBooks(currentUser, "KEPT");
         model.addAttribute("bookPostponed", bookPostponed);
         return "postponed";
     }
@@ -110,78 +75,28 @@ public class BookshopCardController {
     @PostMapping("/changeBookStatus")
     @ResponseBody
     public ResultResponse handleChangeBookStatus(@RequestBody BookStatus bookStatus,
-                                                 @CookieValue(name = "cartContents", required = false) String cartContents,
-                                                 @CookieValue(name = "postponedContents", required = false) String postponedContents,
+                                                 @CookieValue(name = "anonymousUser", required = false) String userHash,
                                                  HttpServletResponse response) {
         ResultResponse resultResponse = null;
+        User currentUser = (User) userRegister.getCurrentUser();
+        if (currentUser == null && !StringUtils.isEmpty(userHash)) {
+            currentUser = userService.getUserByHash(userHash);
+        }
+        if (currentUser == null) {
+            RegistrationForm registrationForm = new RegistrationForm();
+            registrationForm.setName("anonymousUser" + new Random().nextInt(1000));
+            currentUser = userRegister.registerNewUser(registrationForm);
+            Cookie cookie = new Cookie("anonymousUser", currentUser.getHash());
+            cookie.setPath("/books");
+            response.addCookie(cookie);
+        }
 
         if (bookStatus != null && !StringUtils.isEmpty(bookStatus.getStatus()) && !StringUtils.isEmpty(bookStatus.getBooksIds())) {
             // Сохранение в БД
             for (String bookSlug : bookStatus.getBooksIds().split(",")) {
                 Book book = bookService.getBookBySlug(bookSlug);
-                resultResponse = userBooksService.changeBookStatus(bookStatus.getStatus(), book);
+                resultResponse = userBooksService.changeBookStatus(bookStatus.getStatus(), book, currentUser);
                 if (!resultResponse.getResult())
-                    break;
-            }
-
-            // Обработка куки
-            String cookieValue = null;
-            Cookie cookieCart = new Cookie("cartContents", null);
-            Cookie cookieKept = new Cookie("postponedContents", null);
-            cookieCart.setPath("/books");
-            cookieKept.setPath("/books");
-            switch (bookStatus.getStatus().toUpperCase()) {
-                case "UNLINK" :
-                    if (!StringUtils.isEmpty(postponedContents)) {
-                        cookieValue = postponedContents;
-                        for (String bookSlug : bookStatus.getBooksIds().split(",")) {
-                            cookieValue = deleteBookFromCookie(bookSlug, cookieValue);
-                        }
-                        cookieKept.setValue(cookieValue);
-                        response.addCookie(cookieKept);
-                    }
-                    if (!StringUtils.isEmpty(cartContents)) {
-                        cookieValue = cartContents;
-                        for (String bookSlug : bookStatus.getBooksIds().split(",")) {
-                            cookieValue = deleteBookFromCookie(bookSlug, cookieValue);
-                        }
-                        cookieCart.setValue(cookieValue);
-                        response.addCookie(cookieCart);
-                    }
-                    break;
-                case "CART" :
-                    cookieValue = cartContents;
-                    for (String bookSlug : bookStatus.getBooksIds().split(",")) {
-                        cookieValue = addBookToCookie(bookSlug, cookieValue);
-                    }
-                    cookieCart.setValue(cookieValue);
-                    response.addCookie(cookieCart);
-                    // При добавлении в корзину из отложенных удаляем книгу
-                    if (!StringUtils.isEmpty(postponedContents)) {
-                        cookieValue = postponedContents;
-                        for (String bookSlug : bookStatus.getBooksIds().split(",")) {
-                            cookieValue = deleteBookFromCookie(bookSlug, cookieValue);
-                        }
-                        cookieKept.setValue(cookieValue);
-                        response.addCookie(cookieKept);
-                    }
-                    break;
-                case "KEPT" :
-                    cookieValue = postponedContents;
-                    for (String bookSlug : bookStatus.getBooksIds().split(",")) {
-                        cookieValue = addBookToCookie(bookSlug, cookieValue);
-                    }
-                    cookieKept.setValue(cookieValue);
-                    response.addCookie(cookieKept);
-                    // При добавлении в отложенное из корзины удаляем книгу
-                    if (!StringUtils.isEmpty(cartContents)) {
-                        cookieValue = cartContents;
-                        for (String bookSlug : bookStatus.getBooksIds().split(",")) {
-                            cookieValue = deleteBookFromCookie(bookSlug, cookieValue);
-                        }
-                        cookieCart.setValue(cookieValue);
-                        response.addCookie(cookieCart);
-                    }
                     break;
             }
         }
@@ -200,7 +115,7 @@ public class BookshopCardController {
 
     @GetMapping("/payment")
     public RedirectView handlePayment() throws NoSuchAlgorithmException {
-        List<Book> booksFromCookiesSlug = bookService.getBooksBySlugs(getSlugFromString(null));
+        List<Book> booksFromCookiesSlug = bookService.getBooksBySlugs(null);
         String paymentUrl = paymentService.getPaymentUrl(booksFromCookiesSlug);
         return new RedirectView(paymentUrl);
     }

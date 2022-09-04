@@ -69,7 +69,7 @@ public class PaymentService {
                     transaction.setDescription("Покупка книги '" + book.getTitle() + "'");
 
                     // Сохранение книги пользователя
-                    result = userBooksService.changeBookStatus("PAID", book);
+                    result = userBooksService.changeBookStatus("PAID", book, user);
                     if (result.getResult()) {
                         transactionService.save(transaction);
                     } else {

@@ -48,6 +48,7 @@ public class BookstoreUserDetailsService implements UserDetailsService {
             newUser.setBalance(0F);
             newUser.setHash(customOAuth2User.getName());
             newUser.setRegTime(new Date());
+            newUser.addRole(userService.getUserRoleByName("REGISTER"));
             userService.save(newUser);
 
             if (!StringUtils.isEmpty(customOAuth2User.getEmail())) {

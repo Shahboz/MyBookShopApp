@@ -2210,7 +2210,11 @@ insert into book2tag (book_id, tag_id) values (633, 36);
 insert into book2tag (book_id, tag_id) values (216, 17);
 insert into book2tag (book_id, tag_id) values (216, 25);
 
-insert into users (id, balance, hash, name, reg_time) values (1,  0.0,   'default_user', 'root', now());
+insert into roles (id, name) values (1, 'ANONYMOUS');
+insert into roles (id, name) values (2, 'REGISTER');
+insert into roles (id, name) values (3, 'ADMIN');
+
+insert into users (id, balance, hash, name, reg_time, email, password) values (1,  0.0,   'admin_user', 'Admin', now(), 'admin@gmail.com', '$2a$10$SIgUyITQAItDwjlneBjgZuRLVco6dEU.DNFnxlMARs1is7EebRG0G');
 insert into users (id, balance, hash, name, reg_time) values (2,  79.41, 'b57e633c479fc5120d48b185ced1b6b03f71cb04', 'Dulcie McTrustey', '07/11/2021');
 insert into users (id, balance, hash, name, reg_time) values (3,  22.93, 'd13c4aabb826e302f12b5372c23e1a35a31932b8', 'Catlee Prattin', '21/08/2020');
 insert into users (id, balance, hash, name, reg_time) values (4,  2.89,  'ea3ffc577d4039e8545992b7bb5b27140e40fd93', 'Isidor Thor', '13/05/2020');

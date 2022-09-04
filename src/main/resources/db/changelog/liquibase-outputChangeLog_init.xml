@@ -485,4 +485,28 @@
         </createTable>
     </changeSet>
 
+    <changeSet id="final_part_2_task_3" author="SSafarov">
+        <createSequence sequenceName="role_id_seq" startValue="50" incrementBy="1" cycle="false"/>
+        <createTable tableName="roles">
+            <column name="id" type="BIGINT" defaultValueSequenceNext="role_id_seq">
+                <constraints primaryKey="true" primaryKeyName="roles_pkey"/>
+            </column>
+            <column name="name" type="VARCHAR2(255)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <createTable tableName="users_roles">
+            <column name="user_id" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="role_id" type="INT">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <addForeignKeyConstraint baseColumnNames="user_id" baseTableName="users_roles" constraintName="users_roles_fk1" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="users"/>
+        <addForeignKeyConstraint baseColumnNames="role_id" baseTableName="users_roles" constraintName="users_roles_fk2" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="roles"/>
+
+    </changeSet>
+
 </databaseChangeLog>

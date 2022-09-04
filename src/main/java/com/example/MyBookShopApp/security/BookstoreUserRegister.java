@@ -62,6 +62,9 @@ public class BookstoreUserRegister {
             // Обновим данные анонимного пользователя
             if (!StringUtils.isEmpty(user.getName()) && user.getName().contains("anonymousUser") && StringUtils.isEmpty(user.getPassword())) {
                 user.setName(registrationForm.getName());
+                if (!registrationForm.getName().contains("anonymousUser")) {
+                    user.addRole(userService.getUserRoleByName("REGISTER"));
+                }
                 user.setHash(encodePassword(registrationForm.getName()));
                 user.setEmail(registrationForm.getEmail());
                 user.setPassword(encodePassword(registrationForm.getPass()));

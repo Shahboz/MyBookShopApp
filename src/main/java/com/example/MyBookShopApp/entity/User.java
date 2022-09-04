@@ -5,7 +5,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 
 @Entity
@@ -36,6 +38,10 @@ public class User {
     @ApiModelProperty(value = "Password user. Temporary field")
     private String password;
 
+    @ManyToMany
+    @JoinTable(name = "users_roles", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
+    private List<Role> roles = new ArrayList<>();
+
     public User(Integer id, String hash, Date regTime, Float balance, String name, String email, String password) {
         this.id = id;
         this.hash = hash;
@@ -44,6 +50,19 @@ public class User {
         this.name = name;
         this.email = email;
         this.password = password;
+    }
+
+    public void addRole(Role role) {
+        if (!hasRole(role.getName()))
+            this.roles.add(role);
+    }
+
+    public boolean hasRole(String roleName) {
+        return roles.stream().anyMatch(r->r.getName().equals(roleName));
+    }
+
+    public void deleteRole(Role role) {
+        roles.removeIf(r -> r.getName().equals(role.getName()));
     }
 
 }
