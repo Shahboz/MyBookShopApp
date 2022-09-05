@@ -151,7 +151,8 @@ public class AuthUserController {
 
     @GetMapping("/my")
     public String handleMy() {
-        return "my";
+        User currentUser = (User) userRegister.getCurrentUser();
+        return currentUser.hasRole("ADMIN") ? "/pages/dashboard" : "my";
     }
 
     @GetMapping("/profile")

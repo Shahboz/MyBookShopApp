@@ -2210,10 +2210,6 @@ insert into book2tag (book_id, tag_id) values (633, 36);
 insert into book2tag (book_id, tag_id) values (216, 17);
 insert into book2tag (book_id, tag_id) values (216, 25);
 
-insert into roles (id, name) values (1, 'ANONYMOUS');
-insert into roles (id, name) values (2, 'REGISTER');
-insert into roles (id, name) values (3, 'ADMIN');
-
 insert into users (id, balance, hash, name, reg_time, email, password) values (1,  0.0,   'admin_user', 'Admin', now(), 'admin@gmail.com', '$2a$10$SIgUyITQAItDwjlneBjgZuRLVco6dEU.DNFnxlMARs1is7EebRG0G');
 insert into users (id, balance, hash, name, reg_time) values (2,  79.41, 'b57e633c479fc5120d48b185ced1b6b03f71cb04', 'Dulcie McTrustey', '07/11/2021');
 insert into users (id, balance, hash, name, reg_time) values (3,  22.93, 'd13c4aabb826e302f12b5372c23e1a35a31932b8', 'Catlee Prattin', '21/08/2020');
@@ -2239,6 +2235,12 @@ insert into users (id, balance, hash, name, reg_time) values (22, 90.56, 'ef4bcf
 insert into users (id, balance, hash, name, reg_time) values (23, 7.78,  '476d94b1cf24deeecf6f54956b511d636e94226a', 'Nataline Christer', '29/08/2020');
 insert into users (id, balance, hash, name, reg_time) values (24, 29.29, '239e757df0c4e2e509f574d05d0ed98c04d37651', 'Em Lear', '05/10/2021');
 insert into users (id, balance, hash, name, reg_time) values (25, 5.47,  '3facc95cff0f301723a4c1321e5a7f5177b82d80', 'Lynnet Gresly', '02/03/2021');
+
+insert into roles (id, name) values (1, 'ANONYMOUS');
+insert into roles (id, name) values (2, 'REGISTER');
+insert into roles (id, name) values (3, 'ADMIN');
+
+insert into users_roles(user_id, role_id) values (1, 3);
 
 insert into book_review (id, book_id, user_id, time, text) values (1,  919, 1,  '21/01/2021', 'Первая книга - сборник повестей и рассказов "Большой поток" - посвящена людям леспромхоза. Автор книг "Рассказы" (1954), "Неразменное счастье. Повести и рассказы" (1962). Наиболее известная его повесть "Девчата" (1961) переведена на пятнадцать языков. По написанному им же сценарию был поставлен одноименный фильм, до сих пор имеющий огромный успех.');
 insert into book_review (id, book_id, user_id, time, text) values (2,  919, 2,  '21/06/2021', 'Proin leo odio, porttitor id, consequat in, consequat ut, nulla. Sed accumsan felis. Ut at dolor quis odio consequat varius. Integer ac leo. Pellentesque ultrices mattis odio. Donec vitae nisi. Nam ultrices, libero non mattis pulvinar, nulla pede ullamcorper augue, a suscipit nulla elit ac nulla. Sed vel enim sit amet nunc viverra dapibus. Nulla suscipit ligula in lacus. Curabitur at ipsum ac tellus semper interdum.');

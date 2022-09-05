@@ -56,7 +56,7 @@ public class SmsService {
             mailMessage.setTo(userContact.getContact());
             mailMessage.setSubject("Bookstore email verification!");
             mailMessage.setText("Verification code is: " + userContact.getCode());
-            javaMailSender.send(mailMessage);
+            //javaMailSender.send(mailMessage);
         } else {
             // Send SMS code
             Twilio.init(accountSid, authToken);
