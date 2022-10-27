@@ -7,6 +7,7 @@ import com.example.MyBookShopApp.entity.User;
 import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import java.util.List;
 
 
 @Service
@@ -44,6 +45,10 @@ public class UserService {
 
     public Role getUserRoleByName(String roleName) {
         return roleRepository.findRoleByName(roleName);
+    }
+
+    public List<User> getRegisterUsers() {
+        return userRepository.findAll();
     }
 
 }

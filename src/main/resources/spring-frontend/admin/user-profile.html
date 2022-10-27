@@ -1,0 +1,281 @@
+<!--
+=========================================================
+* Material Dashboard 2 - v3.0.4
+=========================================================
+* Product Page: https://www.creative-tim.com/product/material-dashboard
+* Copyright 2022 Creative Tim (https://www.creative-tim.com)
+* Licensed under MIT (https://www.creative-tim.com/license)
+* Coded by Creative Tim
+=========================================================
+* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+-->
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/admin/head_fragment :: headFragment}"></head>
+
+<body class="g-sidenav-show  bg-gray-200">
+  <aside th:replace="~{fragments/admin/menubar_fragment :: menubarFragment('users')}"></aside>
+  <main class="main-content position-relative max-height-vh-100 h-100 border-radius-lg ">
+    <!-- Navbar -->
+    <nav th:replace="~{fragments/admin/navbar_fragment :: navbarFragment('Registered users')}"></nav>
+    <!-- End Navbar -->
+    <div class="container-fluid py-4">
+      <div class="row">
+        <div class="col-lg-8 mt-lg-0 mt-4">
+          <div class="card card-body" id="profile">
+            <div class="row justify-content-start align-items-center">
+              <div class="col-sm-auto col-4">
+                <div class="avatar avatar-xl position-relative">
+                  <img src="/assets/img/person.png" class="avatar avatar-sm me-3 border-radius-lg" alt="user1">
+                </div>
+              </div>
+              <div class="col-sm-auto col-8 my-auto">
+                <div class="h-100">
+                  <h5 class="mb-1 font-weight-bolder" th:text="${userDto.getUser().getName()}">Richard Davis</h5>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="card mt-4" id="basic-info">
+              <div class="card-header">
+                <h5>Basic Info</h5>
+              </div>
+              <div class="card-body pt-0">
+                <div class="row">
+                  <div class="col-6">
+                    <div class="input-group input-group-static">
+                      <label>ID</label>
+                      <input type="number" class="form-control" th:placeholder="${userDto.getUser().getId()}" disabled>
+                    </div>
+                  </div>
+                  <div class="col-6">
+                    <div class="input-group input-group-static">
+                      <label>Hash</label>
+                      <input type="text" class="form-control" th:placeholder="${userDto.getUser().getHash()}" disabled>
+                    </div>
+                  </div>
+                </div>
+                <div class="row mt-4">
+                  <div class="col-6">
+                    <div class="input-group input-group-static">
+                      <label>Username</label>
+                      <input type="text" class="form-control" th:placeholder="${userDto.getUser().getName()}" disabled>
+                    </div>
+                  </div>
+                  <div class="col-6">
+                    <div class="input-group input-group-static">
+                      <label>Login</label>
+                      <input type="text" class="form-control" th:placeholder="${userDto.getUser().getEmail()}" disabled>
+                    </div>
+                  </div>
+                </div>
+                <div class="row mt-4">
+                  <div class="col-6">
+                    <div class="input-group input-group-static">
+                      <label>Registration datetime</label>
+                      <input type="text" class="form-control" th:placeholder="${userDto.getUser().getRegTime().toLocaleString()}" disabled>
+                    </div>
+                  </div>
+                  <div class="col-6">
+                    <div class="input-group input-group-static">
+                      <label>Account balance</label>
+                      <input type="number" class="form-control" th:placeholder="${userDto.getUser().getBalance()}" disabled>
+                    </div>
+                  </div>
+                </div>
+                <div class="row mt-4">
+                  <div class="col-6">
+                    <div class="input-group input-group-static">
+                      <label>Email</label>
+                      <input type="email" class="form-control" th:placeholder="${userDto.getContactEmail()}" disabled>
+                    </div>
+                  </div>
+                  <div class="col-6">
+                    <div class="input-group input-group-static">
+                      <label>Phone number</label>
+                      <input type="number" class="form-control" th:placeholder="${userDto.getContactPhone()}" disabled>
+                    </div>
+                  </div>
+                </div>
+              </div>
+          </div>
+          <div class="card mt-4">
+            <div class="card-header">
+              <h5>Change Password</h5>
+            </div>
+            <div class="card-body pt-0">
+              <form method="post" th:action="'/admin/users/' + ${userDto.getUser().getHash()} + '/edit'">
+                <div class="input-group input-group-outline my-4 is-valid">
+                  <label class="form-label">New password</label>
+                  <input type="password" class="form-control" id="password" name="password">
+                </div>
+                <div class="input-group input-group-outline is-valid">
+                  <label class="form-label">Confirm New password</label>
+                  <input type="password" class="form-control" id="confirm" name="confirm">
+                </div>
+                <h5 class="mt-5">Password requirements</h5>
+                <p class="text-muted mb-2">
+                  Please follow this guide for a strong password:
+                </p>
+                <ul class="text-muted ps-4 mb-0 float-start">
+                  <li>
+                    <span class="text-sm">One special characters</span>
+                  </li>
+                  <li>
+                    <span class="text-sm">Min 6 characters</span>
+                  </li>
+                  <li>
+                    <span class="text-sm">One number (2 are recommended)</span>
+                  </li>
+                  <li>
+                    <span class="text-sm">Change it often</span>
+                  </li>
+                </ul>
+                <button type="submit" class="btn bg-gradient-success btn-sm float-end mt-6 mb-0">Update password</button>
+              </form>
+            </div>
+          </div>
+        </div>
+        <div class="col">
+          <div class="card h-100">
+            <div class="nav-wrapper position-relative end-0">
+              <ul class="nav nav-pills nav-fill p-1 flex-row" role="tablist">
+                <li class="nav-item" role="presentation">
+                  <a class="nav-link mb-0 px-0 py-1" data-bs-toggle="tab" href="#tab1" role="tab" aria-selected="false" tabindex="-1">
+                    <i class="material-icons text-lg position-relative">home</i>
+                    <span class="ms-1">Paid Books</span>
+                  </a>
+                </li>
+                <li class="nav-item" role="presentation">
+                  <a class="nav-link mb-0 px-0 py-1 active" data-bs-toggle="tab" href="#tab2" role="tab" aria-selected="true">
+                    <i class="material-icons text-lg position-relative">email</i>
+                    <span class="ms-1">Archive Books</span>
+                  </a>
+                </li>
+                <li class="nav-item" role="presentation">
+                  <a class="nav-link mb-0 px-0 py-1" data-bs-toggle="tab" href="#tab3" role="tab" aria-selected="false" tabindex="-1">
+                    <i class="material-icons text-lg position-relative">settings</i>
+                    <span class="ms-1">Reviews</span>
+                  </a>
+                </li>
+                <div class="moving-tab position-absolute nav-link" style="padding: 0px; transition: all 0.5s ease 0s; transform: translate3d(72px, 0px, 0px); width: 117px;"><a class="nav-link mb-0 px-0 py-1 active" data-bs-toggle="tab" href="#tab2" role="tab" aria-selected="true">-</a></div>
+              </ul>
+              <div class="tab-content card-header pb-0 p-3">
+                <div role="tabpanel" class="tab-pane" id="tab1">
+                  <h6  class="text-center" th:if="${#lists.isEmpty(userDto.getPaidBooksList())}">List of purchased books is empty</h6>
+                  <div class="card" th:if="${userDto.getPaidBooksList().size()} > 0">
+                    <div class="table-responsive">
+                      <table class="table align-items-center mb-0">
+                        <thead>
+                          <tr>
+                            <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Book</th>
+                            <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Discount price</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr th:each="book : ${userDto.getPaidBooksList()}">
+                            <td>
+                              <div class="d-flex px-2">
+                                <div>
+                                  <img class="avatar avatar-sm rounded-circle me-2" th:src="${book.getImage()}">
+                                </div>
+                                <div class="my-auto">
+                                  <h6 class="mb-0 text-xs" th:text="${#strings.length(book.getTitle())} > 20 ? ${#strings.substring(book.getTitle(), 0, 20)} + '...' : ${book.getTitle()}">Title</h6>
+                                </div>
+                              </div>
+                            </td>
+                            <td>
+                              <p class="text-xs font-weight-normal mb-0" th:text="'₽&nbsp;' + ${#numbers.formatInteger(book.getDiscountPrice(), 0, 'WHITESPACE')}">Discount Price</p>
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+                <div role="tabpanel" class="tab-pane active" id="tab2">
+                  <h6 class="text-center" th:if="${#lists.isEmpty(userDto.getArchivedBooksList())}">List of archived books is empty</h6>
+                  <div class="card" th:if="${userDto.getArchivedBooksList().size()} > 0">
+                    <div class="table-responsive">
+                      <table class="table align-items-center mb-0">
+                        <thead>
+                        <tr>
+                          <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Book</th>
+                          <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Discount price</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="book : ${userDto.getArchivedBooksList()}">
+                          <td>
+                            <div class="d-flex px-2">
+                              <div>
+                                <img class="avatar avatar-sm rounded-circle me-2" th:src="${book.getImage()}">
+                              </div>
+                              <div class="my-auto">
+                                <h6 class="mb-0 text-xs" th:text="${#strings.length(book.getTitle())} > 20 ? ${#strings.substring(book.getTitle(), 0, 20)} + '...' : ${book.getTitle()}">Title</h6>
+                              </div>
+                            </div>
+                          </td>
+                          <td>
+                            <p class="text-xs font-weight-normal mb-0" th:text="'₽&nbsp;' + ${#numbers.formatInteger(book.getDiscountPrice(), 0, 'WHITESPACE')}">Discount Price</p>
+                          </td>
+                        </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+                <div role="tabpanel" class="tab-pane" id="tab3">
+                  <h6 class="text-center" th:if="${#lists.isEmpty(userDto.getBookReviewList())}">No reviews added</h6>
+                  <div class="card" th:if="${userDto.getBookReviewList().size()} > 0">
+                    <div class="table-responsive">
+                      <table class="table align-items-center mb-0">
+                        <thead>
+                        <tr>
+                          <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Book</th>
+                          <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Rate</th>
+                          <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Liked</th>
+                          <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Disliked</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="bookReview : ${userDto.getBookReviewList()}">
+                          <td>
+                            <div class="d-flex px-2">
+                              <div>
+                                <img class="avatar avatar-sm rounded-circle me-2" th:src="${bookReview.getReview().getBook().getImage()}">
+                              </div>
+                              <div class="my-auto">
+                                <h6 class="mb-0 text-xs"
+                                    th:text="${#strings.length(bookReview.getReview().getBook().getTitle())} > 20 ? ${#strings.substring(bookReview.getReview().getBook().getTitle(), 0, 20)} + '...' : ${bookReview.getReview().getBook().getTitle()}">Title</h6>
+                              </div>
+                            </div>
+                          </td>
+                          <td>
+                            <p class="text-xs font-weight-normal mb-0" th:text="${bookReview.getRate().getValue()}">Rate</p>
+                          </td>
+                          <td>
+                            <p class="text-xs font-weight-normal mb-0" th:text="${bookReview.getLikedCount()}">Liked</p>
+                          </td>
+                          <td>
+                            <p class="text-xs font-weight-normal mb-0" th:text="${bookReview.getDislikedCount()}">Disliked</p>
+                          </td>
+                        </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <footer th:replace="~{fragments/admin/footer_fragment :: footerFragment}"></footer>
+    </div>
+  </main>
+  <div th:replace="~{fragments/admin/configurator :: configuratorFragment}"></div>
+  <th:block th:replace="~{fragments/admin/scripts :: scriptFragment}"></th:block>
+</body>
+
+</html>

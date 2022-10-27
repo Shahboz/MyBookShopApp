@@ -12,7 +12,6 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.util.*;
 
@@ -168,12 +167,6 @@ public class BooksController {
                               @ModelAttribute("bookFilesData") List<BookFileDto> bookFileDtoList) {
         userViewedBooksService.saveBookView(book);
         return "/books/slugmy";
-    }
-
-    @PostMapping("/{slug}/img/save")
-    public String saveBookImage(@RequestParam("file")MultipartFile file, @PathVariable("slug") String bookSlug) throws IOException {
-        bookService.saveBookImage(file, bookSlug);
-        return "redirect:/books/" + bookSlug;
     }
 
     @PostMapping(value = "/rateBook")

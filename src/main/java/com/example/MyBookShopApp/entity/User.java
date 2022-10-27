@@ -38,7 +38,7 @@ public class User {
     @ApiModelProperty(value = "Password user. Temporary field")
     private String password;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinTable(name = "users_roles", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
     private List<Role> roles = new ArrayList<>();
 
@@ -63,6 +63,10 @@ public class User {
 
     public void deleteRole(Role role) {
         roles.removeIf(r -> r.getName().equals(role.getName()));
+    }
+
+    public void setHash(String hash) {
+        this.hash = hash.replaceAll("[^a-zA-Z0-9]", "");
     }
 
 }

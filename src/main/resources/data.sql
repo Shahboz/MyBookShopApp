@@ -2020,6 +2020,11 @@ insert into book2author (id, sort_index, author_id, book_id) values (997, 997, 3
 insert into book2author (id, sort_index, author_id, book_id) values (998, 998, 12, 261);
 insert into book2author (id, sort_index, author_id, book_id) values (999, 999, 3, 386);
 insert into book2author (id, sort_index, author_id, book_id) values (1000, 1000, 6, 43);
+insert into book2author (id, sort_index, author_id, book_id) values (1001, 1, 5,  886);
+insert into book2author (id, sort_index, author_id, book_id) values (1002, 2, 10, 886);
+insert into book2author (id, sort_index, author_id, book_id) values (1003, 3, 15, 886);
+insert into book2author (id, sort_index, author_id, book_id) values (1004, 4, 18, 886);
+insert into book2author (id, sort_index, author_id, book_id) values (1005, 5, 20, 886);
 
 insert into genre (id, parent_id, slug, name) values (1,  null, 'Easy reading', 'Лёгкое чтение');
 insert into genre (id, parent_id, slug, name) values (2,  1,    'Fantastic', 'Фантастика');
@@ -2106,6 +2111,11 @@ insert into book2genre (id, book_id, genre_id) values (47, 764, 4);
 insert into book2genre (id, book_id, genre_id) values (48, 983, 18);
 insert into book2genre (id, book_id, genre_id) values (49, 408, 24);
 insert into book2genre (id, book_id, genre_id) values (50, 412, 19);
+insert into book2genre (id, book_id, genre_id) values (51, 886, 1);
+insert into book2genre (id, book_id, genre_id) values (52, 886, 11);
+insert into book2genre (id, book_id, genre_id) values (53, 886, 16);
+insert into book2genre (id, book_id, genre_id) values (54, 886, 25);
+insert into book2genre (id, book_id, genre_id) values (55, 886, 30);
 
 insert into tags (id, name, slug) values (1, 'Drama', 'Drama');
 insert into tags (id, name, slug) values (2, 'Action', 'Action');
@@ -2209,6 +2219,10 @@ insert into book2tag (book_id, tag_id) values (991, 32);
 insert into book2tag (book_id, tag_id) values (633, 36);
 insert into book2tag (book_id, tag_id) values (216, 17);
 insert into book2tag (book_id, tag_id) values (216, 25);
+insert into book2tag (book_id, tag_id) values (886, 10);
+insert into book2tag (book_id, tag_id) values (886, 25);
+insert into book2tag (book_id, tag_id) values (886, 40);
+insert into book2tag (book_id, tag_id) values (886, 50);
 
 insert into users (id, balance, hash, name, reg_time, email, password) values (1,  0.0,   'admin_user', 'Admin', now(), 'admin@gmail.com', '$2a$10$SIgUyITQAItDwjlneBjgZuRLVco6dEU.DNFnxlMARs1is7EebRG0G');
 insert into users (id, balance, hash, name, reg_time) values (2,  79.41, 'b57e633c479fc5120d48b185ced1b6b03f71cb04', 'Dulcie McTrustey', '07/11/2021');

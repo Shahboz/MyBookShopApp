@@ -1,0 +1,30 @@
+<!--
+=========================================================
+* Material Dashboard 2 - v3.0.4
+=========================================================
+* Product Page: https://www.creative-tim.com/product/material-dashboard
+* Copyright 2022 Creative Tim (https://www.creative-tim.com)
+* Licensed under MIT (https://www.creative-tim.com/license)
+* Coded by Creative Tim
+=========================================================
+* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+-->
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/admin/head_fragment :: headFragment}"></head>
+
+<body class="g-sidenav-show  bg-gray-200">
+  <aside th:replace="~{fragments/admin/menubar_fragment :: menubarFragment('template')}"></aside>
+  <main class="main-content position-relative max-height-vh-100 h-100 border-radius-lg ">
+    <!-- Navbar -->
+    <nav th:replace="~{fragments/admin/navbar_fragment :: navbarFragment('Template')}"></nav>
+    <!-- End Navbar -->
+    <div class="container-fluid py-4">
+      <footer th:replace="~{fragments/admin/footer_fragment :: footerFragment}"></footer>
+    </div>
+  </main>
+  <div th:replace="~{fragments/admin/configurator :: configuratorFragment}"></div>
+  <th:block th:replace="~{fragments/admin/scripts :: scriptFragment}"></th:block>
+</body>
+
+</html>

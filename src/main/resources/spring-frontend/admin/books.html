@@ -1,0 +1,176 @@
+<!--
+=========================================================
+* Material Dashboard 2 - v3.0.4
+=========================================================
+* Product Page: https://www.creative-tim.com/product/material-dashboard
+* Copyright 2022 Creative Tim (https://www.creative-tim.com)
+* Licensed under MIT (https://www.creative-tim.com/license)
+* Coded by Creative Tim
+=========================================================
+* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+-->
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/admin/head_fragment :: headFragment}"></head>
+
+<body class="g-sidenav-show  bg-gray-200">
+  <aside th:replace="~{fragments/admin/menubar_fragment :: menubarFragment('books')}"></aside>
+  <main class="main-content position-relative max-height-vh-100 h-100 border-radius-lg ">
+    <!-- Navbar -->
+    <nav th:replace="~{fragments/admin/navbar_fragment :: navbarFragment('Books')}"></nav>
+    <!-- End Navbar -->
+    <div class="container-fluid py-4">
+      <div class="row">
+        <div class="col-12">
+          <div class="card my-4">
+            <div class="card-header pb-0 p-3">
+              <div class="row">
+                <div class="col-lg-11 d-flex align-items-center">
+                  <h6 class="mb-0">Books</h6>
+                </div>
+                <div class="col-lg-1 text-start">
+                  <div class="row">
+                    <button type="button" class="btn btn-block bg-gradient-success mb-3" data-bs-toggle="modal" data-bs-target="#modal-default">
+                      <i class="material-icons text-sm">add</i>&nbsp;Add Book</button>
+                    <div class="col-md-4">
+                      <div class="modal fade" id="modal-default" tabindex="-1" role="dialog" aria-labelledby="modal-default" aria-hidden="true">
+                        <div class="modal-dialog modal- modal-dialog-centered modal-" role="document">
+                          <div class="modal-content">
+                            <div class="card-header pb-0 text-center">
+                              <h5 class="">Adding a new book</h5>
+                            </div>
+                            <div class="card-body">
+                              <form method="post" th:object="${bookInfoDto}" th:action="@{/admin/books/add}">
+                                <div class="input-group input-group-static is-valid mb-4">
+                                  <label>Books Title</label>
+                                  <input type="text" class="form-control" required th:field="*{title}">
+                                </div>
+                                <div class="input-group input-group-static is-valid my-3">
+                                  <label>Publication Date</label>
+                                  <input type="datetime-local" class="form-control" required th:field="*{pubDate}">
+                                </div>
+                                <div class="input-group input-group-static is-valid my-3">
+                                  <label>Image</label>
+                                  <input type="url" class="form-control" th:field="*{image}">
+                                </div>
+                                <div class="input-group input-group-static is-valid my-3">
+                                  <label>Price</label>
+                                  <input type="number" class="form-control" min="1" required th:field="*{price}">
+                                </div>
+                                <div class="input-group input-group-static is-valid my-3">
+                                  <label>Discount, %</label>
+                                  <input type="number" class="form-control" min="0" max="100" required th:field="*{discount}">
+                                </div>
+                                <div class="form-check">
+                                  <input class="form-check-input" type="checkbox" value="" checked="" th:field="*{isBestseller}">
+                                  <label class="custom-control-label">Is Bestseller</label>
+                                </div>
+                                <div class="input-group input-group-dynamic is-valid">
+                                  <textarea class="form-control" rows="2" placeholder="Description of books" spellcheck="false" th:field="*{description}"></textarea>
+                                </div>
+                                <div class="modal-footer text-center">
+                                  <button type="submit" class="btn bg-gradient-success">Add</button>
+                                  <button type="button" class="btn btn-link bg-gradient-secondary" data-bs-dismiss="modal">Cancel</button>
+                                </div>
+                              </form>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="card-body px-0 pb-2">
+              <div class="table-responsive p-0">
+                <table class="table align-items-center mb-0">
+                  <thead>
+                    <tr>
+                      <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Title</th>
+                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Publication date</th>
+                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Price</th>
+                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Discount price</th>
+                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Bestseller</th>
+                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Description</th>
+                      <th class="text-secondary opacity-7"><i class="fa fa-cog fixed-plugin-button-nav cursor-pointer"></i></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr th:each="book : ${booksList}">
+                      <td>
+                        <div class="d-flex px-2 py-1">
+                          <div>
+                            <img th:src="${book.getImage()}" class="avatar avatar-sm me-3 border-radius-lg" alt="user1">
+                          </div>
+                          <div class="d-flex flex-column justify-content-center">
+                            <h6 class="mb-0 text-sm" th:text="${#strings.length(book.getTitle())} > 50 ? ${#strings.substring(book.getTitle(), 0, 50)} + '...' : ${book.getTitle()}">John Michael</h6>
+                          </div>
+                        </div>
+                      </td>
+                      <td class="align-middle text-center">
+                        <span class="text-secondary text-xs font-weight-bold" th:text="${book.getPubDate()}">23/04/18</span>
+                      </td>
+                      <td class="align-middle text-center">
+                        <span class="text-secondary text-xs font-weight-bold" th:text="'₽' + ${#numbers.formatInteger(book.getPrice(), 0, 'WHITESPACE')}">230418</span>
+                      </td>
+                      <td class="align-middle text-center">
+                        <p class="text-xs font-weight-bold mb-0" th:text="'₽' + ${#numbers.formatInteger(book.calcDiscountPrice(), 0, 'WHITESPACE')}">Manager</p>
+                        <p class="text-xs text-secondary mb-0" th:if="${book.getDiscount() } > 0" th:text="${book.getDiscount()} + '%'">Organization</p>
+                      </td>
+                      <td class="align-middle text-center text-sm">
+                        <span th:class="'badge badge-sm bg-gradient-' + (${book.getIsBestseller()} ? 'success' : 'secondary')"
+                              th:text="${book.getIsBestseller()} ? 'Yes' : 'No'">Online</span>
+                      </td>
+                      <td class="my-auto">
+                        <p class="text-sm" th:text="${#strings.length(book.getDescription())} > 50 ? ${#strings.substring(book.getDescription(), 0, 50)} + '...' : ${book.getDescription()}">Organization</p>
+                      </td>
+                      <td class="align-content-lg-start">
+                        <div class="dropdown float-start">
+                          <a class="cursor-pointer" id="dropdownTable" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fa fa-ellipsis-v text-secondary"></i>
+                          </a>
+                          <ul class="dropdown-menu px-1 py-3 ms-sm-n4 ms-n5" aria-labelledby="dropdownTable">
+                            <li><a class="dropdown-item border-radius-md" th:href="@{'/books/' + ${book.getSlug()}}">View</a></li>
+                            <li><a class="dropdown-item border-radius-md" th:href="@{'/admin/books/' + ${book.getSlug()}}">Edit</a></li>
+                          </ul>
+                        </div>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+                <nav aria-label="Page navigation example">
+                  <ul class="pagination justify-content-center" id="pagination">
+                    <li id="pageItemPrev" th:class="${activePage < 3} ? 'page-item disabled' : 'page-item'">
+                      <a class="page-link" href="javascript:prevPageClick();" tabindex="-1">
+                        <span class="material-icons">keyboard_arrow_left</span>
+                        <span class="sr-only">Previous</span>
+                      </a>
+                    </li>
+                    <li th:each="i : ${#numbers.sequence(1, countPage)}"
+                        th:class="'page-item' + (${i == activePage} ? ' active' :
+                          (${T(Math).abs(i - activePage) == 1 or (activePage == 1 and i - activePage == 2) or (activePage == countPage and countPage - i == 2)} ? '' : ' visually-hidden'))">
+                      <a class="page-link" th:href="@{'/admin/books?page=' + ${i}}" th:text="${i}">1</a>
+                    </li>
+                    <li id="pageItemNext" th:class="${countPage - activePage} < 2 ? 'page-item disabled' : 'page-item'" th:attr="data-max=${countPage}">
+                      <a class="page-link" href="javascript:nextPageClick();" tabindex="0">
+                        <span class="material-icons">keyboard_arrow_right</span>
+                        <span class="sr-only">Next</span>
+                      </a>
+                    </li>
+                  </ul>
+                </nav>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <footer th:replace="~{fragments/admin/footer_fragment :: footerFragment}"></footer>
+    </div>
+  </main>
+  <div th:replace="~{fragments/admin/configurator :: configuratorFragment}"></div>
+  <th:block th:replace="~{fragments/admin/scripts :: scriptFragment}"></th:block>
+  <script src="/assets/js/PaginationScript.js"></script>
+</body>
+
+</html>

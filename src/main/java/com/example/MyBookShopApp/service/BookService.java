@@ -1,5 +1,6 @@
 package com.example.MyBookShopApp.service;
 
+import com.example.MyBookShopApp.dto.BookInfoDto;
 import com.example.MyBookShopApp.repository.BookRepository;
 import com.example.MyBookShopApp.entity.*;
 import com.example.MyBookShopApp.entity.google.api.books.Item;
@@ -20,6 +21,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -143,6 +145,10 @@ public class BookService {
         return bookRepository.findBookById(bookId);
     }
 
+    public Integer getCountBooks() {
+        return Math.toIntExact(bookRepository.count());
+    }
+
     public Integer getBookCountByTitle(String bookSlug) {
         return bookRepository.countByTitleContaining(bookSlug);
     }
@@ -191,6 +197,72 @@ public class BookService {
             }
         }
         return bookFileDtoList;
+    }
+
+    public BookInfoDto getBookInfoDto(String bookSlug) throws IOException {
+        BookInfoDto bookInfoDto = null;
+        Book book = bookRepository.findBookBySlugEquals(bookSlug);
+        if (book != null) {
+            bookInfoDto = new BookInfoDto(book);
+            bookInfoDto.setGenreList(book.getGenresList());
+            bookInfoDto.setTagList(book.getTagsList());
+            bookInfoDto.setBookFileDtoList(getBookFilesData(bookSlug));
+        }
+        return bookInfoDto;
+    }
+
+    public void saveBook(BookInfoDto bookInfoDto) throws ParseException {
+        if (bookInfoDto != null) {
+            Boolean isChange = false;
+            Book book = bookRepository.findBookBySlugEquals(bookInfoDto.getSlug());
+            if (book == null) {
+                Book newBook = new Book();
+                newBook.setTitle(bookInfoDto.getTitle());
+                newBook.setSlug(bookInfoDto.getTitle().replaceAll("[^a-zA-Z0-9]", ""));
+                newBook.setPubDate(BookInfoDto.parseDate(bookInfoDto.getPubDate()));
+                newBook.setPrice(bookInfoDto.getPrice());
+                newBook.setDiscount(bookInfoDto.getDiscount());
+                newBook.setImage(bookInfoDto.getImage());
+                newBook.setDescription(bookInfoDto.getDescription());
+                newBook.setIsBestseller(bookInfoDto.getIsBestseller() ? 1 : 0);
+                bookRepository.save(newBook);
+            } else {
+                if (!StringUtils.isEmpty(bookInfoDto.getTitle()) && !book.getTitle().equals(bookInfoDto.getTitle())) {
+                    isChange = true;
+                    book.setTitle(bookInfoDto.getTitle());
+                }
+                if (!StringUtils.isEmpty(bookInfoDto.getPubDate())) {
+                    Date newPubDate = BookInfoDto.parseDate(bookInfoDto.getPubDate());
+                    if (!book.getPubDate().equals(newPubDate)) {
+                        isChange = true;
+                        book.setPubDate(newPubDate);
+                    }
+                }
+                if (!StringUtils.isEmpty(bookInfoDto.getDescription()) && !book.getDescription().equals(bookInfoDto.getDescription())) {
+                    isChange = true;
+                    book.setDescription(bookInfoDto.getDescription());
+                }
+                if (bookInfoDto.getPrice() > 0 && book.getPrice().equals(bookInfoDto.getPrice())) {
+                    isChange = true;
+                    book.setPrice(bookInfoDto.getPrice());
+                }
+                if (bookInfoDto.getDiscount() >= 0 && !book.getDiscount().equals(bookInfoDto.getDiscount())) {
+                    isChange = true;
+                    book.setDiscount(bookInfoDto.getDiscount());
+                }
+                if (!book.getIsBestseller().equals(bookInfoDto.getIsBestseller())) {
+                    isChange = true;
+                    book.setIsBestseller(bookInfoDto.getIsBestseller() ? 1 : 0);
+                }
+                if (isChange) {
+                    bookRepository.save(book);
+                }
+            }
+        }
+    }
+
+    public void deleteBook(Book book) {
+        bookRepository.delete(book);
     }
 
     @Value("${google.books.api.key}")

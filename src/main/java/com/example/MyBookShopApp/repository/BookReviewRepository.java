@@ -9,6 +9,8 @@ public interface BookReviewRepository extends JpaRepository<BookReview, Integer>
 
     List<BookReview> findBookReviewsByBookSlug(String bookSlug);
 
+    List<BookReview> findBookReviewsByUserHash(String userHash);
+
     BookReview findBookReviewByBookIdAndUserId(Integer bookId, Integer userId);
 
     BookReview findBookReviewById(Integer reviewId);

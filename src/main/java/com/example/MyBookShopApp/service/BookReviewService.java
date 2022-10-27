@@ -35,6 +35,30 @@ public class BookReviewService {
         this.bookReviewLikeService = bookReviewLikeService;
     }
 
+    private List<BookReviewDto> getBookReviewDtos(List<BookReview> bookReviews) {
+        List<BookReviewDto> reviewDtoList = new ArrayList<>();
+        for (BookReview review : bookReviews) {
+            BookReviewDto reviewDto = new BookReviewDto();
+            reviewDto.setReview(review);
+            reviewDto.setRate(bookRateService.getUserBookRate(review.getBook().getId(), review.getUser().getId()));
+            reviewDto.setLikedCount(bookReviewLikeService.getCountReviewByValue(review.getId(), 1));
+            reviewDto.setDislikedCount(bookReviewLikeService.getCountReviewByValue(review.getId(), -1));
+            reviewDtoList.add(reviewDto);
+        }
+        Collections.sort(reviewDtoList, (r1, r2) -> (r2.getLikedCount() - r2.getDislikedCount()) - (r1.getLikedCount() - r1.getDislikedCount()));
+        return reviewDtoList;
+    }
+
+    public BookReview getBookReviewById(Integer reviewId) {
+        return bookReviewRepository.findBookReviewById(reviewId);
+    }
+
+    public void deleteBookReview(BookReview bookReview) {
+        if (bookReview != null) {
+            bookReviewRepository.delete(bookReview);
+        }
+    }
+
     public ResultResponse saveBookReview(Book book, String reviewText) {
         ResultResponse result = new ResultResponse();
         User currentUser = (User) userRegister.getCurrentUser();
@@ -66,20 +90,11 @@ public class BookReviewService {
     }
 
     public List<BookReviewDto> getBookReviewData(String bookSlug) {
-        if (bookSlug == null)
-            return null;
-        List<BookReviewDto> reviewDtoList = new ArrayList<>();
-        List<BookReview> reviewList = bookReviewRepository.findBookReviewsByBookSlug(bookSlug);
-        for (BookReview review : reviewList) {
-            BookReviewDto reviewDto = new BookReviewDto();
-            reviewDto.setReview(review);
-            reviewDto.setRate(bookRateService.getUserBookRate(review.getBook().getId(), review.getUser().getId()));
-            reviewDto.setLikedCount(bookReviewLikeService.getCountReviewByValue(review.getId(), 1));
-            reviewDto.setDislikedCount(bookReviewLikeService.getCountReviewByValue(review.getId(), -1));
-            reviewDtoList.add(reviewDto);
-        }
-        Collections.sort(reviewDtoList, (r1, r2) -> (r2.getLikedCount() - r2.getDislikedCount()) - (r1.getLikedCount() - r1.getDislikedCount()));
-        return reviewDtoList;
+        return StringUtils.isEmpty(bookSlug) ? null : getBookReviewDtos(bookReviewRepository.findBookReviewsByBookSlug(bookSlug));
+    }
+
+    public List<BookReviewDto> getUserBookReviewData(String userHash) {
+        return StringUtils.isEmpty(userHash) ? null : getBookReviewDtos(bookReviewRepository.findBookReviewsByUserHash(userHash));
     }
 
     public ResultResponse bookReviewLiked(BookReviewData bookReviewData) {

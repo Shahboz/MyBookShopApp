@@ -1,0 +1,88 @@
+<!--
+=========================================================
+* Material Dashboard 2 - v3.0.4
+=========================================================
+* Product Page: https://www.creative-tim.com/product/material-dashboard
+* Copyright 2022 Creative Tim (https://www.creative-tim.com)
+* Licensed under MIT (https://www.creative-tim.com/license)
+* Coded by Creative Tim
+=========================================================
+* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+-->
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/admin/head_fragment :: headFragment}"></head>
+
+<body class="g-sidenav-show  bg-gray-200">
+  <aside th:replace="~{fragments/admin/menubar_fragment :: menubarFragment('authors')}"></aside>
+  <main class="main-content position-relative max-height-vh-100 h-100 border-radius-lg ">
+    <!-- Navbar -->
+    <nav th:replace="~{fragments/admin/navbar_fragment :: navbarFragment('Authors')}"></nav>
+    <!-- End Navbar -->
+    <div class="container-fluid py-4">
+      <div class="row">
+        <div class="col-12">
+          <div class="card my-4">
+            <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+              <div class="bg-gradient-success shadow-primary border-radius-lg pt-4 pb-3">
+                <h6 class="text-white text-capitalize ps-3">Authors</h6>
+              </div>
+            </div>
+            <div class="card-body px-0 pb-2">
+              <div class="table-responsive p-0">
+                <table class="table align-items-center justify-content-center mb-0">
+                  <thead>
+                  <tr>
+                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Name</th>
+                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Books</th>
+                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Biography</th>
+                    <th class="text-secondary opacity-7"><i class="fa fa-cog fixed-plugin-button-nav cursor-pointer"></i></th>
+                  </tr>
+                  </thead>
+                  <tbody>
+                  <tr th:each="author : ${authorList}">
+                    <td>
+                      <div class="d-flex px-2">
+                        <div>
+                          <img th:src="${author.getPhoto()}" class="avatar avatar-sm rounded-circle me-2" alt="spotify">
+                        </div>
+                        <div class="my-auto">
+                          <h6 class="mb-0 text-sm" th:text="${author.getName()}">Asana</h6>
+                        </div>
+                      </div>
+                    </td>
+                    <td>
+                      <p class="text-sm font-weight-bold mb-0" th:text="${#numbers.formatInteger(author.getBooks().size(), 0, 'WHITESPACE')}">2,500</p>
+                    </td>
+                    <td>
+                      <p class="text-sm font-weight-bold mb-0"
+                         th:text="${#strings.length(author.getDescription())} > 100 ? ${#strings.substring(author.getDescription(), 0, 100)} + '...' : ${author.getDescription()}">2,500
+                      </p>
+                    </td>
+                    <td class="align-content-lg-start">
+                      <div class="dropdown float-start">
+                        <a class="cursor-pointer" id="dropdownTable" data-bs-toggle="dropdown" aria-expanded="false">
+                          <i class="fa fa-ellipsis-v text-secondary"></i>
+                        </a>
+                        <ul class="dropdown-menu px-1 py-3 ms-sm-n4 ms-n5" aria-labelledby="dropdownTable">
+                          <li><a class="dropdown-item border-radius-md" th:href="@{'/authors/' + ${author.getSlug()}}">View</a></li>
+                          <li><a class="dropdown-item border-radius-md" th:href="@{'/admin/authors/' + ${author.getSlug()}}">Edit</a></li>
+                        </ul>
+                      </div>
+                    </td>
+                  </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <footer th:replace="~{fragments/admin/footer_fragment :: footerFragment}"></footer>
+    </div>
+  </main>
+  <div th:replace="~{fragments/admin/configurator :: configuratorFragment}"></div>
+  <th:block th:replace="~{fragments/admin/scripts :: scriptFragment}"></th:block>
+</body>
+
+</html>

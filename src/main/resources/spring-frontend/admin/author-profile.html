@@ -1,0 +1,131 @@
+<!--
+=========================================================
+* Material Dashboard 2 - v3.0.4
+=========================================================
+* Product Page: https://www.creative-tim.com/product/material-dashboard
+* Copyright 2022 Creative Tim (https://www.creative-tim.com)
+* Licensed under MIT (https://www.creative-tim.com/license)
+* Coded by Creative Tim
+=========================================================
+* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+-->
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/admin/head_fragment :: headFragment}"></head>
+
+<body class="g-sidenav-show  bg-gray-200">
+  <aside th:replace="~{fragments/admin/menubar_fragment :: menubarFragment('authors')}"></aside>
+  <main class="main-content position-relative max-height-vh-100 h-100 border-radius-lg ">
+    <!-- Navbar -->
+    <nav th:replace="~{fragments/admin/navbar_fragment :: navbarFragment('Book')}"></nav>
+    <!-- End Navbar -->
+    <div class="container-fluid py-4">
+      <div class="row">
+        <div class="col-lg-8 mt-lg-0 mt-4">
+          <div class="card card-body" id="profile">
+            <div class="row justify-content-start align-items-center">
+              <div class="col-sm-auto col-4">
+                <div class="avatar avatar-xl position-relative">
+                  <img th:src="${author.getPhoto()}" alt="bruce" class="w-100 rounded-circle shadow-sm">
+                </div>
+              </div>
+              <div class="col-sm-auto col-8 my-auto">
+                <div class="h-100">
+                  <h5 class="mb-1 font-weight-bolder" th:text="${author.getName()}">Richard Davis</h5>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="card mt-4" id="basic-info">
+              <div class="card-header">
+                <h5>Profile Information</h5>
+              </div>
+              <div class="card-body pt-0">
+                <form method="post" th:action="@{/admin/authors/edit}" th:object="${author}">
+                  <input type="hidden" placeholder="Author slug" th:field="*{slug}">
+                  <div class="input-group input-group-static is-valid">
+                    <label>Name</label>
+                    <input type="text" class="form-control" placeholder="Author name" th:field="*{name}" required>
+                  </div>
+                  <div class="row mt-4">
+                    <div class="col">
+                      <div class="input-group input-group-dynamic is-valid">
+                        <textarea class="form-control" rows="18" placeholder="Biography of author" spellcheck="false" th:field="*{description}" required>Description</textarea>
+                      </div>
+                    </div>
+                  </div>
+                  <button type="submit" class="col-lg-6 btn btn-block bg-gradient-success btn-sm float-end mt-6">
+                    <i class="material-icons text-sm">save</i>&nbsp;Save</button>
+                </form>
+              </div>
+          </div>
+        </div>
+        <div class="col">
+          <div class="card h-100">
+            <div class="card-header pb-0 p-3">
+              <div class="row">
+                <div class="col-lg-6 d-flex align-items-center">
+                  <h6 class="mb-0">List of Books</h6>
+                </div>
+                <div class="col-lg-6 text-end" th:if="${author.getBooks().size() > 10}">
+                  <button class="btn btn-block bg-gradient-success btn-sm" data-bs-toggle="modal" data-bs-target="#modal-author-books">View All</button>
+                  <div class="col-md-4">
+                    <div class="modal fade" id="modal-author-books" tabindex="-1" role="dialog" aria-labelledby="modal-default" aria-hidden="true">
+                      <div class="modal-dialog modal- modal-dialog-centered modal-" role="document">
+                        <div class="modal-content">
+                          <div class="card-header pb-0 text-center">
+                            <h5 class="">List of Books</h5>
+                          </div>
+                          <div class="card-body">
+                            <table class="table align-items-center mb-0">
+                              <tbody>
+                              <tr>
+                                <th scope="row" class="align-middle text-start">#</th>
+                                <th class="align-middle text-start">Title</th>
+                                <th class="align-middle text-start">Price</th>
+                                <th class="align-middle text-start">Discount price</th>
+                              </tr>
+                              <tr th:each="authorBook, iStat : ${author.getBooks()}">
+                                <th scope="row" class="align-middle text-start" th:text="${iStat.index + 1}">1</th>
+                                <td class="align-middle text-start"
+                                    th:text="${#strings.length(authorBook.getTitle())} > 25 ? ${#strings.substring(authorBook.getTitle(), 0, 25)} + '...' : ${authorBook.getTitle()}">Title</td>
+                                <td class="align-middle text-start" th:text="'₽&nbsp;' + ${#numbers.formatInteger(authorBook.getPrice(), 0, 'WHITESPACE')}">Price</td>
+                                <td class="align-middle text-start" th:text="'₽&nbsp;' + ${#numbers.formatInteger(authorBook.getDiscountPrice(), 0, 'WHITESPACE')}">Discount price</td>
+                              </tr>
+                              </tbody>
+                            </table>
+                            <div class="modal-footer text-center">
+                              <button type="button" class="btn btn-link bg-gradient-secondary" data-bs-dismiss="modal">Close</button>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="card-body p-3 pb-0">
+              <table class="table align-items-center mb-0">
+                <tbody>
+                  <tr th:each="authorBook, iStat : ${author.getBooks()}" th:if="${iStat.index} < 15">
+                    <th scope="row" class="align-middle text-start" th:text="${iStat.index + 1}">1</th>
+                    <td class="align-middle text-start"
+                        th:text="${#strings.length(authorBook.getTitle())} > 20 ? ${#strings.substring(authorBook.getTitle(), 0, 20)} + '...' : ${authorBook.getTitle()}">Mark</td>
+                    <td class="align-middle text-start" th:text="'₽&nbsp;' + ${#numbers.formatInteger(authorBook.getPrice(), 0, 'WHITESPACE')}">Otto</td>
+                    <td class="align-middle text-start" th:text="'₽&nbsp;' + ${#numbers.formatInteger(authorBook.getDiscountPrice(), 0, 'WHITESPACE')}">Otto</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+      <footer th:replace="~{fragments/admin/footer_fragment :: footerFragment}"></footer>
+    </div>
+  </main>
+  <div th:replace="~{fragments/admin/configurator :: configuratorFragment}"></div>
+  <th:block th:replace="~{fragments/admin/scripts :: scriptFragment}"></th:block>
+</body>
+
+</html>

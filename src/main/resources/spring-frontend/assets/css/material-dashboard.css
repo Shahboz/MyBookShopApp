@@ -6515,7 +6515,7 @@ fieldset:disabled .btn {
 }
 
 .modal-footer {
-  display: flex;
+  display: block;
   flex-shrink: 0;
   flex-wrap: wrap;
   align-items: center;

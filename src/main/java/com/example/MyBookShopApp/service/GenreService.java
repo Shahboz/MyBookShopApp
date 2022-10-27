@@ -39,4 +39,8 @@ public class GenreService {
         return genreRepository.findGenreBySlug(genreSlug);
     }
 
+    public Integer getCountGenres() {
+        return Math.toIntExact(genreRepository.count());
+    }
+
 }

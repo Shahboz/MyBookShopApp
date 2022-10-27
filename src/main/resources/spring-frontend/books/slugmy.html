@@ -40,12 +40,9 @@
         <div class="Product">
           <div class="ProductCard">
             <div class="ProductCard-look">
-              <form id="imgForm" method="post" enctype="multipart/form-data" action="#" th:action="'/books/' + ${book.getSlug()} + '/img/save'">
-                <div class="ProductCard-photo" id="uploadButton">
-                  <img th:src="${book.getImage()}" src="/assets/img/content/main/card.jpg" alt="card.jpg"/>
-                </div>
-                <input type="bookFile" name="bookFile" id="dialog" style="display: none" accept="image/*">
-              </form>
+              <div class="ProductCard-photo">
+                <img th:src="${book.getImage()}" src="/assets/img/content/main/card.jpg" alt="card.jpg"/>
+              </div>
             </div>
             <div class="ProductCard-desc">
               <div class="ProductCard-header">
@@ -202,14 +199,14 @@
                 </div>
                 <div id="myPopup">
                   <p>Ссылки для скачивания</p>
-                  <table th:if="${!isLimitDownloadExceeded}" border="0">
+                  <table th:if="${!isLimitDownloadExceeded and !isAnonymousUser}" border="0">
                     <tr th:each="bookFile : ${bookFilesData}">
                       <td th:text="${bookFile.getBookFile().getType().getName()}"></td>
                       <td th:text="${bookFile.getBookFile().getType().getDescription()}"></td>
                       <td th:text="${bookFile.getFileSize()} + ' КБ'"></td>
                       <td>
                         <button type="button" class="btn_info"
-                                th:onclick="'window.location.href = \''+@{'/books/download/' + ${bookFile.getFile().getHash()}}+'\''"
+                                th:onclick="'window.location.href = \''+@{'/books/download/' + ${bookFile.getBookFile().getHash()}}+'\''"
                                 th:text="#{button.download}"></button>
                       </td>
                     </tr>
@@ -318,6 +315,5 @@
   </div>
   <footer th:replace="~{fragments/footer_fragment :: footFragment}"></footer>
   <script src="/assets/plg/jQuery/jquery-3.5.1.min.js"></script>
-  <script src="/assets/js/UploadNewBookImageScript.js"></script>
   <script src="/assets/js/DownloadBookWindowScript.js"></script>
 </body></html>

@@ -54,6 +54,10 @@ public class UserBooksService {
         return user == null ? new ArrayList<>() : userBooksRepository.findUserBooksByUserBookType(user.getId(), bookTypeCode);
     }
 
+    public Integer getCountBooks(String bookSlug, String bookTypeCode) {
+        return userBooksRepository.countUserBookTypeByBookSlug(bookSlug, bookTypeCode);
+    }
+
     public ResultResponse changeBookStatus(String status, Book book, User user) {
         ResultResponse result = new ResultResponse();
 
