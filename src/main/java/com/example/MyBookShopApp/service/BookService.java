@@ -7,6 +7,7 @@ import com.example.MyBookShopApp.entity.google.api.books.Item;
 import com.example.MyBookShopApp.entity.google.api.books.Root;
 import com.example.MyBookShopApp.exceptions.BookstoreApiWrongParameterException;
 import com.example.MyBookShopApp.security.BookstoreUserRegister;
+import com.example.MyBookShopApp.utils.DateFormatter;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -218,8 +219,8 @@ public class BookService {
             if (book == null) {
                 Book newBook = new Book();
                 newBook.setTitle(bookInfoDto.getTitle());
-                newBook.setSlug(bookInfoDto.getTitle().replaceAll("[^a-zA-Z0-9]", ""));
-                newBook.setPubDate(BookInfoDto.parseDate(bookInfoDto.getPubDate()));
+                newBook.setSlug(bookInfoDto.getSlug());
+                newBook.setPubDate(DateFormatter.parseDate(bookInfoDto.getPubDate()));
                 newBook.setPrice(bookInfoDto.getPrice());
                 newBook.setDiscount(bookInfoDto.getDiscount());
                 newBook.setImage(bookInfoDto.getImage());
@@ -232,7 +233,7 @@ public class BookService {
                     book.setTitle(bookInfoDto.getTitle());
                 }
                 if (!StringUtils.isEmpty(bookInfoDto.getPubDate())) {
-                    Date newPubDate = BookInfoDto.parseDate(bookInfoDto.getPubDate());
+                    Date newPubDate = DateFormatter.parseDate(bookInfoDto.getPubDate());
                     if (!book.getPubDate().equals(newPubDate)) {
                         isChange = true;
                         book.setPubDate(newPubDate);
@@ -250,7 +251,7 @@ public class BookService {
                     isChange = true;
                     book.setDiscount(bookInfoDto.getDiscount());
                 }
-                if (!book.getIsBestseller().equals(bookInfoDto.getIsBestseller())) {
+                if (!book.getIsBestseller().equals(bookInfoDto.getIsBestseller() ? 1 : 0)) {
                     isChange = true;
                     book.setIsBestseller(bookInfoDto.getIsBestseller() ? 1 : 0);
                 }
@@ -261,8 +262,11 @@ public class BookService {
         }
     }
 
-    public void deleteBook(Book book) {
-        bookRepository.delete(book);
+    public void deleteBook(String bookSlug) {
+        Book book = bookRepository.findBookBySlugEquals(bookSlug);
+        if (book != null) {
+            bookRepository.delete(book);
+        }
     }
 
     @Value("${google.books.api.key}")

@@ -32,30 +32,26 @@ public class UserBooksService {
 
     public List<Book> getUserPaidBooks() {
         User currentUser = (User) userRegister.getCurrentUser();
-        return currentUser == null ? new ArrayList<>() : userBooksRepository.findUserBooksByUserBookType(currentUser.getId(), "PAID");
+        return currentUser == null ? new ArrayList<>() : userBooksRepository.findUserBooksByUserBookType(currentUser.getHash(), "PAID");
     }
 
     public List<Book> getUserCartBooks() {
         User currentUser = (User) userRegister.getCurrentUser();
-        return currentUser == null ? new ArrayList<>() : userBooksRepository.findUserBooksByUserBookType(currentUser.getId(), "CART");
+        return currentUser == null ? new ArrayList<>() : userBooksRepository.findUserBooksByUserBookType(currentUser.getHash(), "CART");
     }
 
     public List<Book> getUserKeptBooks() {
         User currentUser = (User) userRegister.getCurrentUser();
-        return currentUser == null ? new ArrayList<>() : userBooksRepository.findUserBooksByUserBookType(currentUser.getId(), "KEPT");
+        return currentUser == null ? new ArrayList<>() : userBooksRepository.findUserBooksByUserBookType(currentUser.getHash(), "KEPT");
     }
 
     public List<Book> getArchivedBooks() {
         User currentUser = (User) userRegister.getCurrentUser();
-        return currentUser == null ? new ArrayList<>() : userBooksRepository.findUserBooksByUserBookType(currentUser.getId(), "ARCHIVED");
+        return currentUser == null ? new ArrayList<>() : userBooksRepository.findUserBooksByUserBookType(currentUser.getHash(), "ARCHIVED");
     }
 
-    public List<Book> getUserBooks(User user, String bookTypeCode) {
-        return user == null ? new ArrayList<>() : userBooksRepository.findUserBooksByUserBookType(user.getId(), bookTypeCode);
-    }
-
-    public Integer getCountBooks(String bookSlug, String bookTypeCode) {
-        return userBooksRepository.countUserBookTypeByBookSlug(bookSlug, bookTypeCode);
+    public List<Book> getUserBooks(String userHash, String bookTypeCode) {
+        return userBooksRepository.findUserBooksByUserBookType(userHash, bookTypeCode);
     }
 
     public ResultResponse changeBookStatus(String status, Book book, User user) {

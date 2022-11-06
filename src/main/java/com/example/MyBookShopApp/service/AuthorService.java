@@ -1,7 +1,6 @@
 package com.example.MyBookShopApp.service;
 
-import com.example.MyBookShopApp.entity.AuthorBooks;
-import com.example.MyBookShopApp.repository.AuthorBooksRepository;
+import com.example.MyBookShopApp.dto.AuthorDto;
 import com.example.MyBookShopApp.repository.AuthorRepository;
 import com.example.MyBookShopApp.entity.Author;
 import org.apache.commons.lang3.StringUtils;
@@ -17,12 +16,10 @@ import java.util.stream.Collectors;
 public class AuthorService {
 
     private final AuthorRepository authorRepository;
-    private final AuthorBooksRepository authorBooksRepository;
 
     @Autowired
-    public AuthorService(AuthorRepository authorRepository, AuthorBooksRepository authorBooksRepository) {
+    public AuthorService(AuthorRepository authorRepository) {
         this.authorRepository = authorRepository;
-        this.authorBooksRepository = authorBooksRepository;
     }
 
     public Map<String, List<Author>> getAuthorsMap() {
@@ -34,47 +31,45 @@ public class AuthorService {
         return authorRepository.findAuthorBySlug(slug);
     }
 
-    public List<Author> getAllAuthors() {
-        return authorRepository.findByOrderByName();
+    public Integer getCountAuthors() {
+        return Math.toIntExact(authorRepository.count());
     }
 
-    public List<AuthorBooks> getAuthorsBook(String bookSlug) {
-        return authorBooksRepository.findAuthorsBooksByBookSlug(bookSlug);
+    public AuthorDto getAuthorDto(String authorSlug) {
+        Author author = authorRepository.findAuthorBySlug(authorSlug);
+        return author == null ? null : new AuthorDto(author);
     }
 
-    public AuthorBooks getAuthorBooks(Integer authorBookId) {
-        return authorBooksRepository.getOne(authorBookId);
+    public List<AuthorDto> getAllAuthorsDto() {
+        return authorRepository.findByOrderByName().stream().map(author -> new AuthorDto(author)).collect(Collectors.toList());
     }
 
-    public void deleteAuthorBooks(AuthorBooks authorBook) {
-        authorBooksRepository.delete(authorBook);
-    }
-
-    public void saveAuthor(Author authorDto) {
+    public void saveAuthor(AuthorDto authorDto) {
+        Boolean isChange = false;
         Author author = authorRepository.findAuthorBySlug(authorDto.getSlug());
-        if (StringUtils.isEmpty(authorDto.getSlug()) || author == null) {
+        if (author == null) {
             // Создание автора
             author = new Author();
             author.setName(authorDto.getName());
             author.setDescription(authorDto.getDescription());
             author.setPhoto(authorDto.getPhoto());
-            author.setSlug(author.getName().replaceAll("[^a-z0-9A-Z]", ""));
+            author.setSlug(authorDto.getSlug());
+            isChange = true;
         } else {
             // Обновление ФИО автора
             if (!StringUtils.isEmpty(authorDto.getName()) && !author.getName().equals(authorDto.getName())) {
                 author.setName(authorDto.getName());
+                isChange = true;
             }
             // Обновление биографии
             if (!author.getDescription().equals(authorDto.getDescription())) {
                 author.setDescription(authorDto.getDescription());
+                isChange = true;
             }
         }
-        // Сохранение
-        authorRepository.save(author);
-    }
-
-    public void saveAuthorBook(AuthorBooks authorBooks) {
-        authorBooksRepository.save(authorBooks);
+        if (isChange) {
+            authorRepository.save(author);
+        }
     }
 
 }

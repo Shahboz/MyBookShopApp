@@ -52,7 +52,7 @@
                       </div>
                     </td>
                     <td>
-                      <p class="text-sm font-weight-bold mb-0" th:text="${#numbers.formatInteger(author.getBooks().size(), 0, 'WHITESPACE')}">2,500</p>
+                      <p class="text-sm font-weight-bold mb-0" th:text="${#numbers.formatInteger(author.getCountBooks(), 0, 'WHITESPACE')}">2,500</p>
                     </td>
                     <td>
                       <p class="text-sm font-weight-bold mb-0"
@@ -66,7 +66,7 @@
                         </a>
                         <ul class="dropdown-menu px-1 py-3 ms-sm-n4 ms-n5" aria-labelledby="dropdownTable">
                           <li><a class="dropdown-item border-radius-md" th:href="@{'/authors/' + ${author.getSlug()}}">View</a></li>
-                          <li><a class="dropdown-item border-radius-md" th:href="@{'/admin/authors/' + ${author.getSlug()}}">Edit</a></li>
+                          <li><a class="dropdown-item border-radius-md" th:href="@{'/admin/author/' + ${author.getSlug()}}">Edit</a></li>
                         </ul>
                       </div>
                     </td>

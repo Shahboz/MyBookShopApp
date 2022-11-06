@@ -78,7 +78,7 @@ public class BooksController {
 
     @ModelAttribute("bookReviewData")
     public List<BookReviewDto> getBookReviewData(@PathVariable(value = "slug", required = false) String bookSlug) {
-        return bookReviewService.getBookReviewData(bookSlug);
+        return bookReviewService.getBookReviewDtoList(bookSlug, 0, bookReviewService.getBookReviewCount(bookSlug));
     }
 
     @ModelAttribute("bookRate")

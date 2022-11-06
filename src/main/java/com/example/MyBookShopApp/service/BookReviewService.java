@@ -11,15 +11,31 @@ import com.example.MyBookShopApp.entity.User;
 import com.example.MyBookShopApp.security.BookstoreUserRegister;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
 
 @Service
 public class BookReviewService {
+
+    @Value("${review.refresh.offset}")
+    private Integer refreshOffset;
+
+    @Value("${review.refresh.limit}")
+    private Integer refreshLimit;
+
+    public Integer getRefreshOffset() {
+        return refreshOffset;
+    }
+
+    public Integer getRefreshLimit() {
+        return refreshLimit;
+    }
 
     private final BookstoreUserRegister userRegister;
     private final BookReviewRepository bookReviewRepository;
@@ -35,25 +51,8 @@ public class BookReviewService {
         this.bookReviewLikeService = bookReviewLikeService;
     }
 
-    private List<BookReviewDto> getBookReviewDtos(List<BookReview> bookReviews) {
-        List<BookReviewDto> reviewDtoList = new ArrayList<>();
-        for (BookReview review : bookReviews) {
-            BookReviewDto reviewDto = new BookReviewDto();
-            reviewDto.setReview(review);
-            reviewDto.setRate(bookRateService.getUserBookRate(review.getBook().getId(), review.getUser().getId()));
-            reviewDto.setLikedCount(bookReviewLikeService.getCountReviewByValue(review.getId(), 1));
-            reviewDto.setDislikedCount(bookReviewLikeService.getCountReviewByValue(review.getId(), -1));
-            reviewDtoList.add(reviewDto);
-        }
-        Collections.sort(reviewDtoList, (r1, r2) -> (r2.getLikedCount() - r2.getDislikedCount()) - (r1.getLikedCount() - r1.getDislikedCount()));
-        return reviewDtoList;
-    }
-
-    public BookReview getBookReviewById(Integer reviewId) {
-        return bookReviewRepository.findBookReviewById(reviewId);
-    }
-
-    public void deleteBookReview(BookReview bookReview) {
+    public void deleteReview(Integer reviewId) {
+        BookReview bookReview = bookReviewRepository.findBookReviewById(reviewId);
         if (bookReview != null) {
             bookReviewRepository.delete(bookReview);
         }
@@ -89,11 +88,29 @@ public class BookReviewService {
         return result;
     }
 
-    public List<BookReviewDto> getBookReviewData(String bookSlug) {
-        return StringUtils.isEmpty(bookSlug) ? null : getBookReviewDtos(bookReviewRepository.findBookReviewsByBookSlug(bookSlug));
+    public Integer getBookReviewCount(String bookSlug) {
+        return bookReviewRepository.countByBookSlug(bookSlug);
     }
 
-    public List<BookReviewDto> getUserBookReviewData(String userHash) {
+    private List<BookReviewDto> getBookReviewDtos(List<BookReview> bookReviews) {
+        List<BookReviewDto> reviewDtoList = new ArrayList<>();
+        for (BookReview review : bookReviews) {
+            BookReviewDto reviewDto = new BookReviewDto();
+            reviewDto.setReview(review);
+            reviewDto.setRate(bookRateService.getUserBookRate(review.getBook().getId(), review.getUser().getId()));
+            reviewDto.setLikedCount(bookReviewLikeService.getCountReviewByValue(review.getId(), 1));
+            reviewDto.setDislikedCount(bookReviewLikeService.getCountReviewByValue(review.getId(), -1));
+            reviewDtoList.add(reviewDto);
+        }
+        return reviewDtoList;
+    }
+
+    public List<BookReviewDto> getBookReviewDtoList(String bookSlug, Integer offset, Integer limit) {
+        Pageable nextPage = PageRequest.of(offset/limit, limit);
+        return StringUtils.isEmpty(bookSlug) ? null : getBookReviewDtos(bookReviewRepository.findBookReviewsByBookSlug(bookSlug, nextPage));
+    }
+
+    public List<BookReviewDto> getUserBookReviewDtoList(String userHash) {
         return StringUtils.isEmpty(userHash) ? null : getBookReviewDtos(bookReviewRepository.findBookReviewsByUserHash(userHash));
     }
 

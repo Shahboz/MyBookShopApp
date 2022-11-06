@@ -123,7 +123,7 @@ public class BookstoreUserRegister {
             Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
             if (principal instanceof BookstoreUserDetails) {
                 BookstoreUserDetails userDetails = (BookstoreUserDetails) principal;
-                return userService.getUserById(userDetails.getUser().getId());
+                return userService.getUserByHash(userDetails.getUser().getHash());
             } else if (principal instanceof CustomOAuth2User) {
                 CustomOAuth2User oAuth2User = (CustomOAuth2User) principal;
                 return userService.getUserByEmail(oAuth2User.getEmail());
@@ -136,10 +136,10 @@ public class BookstoreUserRegister {
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         if(principal instanceof BookstoreUserDetails) {
             BookstoreUserDetails userDetails = (BookstoreUserDetails) principal;
-            return userContactService.getApprovedUserContacts(userDetails.getUser().getId());
+            return userContactService.getApprovedUserContacts(userDetails.getUser().getHash());
         } else if (principal instanceof CustomOAuth2User) {
             CustomOAuth2User oAuth2User = (CustomOAuth2User) principal;
-            return userContactService.getApprovedUserContacts(userService.getUserByEmail(oAuth2User.getEmail()).getId());
+            return userContactService.getApprovedUserContacts(userService.getUserByEmail(oAuth2User.getEmail()).getHash());
         }
         return null;
     }
@@ -161,7 +161,7 @@ public class BookstoreUserRegister {
             response.setError("Код подтверждения устарел. Запросите новый код");
         } else if (userContact.getCode().equals(contactConfirmation.getCode())) {
             // Удаление существующих контактов
-            List<UserContact> userContacts = userContactService.getUserContactsByType(userContact.getUser().getId(), userContact.getType());
+            List<UserContact> userContacts = userContactService.getUserContactsByType(userContact.getUser().getHash(), userContact.getType());
             for (UserContact contact : userContacts) {
                 if (!contact.getContact().equalsIgnoreCase(userContact.getContact())) {
                     userContactService.delete(contact);
@@ -214,6 +214,23 @@ public class BookstoreUserRegister {
             }
         }
         return response;
+    }
+
+    public ResultResponse updatePassword(String userHash, String pass) {
+        ResultResponse resultResponse = new ResultResponse();
+        User user = userService.getUserByHash(userHash);
+        if (user == null) {
+            resultResponse.setResult(false);
+            resultResponse.setError("Пользователь не найден");
+        } else {
+            String updatePass = encodePassword(pass);
+            if (StringUtils.isEmpty(user.getPassword()) || !user.getPassword().equals(updatePass)) {
+                user.setPassword(updatePass);
+                userService.save(user);
+            }
+            resultResponse.setResult(true);
+        }
+        return resultResponse;
     }
 
 }

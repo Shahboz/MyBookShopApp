@@ -2,20 +2,16 @@ package com.example.MyBookShopApp.repository;
 
 import com.example.MyBookShopApp.entity.UserContact;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
 import java.util.List;
 
 
 public interface UserContactRepository extends JpaRepository<UserContact, Integer> {
 
-    @Query(value = "select c from User u left join UserContact c on u.id = c.user.id where u.id = :userId")
-    List<UserContact> findUserContactsByUserId(Integer userId);
-
-    List<UserContact> findUserContactsByUserIdAndApproved(Integer userId, Integer approved);
+    List<UserContact> findUserContactsByUserHashAndApproved(String userHash, Integer approved);
 
     UserContact findUserContactByContact(String contact);
 
-    List<UserContact> findUserContactsByUserIdAndType(Integer userId, String contactType);
+    List<UserContact> findUserContactsByUserHashAndType(String userHash, String contactType);
 
     void deleteUserContactsByUserIdAndApproved(Integer userId, Integer approved);
 

@@ -35,8 +35,8 @@ public class UserContactService {
         this.userContactRepository.save(userContact);
     }
 
-    public List<UserContact> getApprovedUserContacts(Integer userId) {
-        return this.userContactRepository.findUserContactsByUserIdAndApproved(userId, 1);
+    public List<UserContact> getApprovedUserContacts(String userHash) {
+        return this.userContactRepository.findUserContactsByUserHashAndApproved(userHash, 1);
     }
 
     public UserContact getUserContactByContact(String contact) {
@@ -72,8 +72,8 @@ public class UserContactService {
         userContactRepository.delete(contact);
     }
 
-    public List<UserContact> getUserContactsByType(Integer userId, String contactType) {
-        return userContactRepository.findUserContactsByUserIdAndType(userId, contactType);
+    public List<UserContact> getUserContactsByType(String userHash, String contactType) {
+        return userContactRepository.findUserContactsByUserHashAndType(userHash, contactType);
     }
 
     public void deleteNotApproved(Integer userId) {
