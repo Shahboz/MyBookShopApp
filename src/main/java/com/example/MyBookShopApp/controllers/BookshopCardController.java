@@ -55,7 +55,7 @@ public class BookshopCardController {
     @GetMapping("/cart")
     public String getCartPage(@CookieValue(value = "anonymousUser", required = false) String userHash, Model model) {
         User currentUser = userRegister.getCurrentUser() != null ? (User) userRegister.getCurrentUser() : userService.getUserByHash(userHash);
-        List<Book> bookCart = currentUser == null ? new ArrayList<>() : userBooksService.getUserBooks(currentUser.getHash(), "CART");
+        List<Book> bookCart = currentUser == null ? new ArrayList<>() : userBooksService.getUserBooks(currentUser, "CART");
         Integer sumCart = bookCart.stream().mapToInt(Book::getPrice).sum();
         Integer sumCartDiscount = bookCart.stream().mapToInt(Book::getDiscountPrice).sum();
         model.addAttribute("sumCart", sumCart);
@@ -67,7 +67,7 @@ public class BookshopCardController {
     @GetMapping("/postponed")
     public String getPostponedPage(@CookieValue(value = "anonymousUser", required = false) String userHash, Model model) {
         User currentUser = userRegister.getCurrentUser() != null ? (User) userRegister.getCurrentUser() : userService.getUserByHash(userHash);
-        List<Book> bookPostponed = currentUser == null ? new ArrayList<>() : userBooksService.getUserBooks(currentUser.getHash(), "KEPT");
+        List<Book> bookPostponed = currentUser == null ? new ArrayList<>() : userBooksService.getUserBooks(currentUser, "KEPT");
         model.addAttribute("bookPostponed", bookPostponed);
         return "postponed";
     }

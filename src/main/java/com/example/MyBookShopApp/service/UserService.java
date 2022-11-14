@@ -71,7 +71,8 @@ public class UserService {
     }
 
     public UserDto getUserDtoByHash(String userHash) {
-        return new UserDto(userRepository.findUserByHash(userHash));
+        User user = userRepository.findUserByHash(userHash);
+        return user == null ? new UserDto() : new UserDto(user);
     }
 
     public List<UserDto> getPageOfUsers(Integer offset, Integer limit) {

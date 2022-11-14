@@ -32,26 +32,26 @@ public class UserBooksService {
 
     public List<Book> getUserPaidBooks() {
         User currentUser = (User) userRegister.getCurrentUser();
-        return currentUser == null ? new ArrayList<>() : userBooksRepository.findUserBooksByUserBookType(currentUser.getHash(), "PAID");
+        return currentUser == null ? new ArrayList<>() : userBooksRepository.findUserBooksByUserBookType(currentUser.getId(), "PAID");
     }
 
     public List<Book> getUserCartBooks() {
         User currentUser = (User) userRegister.getCurrentUser();
-        return currentUser == null ? new ArrayList<>() : userBooksRepository.findUserBooksByUserBookType(currentUser.getHash(), "CART");
+        return currentUser == null ? new ArrayList<>() : userBooksRepository.findUserBooksByUserBookType(currentUser.getId(), "CART");
     }
 
     public List<Book> getUserKeptBooks() {
         User currentUser = (User) userRegister.getCurrentUser();
-        return currentUser == null ? new ArrayList<>() : userBooksRepository.findUserBooksByUserBookType(currentUser.getHash(), "KEPT");
+        return currentUser == null ? new ArrayList<>() : userBooksRepository.findUserBooksByUserBookType(currentUser.getId(), "KEPT");
     }
 
     public List<Book> getArchivedBooks() {
         User currentUser = (User) userRegister.getCurrentUser();
-        return currentUser == null ? new ArrayList<>() : userBooksRepository.findUserBooksByUserBookType(currentUser.getHash(), "ARCHIVED");
+        return currentUser == null ? new ArrayList<>() : userBooksRepository.findUserBooksByUserBookType(currentUser.getId(), "ARCHIVED");
     }
 
-    public List<Book> getUserBooks(String userHash, String bookTypeCode) {
-        return userBooksRepository.findUserBooksByUserBookType(userHash, bookTypeCode);
+    public List<Book> getUserBooks(User user, String bookTypeCode) {
+        return user == null ? new ArrayList<>() : userBooksRepository.findUserBooksByUserBookType(user.getId(), bookTypeCode);
     }
 
     public ResultResponse changeBookStatus(String status, Book book, User user) {

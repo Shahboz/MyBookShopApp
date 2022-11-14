@@ -38,8 +38,8 @@ public class AdminUserController {
             model.addAttribute("userDto", userService.getUserDtoByHash(userHash));
             userContactService.getApprovedUserContacts(userHash)
                     .forEach(contact -> model.addAttribute(contact.getType().equals("PHONE") ? "contactPhone" : "contactEmail", contact.getContact()));
-            model.addAttribute("userPaidBooks", userBooksService.getUserBooks(userHash, "PAID"));
-            model.addAttribute("userArchivedBooks", userBooksService.getUserBooks(userHash, "ARCHIVED"));
+            model.addAttribute("userPaidBooks", userBooksService.getUserBooks(userService.getUserByHash(userHash), "PAID"));
+            model.addAttribute("userArchivedBooks", userBooksService.getUserBooks(userService.getUserByHash(userHash), "ARCHIVED"));
             model.addAttribute("userBookReviews", bookReviewService.getUserBookReviewDtoList(userHash));
         }
         return "/admin/user-profile";

@@ -12,7 +12,7 @@ public interface UserBooksRepository extends JpaRepository<UserBooks, Integer> {
     @Query(value = "from UserBooks ub where ub.user.id = :userId and ub.book.slug = :bookSlug and ub.type.code = :bookTypeCode")
     UserBooks findUserBooksByUserIdAndBookSlugAndUserBookTypeCode(Integer userId, String bookSlug, String bookTypeCode);
 
-    @Query(value = "select ub.book from UserBooks ub where ub.user.hash = :userHash and ub.type.code = :bookTypeCode")
-    List<Book> findUserBooksByUserBookType(String userHash, String bookTypeCode);
+    @Query(value = "select ub.book from UserBooks ub where ub.user.id = :userId and ub.type.code = :bookTypeCode")
+    List<Book> findUserBooksByUserBookType(Integer userId, String bookTypeCode);
 
 }
