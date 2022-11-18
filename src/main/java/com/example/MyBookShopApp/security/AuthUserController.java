@@ -19,12 +19,15 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 import java.util.List;
-import java.util.Random;
 
 
 @Controller
 public class AuthUserController {
+
+    private static final String PROFILE_PAGE = "profile";
 
     private final BookstoreUserRegister userRegister;
     private final SmsService smsService;
@@ -76,8 +79,7 @@ public class AuthUserController {
                                                          @RequestParam("limit") Integer limit,
                                                          @RequestParam("sort") String sort) {
         User user = (User) userRegister.getCurrentUser();
-        List<Transaction> transactions = transactionService.getPageOfUserTransactions(user.getId(), offset, limit, sort).getContent();
-        return user == null ? null : new TransactionsPageDto(transactions);
+        return user == null ? null : new TransactionsPageDto(transactionService.getPageOfUserTransactions(user.getId(), offset, limit, sort).getContent());
     }
 
     @GetMapping("/signin")
@@ -92,19 +94,19 @@ public class AuthUserController {
 
     @PostMapping("/requestContactConfirmation")
     @ResponseBody
-    public ResultResponse handleRequestContactConfirmation(@RequestBody ContactConfirmationPayload payload) {
+    public ResultResponse handleRequestContactConfirmation(@RequestBody ContactConfirmationPayload payload) throws NoSuchAlgorithmException {
         User currentUser = (User) userRegister.getCurrentUser();
         UserContact userContact = userContactService.getUserContactByContact(payload.getContact());
         // Если пользователь не авторизован, то создаем пустого пользователя
         if (currentUser == null) {
             RegistrationForm registrationForm = new RegistrationForm();
-            registrationForm.setName("anonymousUser" + new Random().nextInt(1000));
+            registrationForm.setName("anonymousUser" + SecureRandom.getInstanceStrong().nextInt(1000));
             if (payload.getContact().contains("@")) {
                 registrationForm.setEmail(payload.getContact());
             } else {
                 registrationForm.setPhone(payload.getContact());
             }
-            currentUser = userRegister.registerNewUser(registrationForm);
+            userRegister.registerNewUser(registrationForm);
 
         } else if (userContact == null) {
             // Новый контакт пользователя
@@ -132,9 +134,10 @@ public class AuthUserController {
     public ContactConfirmationResponse handleLogin(@RequestBody ContactConfirmationPayload payload, HttpServletResponse response) {
         ContactConfirmationResponse loginResponse = userRegister.jwtlogin(payload);
         Cookie cookie = new Cookie("token", loginResponse.getResult());
+        cookie.setSecure(true);
+        cookie.setHttpOnly(true);
         response.addCookie(cookie);
         return loginResponse;
-        //return userRegister.login(payload);
     }
 
     @PostMapping("/login-by-phone-number")
@@ -144,6 +147,8 @@ public class AuthUserController {
         if (resultResponse != null && resultResponse.getResult()) {
             ContactConfirmationResponse loginResponse = userRegister.jwtloginByPhoneNumber(payload);
             Cookie cookie = new Cookie("token", loginResponse.getResult());
+            cookie.setSecure(true);
+            cookie.setHttpOnly(true);
             response.addCookie(cookie);
         }
         return resultResponse;
@@ -159,7 +164,7 @@ public class AuthUserController {
     public String handleProfile(@ModelAttribute("userContacts") List<UserContact> userContacts,
                                 @ModelAttribute("transactions") List<Transaction> transactions, @ModelAttribute("dataSort") String dataSort,
                                 @ModelAttribute("dataOffset") Integer dataOffset, @ModelAttribute("dataLimit") Integer dataLimit) {
-        return "profile";
+        return PROFILE_PAGE;
     }
 
     @GetMapping("/profile/cancel")
@@ -171,7 +176,7 @@ public class AuthUserController {
         } else {
             model.addAttribute("isSaved", false);
         }
-        return "profile";
+        return PROFILE_PAGE;
     }
 
     @PostMapping("/profile/save")
@@ -191,7 +196,7 @@ public class AuthUserController {
                 errorText = "Длина пароля должна быть равна 6";
             }
         }
-        if (StringUtils.isEmpty(errorText)) {
+        if (currentUser != null && StringUtils.isEmpty(errorText)) {
             Boolean isChanged = false;
             // Обновление имя пользователя
             if ((!StringUtils.isEmpty(currentUser.getName()) && !StringUtils.isEmpty(userProfile.getName()) && !userProfile.getName().equals(currentUser.getName())) ||
@@ -220,33 +225,18 @@ public class AuthUserController {
         } else {
             model.addAttribute("errorText", errorText);
         }
-        return "profile";
+        return PROFILE_PAGE;
     }
 
     @PostMapping("/payment")
     @ResponseBody
     public ResultResponse handlePostPayment(@RequestBody PaymentDto payment) {
-        ResultResponse resultResponse = paymentService.processPayment(payment);
-
-        return resultResponse;
+        return paymentService.processPayment(payment);
     }
 
     @GetMapping("/my/archive")
     public String handleMyArchive() {
         return "myarchive";
     }
-
-//    @GetMapping("/logout")
-//    public String handleLogout(HttpServletRequest request) {
-//        HttpSession session = request.getSession();
-//        SecurityContextHolder.clearContext();
-//        if(session != null) {
-//            session.invalidate();
-//        }
-//        for (Cookie cookie : request.getCookies()) {
-//            cookie.setMaxAge(0);
-//        }
-//        return "redirect:/";
-//    }
 
 }

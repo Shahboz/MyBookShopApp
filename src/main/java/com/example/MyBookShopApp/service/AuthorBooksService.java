@@ -6,7 +6,6 @@ import com.example.MyBookShopApp.entity.Book;
 import com.example.MyBookShopApp.repository.AuthorBooksRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import java.util.Comparator;
 import java.util.List;
 
 
@@ -27,14 +26,14 @@ public class AuthorBooksService {
     public void saveAuthorBook(Book book, Author author) {
         if (author != null && book != null && !book.getAuthors().contains(author)) {
             List<AuthorBooks> authorBooksList = authorBooksRepository.findAuthorsBooksByBookSlug(book.getSlug());
-            int maxSortIndex = authorBooksList.size() > 0 ? authorBooksList.stream().max(Comparator.comparing(AuthorBooks::getSortIndex)).get().getSortIndex() : 0;
+            int maxSortIndex = authorBooksList.stream().mapToInt(a -> a.getSortIndex()).reduce(Math::max).orElse(0);
             AuthorBooks authorBooks = new AuthorBooks(book, author, maxSortIndex + 1);
             authorBooksRepository.save(authorBooks);
         }
     }
 
     public void deleteAuthorBook(Integer authorBookId) {
-        AuthorBooks authorBook = authorBooksRepository.getOne(authorBookId);
+        AuthorBooks authorBook = authorBooksRepository.findAuthorBooksById(authorBookId);
         if (authorBook != null) {
             authorBooksRepository.delete(authorBook);
         }

@@ -1,16 +1,13 @@
 package com.example.MyBookShopApp.controllers;
 
-import com.example.MyBookShopApp.dto.BookReviewData;
-import com.example.MyBookShopApp.dto.BookReviewDto;
-import com.example.MyBookShopApp.dto.ResultResponse;
-import com.example.MyBookShopApp.entity.Rate;
+import com.example.MyBookShopApp.dto.*;
 import com.example.MyBookShopApp.entity.*;
-import com.example.MyBookShopApp.dto.BooksPageDto;
 import com.example.MyBookShopApp.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import java.io.IOException;
 import java.util.*;
@@ -53,47 +50,12 @@ public class BooksController {
 
     @ModelAttribute("authorBooks")
     public List<Book> getAuthorBooks(@PathVariable(value = "slug", required = false) String authorSlug) {
-        return authorSlug == null ? null : bookService.getPageOfAuthorBooks(authorSlug, 0, bookService.getRefreshLimit()).getContent();
+        return bookService.getPageOfAuthorBooks(authorSlug, 0, bookService.getRefreshLimit()).getContent();
     }
 
     @ModelAttribute("author")
-    public Author getAuthor(@PathVariable(value = "slug", required = false) String authorSlug) {
-        return authorSlug == null ? null : authorService.getAuthorBySlug(authorSlug);
-    }
-
-    @ModelAttribute("book")
-    public Book getBook(@PathVariable(value = "slug", required = false) String bookSlug) {
-        return bookSlug == null ? null : bookService.getBookBySlug(bookSlug);
-    }
-
-    @ModelAttribute("isLimitDownloadExceeded")
-    public Boolean checkLimitDownload(@PathVariable(value = "slug", required = false) String bookSlug) {
-        return bookService.limitDownloadExceded(bookSlug);
-    }
-
-    @ModelAttribute("bookFilesData")
-    public List<BookFileDto> getBookFilesData(@PathVariable(value = "slug", required = false) String bookSlug) throws IOException {
-        return bookSlug == null ? null : bookService.getBookFilesData(bookSlug);
-    }
-
-    @ModelAttribute("bookReviewData")
-    public List<BookReviewDto> getBookReviewData(@PathVariable(value = "slug", required = false) String bookSlug) {
-        return bookReviewService.getBookReviewDtoList(bookSlug, 0, bookReviewService.getBookReviewCount(bookSlug));
-    }
-
-    @ModelAttribute("bookRate")
-    public Integer calcBookRate(@PathVariable(value = "slug", required = false) String bookSlug) {
-        return bookSlug == null ? 0 :  bookRateService.calcBookRate(bookSlug);
-    }
-
-    @ModelAttribute("bookRateCount")
-    public Integer getBookRateCount(@PathVariable(value = "slug", required = false) String bookSlug) {
-        return bookSlug == null ? 0 : bookRateService.getBookRateCount(bookSlug);
-    }
-
-    @ModelAttribute("bookRates")
-    public Rate[] getBookRates(@PathVariable(value = "slug", required = false) String bookSlug) {
-        return bookRateService.getBookRates(bookSlug);
+    public AuthorDto getAuthor(@PathVariable(value = "slug", required = false) String authorSlug) {
+        return authorService.getAuthorDto(authorSlug);
     }
 
     @GetMapping(value = "/recommended", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -156,16 +118,20 @@ public class BooksController {
     }
 
     @GetMapping(value = "/author/{slug}", produces = MediaType.TEXT_HTML_VALUE)
-    public String getAuthorBooks(@ModelAttribute("authorBooks") List<Book> authorBooks, @ModelAttribute("author") Author author) {
+    public String getAuthorBooks(@ModelAttribute("authorBooks") List<Book> authorBooks, @ModelAttribute("author") AuthorDto author) {
         return "/books/author";
     }
 
     @GetMapping(value = "/{slug}", produces = MediaType.TEXT_HTML_VALUE)
-    public String getBookPage(@ModelAttribute("book") Book book, @ModelAttribute("bookReviewData") List<BookReviewDto> bookReviewData,
-                              @ModelAttribute("bookRates") Rate[] rates, @ModelAttribute("bookRateCount") Integer bookRateCount,
-                              @ModelAttribute("bookRate") Integer bookRate, @ModelAttribute("isLimitDownloadExceeded") Boolean isLimitDownloadExceeded,
-                              @ModelAttribute("bookFilesData") List<BookFileDto> bookFileDtoList) {
-        userViewedBooksService.saveBookView(book);
+    public String getBookPage(@PathVariable(value = "slug") String bookSlug, Model model) throws IOException {
+        model.addAttribute("book", bookService.getBookBySlug(bookSlug));
+        model.addAttribute("bookRates", bookRateService.getBookRates(bookSlug));
+        model.addAttribute("bookRateCount", bookRateService.getBookRateCount(bookSlug));
+        model.addAttribute("bookRate", bookRateService.calcBookRate(bookSlug));
+        model.addAttribute("isLimitDownloadExceeded", bookService.limitDownloadExceded(bookSlug));
+        model.addAttribute("bookFilesData", bookService.getBookFilesData(bookSlug));
+        model.addAttribute("bookReviewData", bookReviewService.getBookReviewDtoList(bookSlug, 0, bookReviewService.getBookReviewCount(bookSlug)));
+        userViewedBooksService.saveBookView(bookService.getBookBySlug(bookSlug));
         return "/books/slugmy";
     }
 

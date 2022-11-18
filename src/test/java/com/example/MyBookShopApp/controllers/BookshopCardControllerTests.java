@@ -16,7 +16,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 @TestPropertySource("/application-test.properties")
-public class BookshopCardControllerTests {
+class BookshopCardControllerTests {
 
     private final MockMvc mockMvc;
 

@@ -9,6 +9,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 import java.util.Date;
 import java.util.Random;
 
@@ -37,8 +39,8 @@ public class SmsService {
         this.javaMailSender = javaMailSender;
     }
 
-    private String generateCode() {
-        Random random = new Random();
+    private String generateCode() throws NoSuchAlgorithmException {
+        Random random = SecureRandom.getInstanceStrong();
         StringBuilder sb = new StringBuilder();
         while (sb.length() < 6) {
             sb.append(random.nextInt(9));
@@ -56,13 +58,12 @@ public class SmsService {
             mailMessage.setTo(userContact.getContact());
             mailMessage.setSubject("Bookstore email verification!");
             mailMessage.setText("Verification code is: " + userContact.getCode());
-            //javaMailSender.send(mailMessage);
+            javaMailSender.send(mailMessage);
         } else {
             // Send SMS code
             Twilio.init(accountSid, authToken);
-            String formattedContact = userContact.getContact().replaceAll("[()-]]", "");
             /*Message.creator(
-                    new PhoneNumber(formattedContact),
+                    new PhoneNumber(userContact.getContact().replaceAll("[()-]]", "")),
                     new PhoneNumber(twilioNumber),
                     "Your secret code is: " + userContact.getCode()
             ).create();*/
@@ -70,7 +71,7 @@ public class SmsService {
         userContactService.save(userContact);
     }
 
-    public ResultResponse sendSecretCode(ContactConfirmationPayload contactConfirmation) {
+    public ResultResponse sendSecretCode(ContactConfirmationPayload contactConfirmation) throws NoSuchAlgorithmException {
         ResultResponse response = new ResultResponse();
         UserContact userContact = userContactService.getUserContactByContact(contactConfirmation.getContact());
         if (userContact != null) {

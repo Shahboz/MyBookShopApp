@@ -8,6 +8,7 @@ import com.example.MyBookShopApp.entity.BookReview;
 import com.example.MyBookShopApp.entity.Rate;
 import com.example.MyBookShopApp.entity.User;
 import com.example.MyBookShopApp.security.BookstoreUserRegister;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.Date;
@@ -27,7 +28,7 @@ public class BookRateService {
 
     public Rate[] getBookRates(String bookSlug) {
         if (bookSlug == null)
-            return null;
+            return new Rate[0];
         Rate[] rates = Rate.values();
         for (int i = 0; i < rates.length; i++) {
             rates[i].setCount(bookRateRepository.findBookRatesByBookSlugAndValueEquals(bookSlug, rates[i].getValue()).size());
@@ -36,7 +37,7 @@ public class BookRateService {
     }
 
     public Integer getBookRateCount(String bookSlug) {
-        return bookRateRepository.countByBookSlug(bookSlug);
+        return StringUtils.isEmpty(bookSlug) ? 0 : bookRateRepository.countByBookSlug(bookSlug);
     }
 
     public ResultResponse saveRateBook(Book book, BookReview bookReview, Integer rateValue) {
@@ -68,7 +69,7 @@ public class BookRateService {
     }
 
     public Integer calcBookRate(String bookSlug) {
-        return bookRateRepository.calcBookRate(bookSlug);
+        return StringUtils.isEmpty(bookSlug) ? 0 : bookRateRepository.calcBookRate(bookSlug);
     }
 
     public BookRate getUserBookRate(Integer bookId, Integer userId) {

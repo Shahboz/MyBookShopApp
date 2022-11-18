@@ -1,13 +1,14 @@
 package com.example.MyBookShopApp.selenium;
 
 
+import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import java.util.ArrayList;
 import java.util.List;
 
-
+@Slf4j
 public class MainPage {
 
     private String url = "http://localhost:8080/";
@@ -18,8 +19,7 @@ public class MainPage {
     }
 
     public MainPage callMainPage() {
-        driver.get(url);
-        return this;
+        return callPage(url);
     }
 
     public MainPage callPage(String url) {
@@ -58,7 +58,7 @@ public class MainPage {
         for (WebElement element : allLinks) {
             String firstValidUrl = element.getAttribute("href");
             if(firstValidUrl.indexOf("#") < 0) {
-                System.out.println("Calling page " + firstValidUrl);
+                log.info("Calling page {0}...", firstValidUrl);
                 this.callPage(firstValidUrl);
                 return this;
             }

@@ -1,5 +1,6 @@
 package com.example.MyBookShopApp.controllers;
 
+import com.example.MyBookShopApp.dto.GenreDto;
 import com.example.MyBookShopApp.entity.Genre;
 import com.example.MyBookShopApp.service.BookService;
 import com.example.MyBookShopApp.service.GenreService;
@@ -35,13 +36,13 @@ public class GenresController {
     }
 
     @ModelAttribute("genre")
-    public Genre getGenre(@PathVariable(value = "slug", required = false) String genreSlug) {
-        return genreSlug == null ? null : genreService.getGenreBySlug(genreSlug);
+    public GenreDto getGenre(@PathVariable(value = "slug", required = false) String genreSlug) {
+        return genreService.getGenreBySlug(genreSlug);
     }
 
     @ModelAttribute("genreBooks")
     public List<Book> getBooksByGenre(@PathVariable(value = "slug", required = false) String genreSlug) {
-        return genreSlug == null ? null : bookService.getPageOfGenreBooks(genreSlug, 0, bookService.getRefreshLimit()).getContent();
+        return bookService.getPageOfGenreBooks(genreSlug, 0, bookService.getRefreshLimit()).getContent();
     }
 
     @GetMapping("")
@@ -51,7 +52,7 @@ public class GenresController {
     }
 
     @GetMapping("/{slug}")
-    public String getGenrePage(@ModelAttribute("genre") Genre genre, @ModelAttribute("genreBooks") List<Book> bookList) {
+    public String getGenrePage(@ModelAttribute("genre") GenreDto genre, @ModelAttribute("genreBooks") List<Book> bookList) {
         return "/genres/slug";
     }
 

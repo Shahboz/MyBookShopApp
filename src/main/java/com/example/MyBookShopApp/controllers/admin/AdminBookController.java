@@ -12,12 +12,13 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
-import java.text.ParseException;
 
 
 @Controller
 @RequestMapping("/admin/book")
 public class AdminBookController {
+
+    private static final String REDIRECT_BOOK_URL = "redirect:/admin/book/";
 
     private final AuthorService authorService;
     private final AuthorBooksService authorBooksService;
@@ -47,15 +48,15 @@ public class AdminBookController {
     }
 
     @PostMapping("/add")
-    public String addBook(@ModelAttribute("bookInfoDto") BookInfoDto bookInfoDto) throws ParseException {
+    public String addBook(@ModelAttribute("bookInfoDto") BookInfoDto bookInfoDto) {
         bookService.saveBook(bookInfoDto);
         return "redirect:/admin/books";
     }
 
     @PostMapping("/edit")
-    public String editBook(@ModelAttribute("bookInfoDto") BookInfoDto bookInfoDto) throws ParseException {
+    public String editBook(@ModelAttribute("bookInfoDto") BookInfoDto bookInfoDto) {
         bookService.saveBook(bookInfoDto);
-        return "redirect:/admin/book/" + bookInfoDto.getSlug();
+        return REDIRECT_BOOK_URL + bookInfoDto.getSlug();
     }
 
     @PostMapping("/delete")
@@ -67,19 +68,19 @@ public class AdminBookController {
     @PostMapping("/{slug}/img/save")
     public String saveBookImage(@RequestParam("file") MultipartFile file, @PathVariable("slug") String bookSlug) throws IOException {
         bookService.saveBookImage(file, bookSlug);
-        return "redirect:/admin/book/" + bookSlug;
+        return REDIRECT_BOOK_URL + bookSlug;
     }
 
     @PostMapping("/author/add")
     public String addAuthorBook(@RequestParam String bookSlug, @RequestParam String authorSlug) {
         authorBooksService.saveAuthorBook(bookService.getBookBySlug(bookSlug), authorService.getAuthorBySlug(authorSlug));
-        return "redirect:/admin/book/" + bookSlug;
+        return REDIRECT_BOOK_URL + bookSlug;
     }
 
     @GetMapping("/author/delete")
     public String deleteAuthorBook(@RequestParam(value = "book") String bookSlug, @RequestParam(value = "id") Integer authorBookId) {
         authorBooksService.deleteAuthorBook(authorBookId);
-        return "redirect:/admin/book/" + bookSlug;
+        return REDIRECT_BOOK_URL + bookSlug;
     }
 
 }

@@ -72,22 +72,9 @@ public class Book {
     @OneToMany(mappedBy = "book")
     private List<BookFile> bookFileList = new ArrayList<>();
 
-    public Book(Integer id, Date pubDate, Integer isBestseller, String slug, String title, String image, String description, Integer price, Integer discount) {
-        this.id = id;
-        this.pubDate = pubDate;
-        this.isBestseller = isBestseller;
-        this.slug = slug;
-        this.title = title;
-        this.image = image;
-        this.description = description;
-        this.price = price;
-        this.discount = discount;
-    }
-
     @JsonProperty("discountPrice")
     public Integer getDiscountPrice() {
-        Integer discountedPrice = this.price - this.price * this.discount / 100;
-        return discountedPrice;
+        return this.price - this.price * this.discount / 100;
     }
 
     @JsonIgnore

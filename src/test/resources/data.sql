@@ -69,9 +69,29 @@ insert into book2tag (book_id, tag_id) values (7, 5);
 insert into book2tag (book_id, tag_id) values (3, 1);
 insert into book2tag (book_id, tag_id) values (3, 3);
 
-insert into book_file(id, hash, type_id, path, book_id) values (1, 'Lockepdf', 1, '/Locke.pdf',  1);
-insert into book_file(id, hash, type_id, path, book_id) values (2, 'Lockefb2', 2, '/Locke.fb2',  1);
-insert into book_file(id, hash, type_id, path, book_id) values (3, 'Lockepub', 3, '/Locke.epub', 1);
-insert into book_file(id, hash, type_id, path, book_id) values (4, 'RattleandHumepub', 3, '/RattleandHum.epub', 5);
+insert into book_file_type(id, name, description) values (1, 'PDF',  'Portable Document Format');
+insert into book_file_type(id, name, description) values (2, 'EPUB', 'Electronic Publication');
+insert into book_file_type(id, name, description) values (3, 'FB2',  'файл в формате XML с расширением FB2');
+
+insert into book_file(id, hash, type_id, path) values (1, 'Lockepdf', 1, '/Locke.pdf');
+insert into book_file(id, hash, type_id, path) values (2, 'Lockefb2', 2, '/Locke.fb2');
+insert into book_file(id, hash, type_id, path) values (3, 'Lockepub', 3, '/Locke.epub');
+insert into book_file(id, hash, type_id, path) values (4, 'RattleandHumepub', 3, '/RattleandHum.epub');
+
+insert into book2file (book_id, file_id) values (1, 1);
+insert into book2file (book_id, file_id) values (1, 2);
+insert into book2file (book_id, file_id) values (1, 3);
+insert into book2file (book_id, file_id) values (5, 4);
+
+insert into roles (id, name) values (1, 'ANONYMOUS');
+insert into roles (id, name) values (2, 'REGISTER');
+insert into roles (id, name) values (3, 'ADMIN');
 
 insert into users (id, balance, hash, name, reg_time, email, password) values (100, 0, 'hash', 'admin admin', now(), 'safarov1209@gmail.com', '$2a$10$tH8meqZRAD5WxguyBAdTB.oPDhVsmq4TFNnGbhYa1YXi.RAgRbkkO');
+insert into users (id, balance, hash, name, reg_time, email, password) values (101, 0, 'root', 'root root',   now(), 'root@gmail.com', '$2a$10$tH8meqZRAD5WxguyBAdTB.oPDhVsmq4TFNnGbhYa1YXi.RAgRbkkO');
+
+insert into user_contact (id, approved, contact, type, user_id) values (200, 1, 'safarov1209@gmail.com', 'EMAIL', 100);
+insert into user_contact (id, approved, contact, type, user_id) values (201, 1, 'root@gmail.com',        'EMAIL', 101);
+
+insert into users_roles(user_id, role_id) values (100, 2);
+insert into users_roles(user_id, role_id) values (101, 3);

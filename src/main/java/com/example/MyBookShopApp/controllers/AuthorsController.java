@@ -1,5 +1,6 @@
 package com.example.MyBookShopApp.controllers;
 
+import com.example.MyBookShopApp.dto.AuthorDto;
 import com.example.MyBookShopApp.entity.Author;
 import com.example.MyBookShopApp.entity.Book;
 import com.example.MyBookShopApp.service.AuthorService;
@@ -35,8 +36,8 @@ public class AuthorsController {
     }
 
     @ModelAttribute("author")
-    public Author author(@PathVariable(value = "slug", required = false) String authorSlug) {
-        return authorSlug == null ? null : authorService.getAuthorBySlug(authorSlug);
+    public AuthorDto author(@PathVariable(value = "slug", required = false) String authorSlug) {
+        return authorSlug == null ? null : authorService.getAuthorDto(authorSlug);
     }
 
     @ModelAttribute("authorBooks")
@@ -50,7 +51,7 @@ public class AuthorsController {
     }
 
     @GetMapping("/{slug}")
-    public String getAuthorPage(@ModelAttribute("author") Author author, @ModelAttribute("authorBooks") List<Book> authorBooks) {
+    public String getAuthorPage(@ModelAttribute("author") AuthorDto author, @ModelAttribute("authorBooks") List<Book> authorBooks) {
         return "/authors/slug";
     }
 

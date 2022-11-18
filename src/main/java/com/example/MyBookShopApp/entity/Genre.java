@@ -63,9 +63,4 @@ public class Genre {
         return this.parent.getRoot();
     }
 
-    @JsonIgnore
-    public Integer getBooksCount() {
-        return this.bookList.size();
-    }
-
 }

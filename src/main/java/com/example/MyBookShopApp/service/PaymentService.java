@@ -36,7 +36,7 @@ public class PaymentService {
 
     public String getPaymentUrl(List<Book> booksFromCookiesSlug) throws NoSuchAlgorithmException {
         int paymentSumTotal = booksFromCookiesSlug.stream().mapToInt(Book::getDiscountPrice).sum();
-        MessageDigest messageDigest = MessageDigest.getInstance("MD5");
+        MessageDigest messageDigest = MessageDigest.getInstance("SHA-512");
         String invId = "5"; // just for testing
         messageDigest.update((metchantLogin + ":" + paymentSumTotal + ":" + invId + ":" + firstTestPass).getBytes());
 
@@ -52,7 +52,7 @@ public class PaymentService {
 
     public ResultResponse processPayUserBooks(User user, List<Book> bookList) {
         ResultResponse result = new ResultResponse();
-        if (bookList != null && bookList.size() > 0) {
+        if (bookList != null && !bookList.isEmpty()) {
             Integer paymentSumTotal = bookList.stream().mapToInt(Book::getDiscountPrice).sum();
             if (user.getBalance() >= paymentSumTotal) {
                 // Списание средств

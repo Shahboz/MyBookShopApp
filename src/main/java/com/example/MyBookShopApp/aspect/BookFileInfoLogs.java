@@ -12,6 +12,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 
@@ -24,35 +25,37 @@ public class BookFileInfoLogs {
     private Logger logger = Logger.getLogger(this.getClass().getName());
 
     @Pointcut(value = "@annotation(com.example.MyBookShopApp.aspect.annotations.BookFileInfo)")
-    public void bookFileInfo() {}
+    public void bookFileInfo() {
+        // Do nothing
+    }
 
     @Before("bookFileInfo() && args(file, bookSlug)")
     public void beforeSaveBookImage(MultipartFile file, String bookSlug) {
         if (!Files.exists(Paths.get(uploadPath)))
-            logger.info("Directory " + uploadPath + " will be created.");
+            logger.log(Level.INFO, "Directory {0} will be created.", uploadPath);
         else
-            logger.info("BookFile " + file.getOriginalFilename() + " will be copied to directory " + uploadPath + ".");
+            logger.log(Level.INFO, "BookFile {0} will be copied to directory {1}.", new String[]{file.getOriginalFilename(), uploadPath});
     }
 
     @AfterReturning(pointcut = "bookFileInfo() && args(file, bookSlug)")
     public void afterReturningCallSaveBookImage(MultipartFile file, String bookSlug) {
-        logger.info( bookSlug + "." + FilenameUtils.getExtension(file.getOriginalFilename()) + " upload to " + uploadPath + ".");
+        logger.log(Level.FINE, "{0}.{1} upload to {2}.", new String[]{bookSlug, FilenameUtils.getExtension(file.getOriginalFilename()), uploadPath});
     }
 
 
     @AfterReturning(pointcut = "bookFileInfo() && args(hash)", returning = "path")
     public void afterReturningCallGetBookFilePath(String hash, Path path) {
-        logger.info("Book (" + hash + ") file path: " + path);
+        logger.log(Level.FINE, "Book ({0}) file path: {1}", new Object[]{hash, path.toAbsolutePath()});
     }
 
     @AfterReturning(pointcut = "bookFileInfo() && args(hash)", returning = "mediaType")
     public void afterReturningCallGetBookFileMime(String hash, MediaType mediaType) {
-        logger.info("Book (" + hash + ") file mime type: " + mediaType);
+        logger.log(Level.FINE, "Book ({0}) file mime type: {1}", new String[]{hash, mediaType.getType()});
     }
 
     @AfterReturning(pointcut = "bookFileInfo() && args(hash)", returning = "bytes")
     public void afterReturningCallGetBookByteArray(String hash, byte[] bytes) {
-        logger.info("Book (" + hash + ") file data length: " + bytes.length);
+        logger.log(Level.FINE, "Book ({0}) file data length: {1}", new String[]{hash, String.valueOf(bytes.length)});
     }
 
 }

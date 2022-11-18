@@ -15,6 +15,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -99,23 +100,20 @@ public class BookstoreUserRegister {
     public ResultResponse login(ContactConfirmationPayload payload) {
         Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(payload.getContact(), payload.getCode()));
         SecurityContextHolder.getContext().setAuthentication(authentication);
-        ResultResponse response = new ResultResponse(true, "");
-        return response;
+        return new ResultResponse(true, "");
     }
 
     public ContactConfirmationResponse jwtlogin(ContactConfirmationPayload payload) {
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(payload.getContact(), payload.getCode()));
         BookstoreUserDetails userDetails = (BookstoreUserDetails) bookstoreUserDetailsService.loadUserByUsername(payload.getContact());
         String jwtToken = jwtUtil.generateToken(userDetails);
-        ContactConfirmationResponse response = new ContactConfirmationResponse(jwtToken);
-        return response;
+        return new ContactConfirmationResponse(jwtToken);
     }
 
     public ContactConfirmationResponse jwtloginByPhoneNumber(ContactConfirmationPayload payload) {
         UserDetails userDetails = bookstoreUserDetailsService.loadUserByUsername(payload.getContact());
         String jwtToken = jwtUtil.generateToken(userDetails);
-        ContactConfirmationResponse response = new ContactConfirmationResponse(jwtToken);
-        return response;
+        return new ContactConfirmationResponse(jwtToken);
     }
 
     public Object getCurrentUser() {
@@ -141,7 +139,7 @@ public class BookstoreUserRegister {
             CustomOAuth2User oAuth2User = (CustomOAuth2User) principal;
             return userContactService.getApprovedUserContacts(userService.getUserByEmail(oAuth2User.getEmail()).getHash());
         }
-        return null;
+        return Collections.emptyList();
     }
 
     public ResultResponse approveContact(ContactConfirmationPayload contactConfirmation) {
@@ -191,13 +189,10 @@ public class BookstoreUserRegister {
         } else if (userContactService.isExhausted(userContact)) {
             response.setResult(false);
             response.setReturn(true);
-            if (userContact.getType().equals("EMAIL")) {
-                response.setError("Количество попыток входа по e-mail исчерпано, попробуйте войти по телефону или повторить вход по e-mail через "
-                        + userContactService.getExceedMinuteRetryTimeout(userContact) + " минут");
-            } else {
-                response.setError("Количество попыток входа по телефону исчерпано, попробуйте войти по e-mail или повторить вход по телефону через "
-                        + userContactService.getExceedMinuteRetryTimeout(userContact) + " минут");
-            }
+            String errorText = "Количество попыток входа по %s исчерпано, попробуйте войти по %s или повторить вход по %s через %d минут";
+            response.setError(userContact.getType().equals("EMAIL")
+                    ? String.format(errorText, "e-mail", "e-mail", "e-mail", userContactService.getExceedMinuteRetryTimeout(userContact))
+                    : String.format(errorText, "телефону", "телефону", "телефону", userContactService.getExceedMinuteRetryTimeout(userContact)));
         } else if (userContactService.isExpired(userContact)) {
             response.setResult(false);
             response.setReturn(true);

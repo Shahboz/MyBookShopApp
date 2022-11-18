@@ -76,7 +76,7 @@
             </div>
           </div>
           <footer class="Section-footer">
-            <a class="Author-books" th:href="'/books/author/' + ${author.getSlug()}" th:text="#{author.allBooks} + '(' + ${author.getBooks().size()} + ')'">Все книги автора
+            <a class="Author-books" th:href="'/books/author/' + ${author.getSlug()}" th:text="#{author.allBooks} + '(' + ${author.getCountBooks()} + ')'">Все книги автора
               <span class="Author-amount">(55)</span>
             </a>
           </footer>

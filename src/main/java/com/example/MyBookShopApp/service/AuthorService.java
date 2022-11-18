@@ -36,12 +36,12 @@ public class AuthorService {
     }
 
     public AuthorDto getAuthorDto(String authorSlug) {
-        Author author = authorRepository.findAuthorBySlug(authorSlug);
+        Author author = StringUtils.isEmpty(authorSlug) ? null : authorRepository.findAuthorBySlug(authorSlug);
         return author == null ? null : new AuthorDto(author);
     }
 
     public List<AuthorDto> getAllAuthorsDto() {
-        return authorRepository.findByOrderByName().stream().map(author -> new AuthorDto(author)).collect(Collectors.toList());
+        return authorRepository.findByOrderByName().stream().map(AuthorDto::new).collect(Collectors.toList());
     }
 
     public void saveAuthor(AuthorDto authorDto) {

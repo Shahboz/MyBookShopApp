@@ -16,6 +16,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -106,8 +107,8 @@ public class BookReviewService {
     }
 
     public List<BookReviewDto> getBookReviewDtoList(String bookSlug, Integer offset, Integer limit) {
-        Pageable nextPage = PageRequest.of(offset/limit, limit);
-        return StringUtils.isEmpty(bookSlug) ? null : getBookReviewDtos(bookReviewRepository.findBookReviewsByBookSlug(bookSlug, nextPage));
+        return StringUtils.isEmpty(bookSlug) || limit == 0 ?
+                Collections.emptyList() : getBookReviewDtos(bookReviewRepository.findBookReviewsByBookSlug(bookSlug, PageRequest.of(offset/limit, limit)));
     }
 
     public List<BookReviewDto> getUserBookReviewDtoList(String userHash) {

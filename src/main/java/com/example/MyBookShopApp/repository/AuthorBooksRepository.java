@@ -11,4 +11,6 @@ public interface AuthorBooksRepository extends JpaRepository<AuthorBooks, Intege
     @Query(value = "select ab from AuthorBooks ab inner join Book b on ab.book.id = b.id where b.slug = :bookSlug")
     List<AuthorBooks> findAuthorsBooksByBookSlug(String bookSlug);
 
+    AuthorBooks findAuthorBooksById(Integer authorBooksId);
+
 }

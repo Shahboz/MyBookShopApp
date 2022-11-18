@@ -88,6 +88,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                             BookstoreUserDetails userDetails = (BookstoreUserDetails) bookstoreUserDetailsService.loadUserByUsername(customOAuth2User.getEmail());
                             Cookie cookie = new Cookie("token", filter.getJwtUtil().generateToken(userDetails));
                             cookie.setPath("/");
+                            cookie.setSecure(true);
+                            cookie.setHttpOnly(true);
                             httpServletResponse.addCookie(cookie);
                             UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
                             authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(httpServletRequest));
@@ -98,7 +100,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                     })
                 .and().oauth2Client();
 
-        // http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
         http.addFilterBefore(filter, UsernamePasswordAuthenticationFilter.class);
     }
 

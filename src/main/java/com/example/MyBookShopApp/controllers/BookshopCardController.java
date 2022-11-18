@@ -19,6 +19,7 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 import java.util.*;
 
 
@@ -76,7 +77,7 @@ public class BookshopCardController {
     @ResponseBody
     public ResultResponse handleChangeBookStatus(@RequestBody BookStatus bookStatus,
                                                  @CookieValue(name = "anonymousUser", required = false) String userHash,
-                                                 HttpServletResponse response) {
+                                                 HttpServletResponse response) throws NoSuchAlgorithmException {
         ResultResponse resultResponse = null;
         User currentUser = (User) userRegister.getCurrentUser();
         if (currentUser == null && !StringUtils.isEmpty(userHash)) {
@@ -84,9 +85,11 @@ public class BookshopCardController {
         }
         if (currentUser == null) {
             RegistrationForm registrationForm = new RegistrationForm();
-            registrationForm.setName("anonymousUser" + new Random().nextInt(1000));
+            registrationForm.setName("anonymousUser" + SecureRandom.getInstanceStrong().nextInt(1000));
             currentUser = userRegister.registerNewUser(registrationForm);
             Cookie cookie = new Cookie("anonymousUser", currentUser.getHash());
+            cookie.setSecure(true);
+            cookie.setHttpOnly(true);
             cookie.setPath("/books");
             response.addCookie(cookie);
         }
@@ -106,7 +109,7 @@ public class BookshopCardController {
 
     @GetMapping("/download/{hash}")
     public ResponseEntity<ByteArrayResource> getBookFile(@PathVariable("hash") String fileHash) throws IOException {
-        Boolean isPaid = userBooksService.getUserPaidBooks().stream().flatMap(book -> book.getBookFileList().stream()).anyMatch(bookFile -> bookFile.equals(fileHash));
+        boolean isPaid = userBooksService.getUserPaidBooks().stream().flatMap(book -> book.getBookFileList().stream()).anyMatch(bookFile -> bookFile.getHash().equals(fileHash));
         if (!StringUtils.isEmpty(fileHash) && isPaid) {
             return bookService.downloadBookFile(fileHash);
         }

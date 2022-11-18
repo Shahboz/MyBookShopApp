@@ -1,19 +1,27 @@
 package com.example.MyBookShopApp.utils;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
+import lombok.NoArgsConstructor;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 
+
+@NoArgsConstructor
 public class DateFormatter {
 
-    private static SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm");
+    private static final String PATTERN = "yyyy-MM-dd'T'HH:mm";
 
-    public static Date parseDate(String date) throws ParseException {
-        return dateFormatter.parse(date);
+    public static String getPattern() {
+        return PATTERN;
+    }
+
+    public static Date parseDate(String date) {
+        return Date.from(LocalDateTime.parse(date, DateTimeFormatter.ofPattern(PATTERN)).atZone(ZoneId.systemDefault()).toInstant());
     }
 
     public static String format(Date date) {
-        return dateFormatter.format(date);
+        return date.toInstant().atZone(ZoneId.systemDefault()).format(DateTimeFormatter.ofPattern(PATTERN));
     }
 
 }

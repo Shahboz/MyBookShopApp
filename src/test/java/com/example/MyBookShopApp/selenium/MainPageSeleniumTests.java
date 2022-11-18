@@ -8,6 +8,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestPropertySource;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
 
@@ -67,7 +69,7 @@ class MainPageSeleniumTests {
                     .pause();
         }
 
-        assertTrue(urlChapters.size() == 5);
+        assertThat(urlChapters).hasSize(5);
     }
 
 }

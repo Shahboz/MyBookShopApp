@@ -34,7 +34,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 @TestPropertySource("/application-test.properties")
-public class AuthUserControllerTests {
+class AuthUserControllerTests {
 
     private final MockMvc mockMvc;
     private final PasswordEncoder passwordEncoder;

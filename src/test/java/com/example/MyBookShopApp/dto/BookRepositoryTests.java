@@ -42,7 +42,7 @@ class BookRepositoryTests {
 
         assertNotNull(bookListBestsellers);
         assertFalse(bookListBestsellers.isEmpty());
-        assertThat(bookListBestsellers.size()).isGreaterThan(1);
+        assertThat(bookListBestsellers).hasSizeGreaterThan(1);
     }
 
     @Test

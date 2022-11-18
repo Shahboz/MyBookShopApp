@@ -1,7 +1,7 @@
 package com.example.MyBookShopApp.controllers;
 
 import com.example.MyBookShopApp.entity.Book;
-import com.example.MyBookShopApp.entity.Tag;
+import com.example.MyBookShopApp.dto.TagDto;
 import com.example.MyBookShopApp.service.BookService;
 import com.example.MyBookShopApp.service.TagService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,17 +27,17 @@ public class TagsController {
     }
 
     @ModelAttribute("tag")
-    public Tag getGenre(@PathVariable(value = "slug", required = false) String slugTag) {
-        return slugTag == null ? null : tagService.getTagBySlug(slugTag);
+    public TagDto getGenre(@PathVariable(value = "slug", required = false) String slugTag) {
+        return tagService.getTagDtoBySlug(slugTag);
     }
 
     @ModelAttribute("books")
     public List<Book> getBooks(@PathVariable(value = "slug", required = false) String slugTag) {
-        return slugTag == null ? null : bookService.getPageOfTagBooks(slugTag, 0, bookService.getRefreshLimit()).getContent();
+        return bookService.getPageOfTagBooks(slugTag, 0, bookService.getRefreshLimit()).getContent();
     }
 
     @GetMapping(value = {"/", "/{slug}"})
-    public String geTagPage(@ModelAttribute("tag") Tag tag, @ModelAttribute("books") List<Book> bookList) {
+    public String geTagPage(@ModelAttribute("tag") TagDto tag, @ModelAttribute("books") List<Book> bookList) {
         return "/tags/index";
     }
 

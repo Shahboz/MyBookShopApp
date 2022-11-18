@@ -1,8 +1,7 @@
 package com.example.MyBookShopApp.controllers;
 
-import com.example.MyBookShopApp.entity.Document;
+import com.example.MyBookShopApp.dto.DocumentDto;
 import com.example.MyBookShopApp.service.DocumentService;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,22 +23,22 @@ public class DocumentsController {
     }
 
     @ModelAttribute("documents")
-    private List<Document> getDocuments() {
+    private List<DocumentDto> getDocuments() {
         return documentService.getDocuments();
     }
 
     @ModelAttribute("document")
-    private Document getDocument(@PathVariable(value = "slug", required = false) String slug) {
-        return StringUtils.isEmpty(slug) ? null : documentService.getDocumentBySlug(slug);
+    private DocumentDto getDocument(@PathVariable(value = "slug", required = false) String slug) {
+        return documentService.getDocumentBySlug(slug);
     }
 
     @GetMapping("")
-    public String documentsPage(@ModelAttribute("documents") List<Document> documentList) {
+    public String documentsPage(@ModelAttribute("documents") List<DocumentDto> documentList) {
         return "/documents/index";
     }
 
     @GetMapping("/{slug}")
-    public String documentPage(@ModelAttribute("document") Document document) {
+    public String documentPage(@ModelAttribute("document") DocumentDto document) {
         return "/documents/slug";
     }
 

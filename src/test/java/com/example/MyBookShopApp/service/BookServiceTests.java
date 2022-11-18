@@ -14,12 +14,14 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.test.context.TestPropertySource;
 import java.util.ArrayList;
 import java.util.List;
+
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
 
 @SpringBootTest
 @TestPropertySource("/application-test.properties")
-public class BookServiceTests {
+class BookServiceTests {
 
     private BookService bookService;
     private List<Book> expectedBookList = new ArrayList<>();
@@ -57,7 +59,7 @@ public class BookServiceTests {
 
         assertNotNull(bookList);
         assertTrue(!bookList.isEmpty());
-        assertTrue(bookList.size() == 5);
+        assertThat(bookList).hasSize(5);
     }
 
     @Test
@@ -71,7 +73,7 @@ public class BookServiceTests {
 
         assertNotNull(bookList);
         assertTrue(!bookList.isEmpty());
-        assertTrue(bookList.size() == 5);
+        assertThat(bookList).hasSize(5);
         assertTrue(bookList.get(0).getSlug().contains("4"));
         assertTrue(bookList.get(4).getSlug().contains("0"));
     }

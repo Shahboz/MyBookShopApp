@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @TestPropertySource("/application-test.properties")
-public class BookReviewLikeServiceTests {
+class BookReviewLikeServiceTests {
 
     private BookReviewLikeService reviewLikeService;
     private BookReview bookReview;
@@ -67,8 +67,8 @@ public class BookReviewLikeServiceTests {
         Integer likeCount = reviewLikeService.getCountReviewByValue(bookReview.getId(), 1);
         Integer dislikeCount = reviewLikeService.getCountReviewByValue(bookReview.getId(), -1);
 
-        assertTrue(likeCount == this.likeCount);
-        assertTrue(dislikeCount == this.dislikeCount);
+        assertEquals(likeCount, this.likeCount);
+        assertEquals(dislikeCount, this.dislikeCount);
     }
 
 }

@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @TestPropertySource("/application-test.properties")
-public class BookstoreUserRegisterTests {
+class BookstoreUserRegisterTests {
 
     private final BookstoreUserRegister userRegister;
     private final PasswordEncoder passwordEncoder;

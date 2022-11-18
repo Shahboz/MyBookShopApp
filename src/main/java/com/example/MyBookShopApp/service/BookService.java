@@ -22,10 +22,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
-import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 
 @Service
@@ -70,11 +67,12 @@ public class BookService {
 
     public Page<Book> getPageOfNewBooks(Integer offset, Integer limit, Date fromDate, Date toDate) {
         Pageable nextPage = PageRequest.of(offset/limit, limit);
-        if(fromDate == null && toDate == null)
-            return bookRepository.findByOrderByPubDateDesc(nextPage);
-        else if(fromDate == null && toDate != null)
-            return bookRepository.findByPubDateLessThanEqualOrderByPubDateDesc(toDate, nextPage);
-        else if(fromDate != null && toDate == null)
+        if (fromDate == null) {
+            if (toDate == null)
+                return bookRepository.findByOrderByPubDateDesc(nextPage);
+            else
+                return bookRepository.findByPubDateLessThanEqualOrderByPubDateDesc(toDate, nextPage);
+        } else if (toDate == null)
             return bookRepository.findByPubDateGreaterThanEqualOrderByPubDateDesc(fromDate, nextPage);
         return bookRepository.findAllByPubDateBetweenOrderByPubDateDesc(fromDate, toDate, nextPage);
     }
@@ -83,7 +81,8 @@ public class BookService {
         Pageable nextPage = PageRequest.of(offset/limit, limit);
         User currentUser = (User) userRegister.getCurrentUser();
         Integer countUserBooks = (currentUser == null ? 0 : bookRepository.getCountUserRecommendedBooks(currentUser.getId()));
-        return currentUser == null || countUserBooks == 0 ? bookRepository.findRecommendBooksByRate(nextPage) : bookRepository.findRecommendBooksByUser(currentUser.getId(), nextPage);
+        return currentUser == null || countUserBooks == 0 ?
+                bookRepository.findRecommendBooksByRate(nextPage) : bookRepository.findRecommendBooksByUser(currentUser.getId(), nextPage);
     }
 
     public Page<Book> getPageOfSearchResultBooks(String searchWord, Integer offset, Integer limit) {
@@ -100,26 +99,26 @@ public class BookService {
 
     public Page<Book> getPageOfAuthorBooks(String authorSlug, Integer offset, Integer limit) {
         Pageable nextPage = PageRequest.of(offset/limit, limit);
-        return bookRepository.findBooksByAuthorNameContaining(authorSlug, nextPage);
+        return StringUtils.isEmpty(authorSlug) ? Page.empty() : bookRepository.findBooksByAuthorNameContaining(authorSlug, nextPage);
     }
 
     public Page<Book> getPageOfGenreBooks(String genreSlug, Integer offset, Integer limit) {
         Pageable nextPage = PageRequest.of(offset/limit, limit);
-        return bookRepository.findBooksByGenreSlug(genreSlug, nextPage);
+        return StringUtils.isEmpty(genreSlug) ? Page.empty() : bookRepository.findBooksByGenreSlug(genreSlug, nextPage);
     }
 
     public Page<Book> getPageOfTagBooks(String tagSlug, Integer offset, Integer limit) {
         Pageable nextPage = PageRequest.of(offset/limit, limit);
-        return bookRepository.findBooksByTagSlug(tagSlug, nextPage);
+        return StringUtils.isEmpty(tagSlug) ? Page.empty() : bookRepository.findBooksByTagSlug(tagSlug, nextPage);
     }
 
     // New BookService methods for RESP api documentation
     public List<Book> getBooksByTitle(String title) throws BookstoreApiWrongParameterException {
-        if (title.equals("") || title.length() <= 1)
+        if (StringUtils.isEmpty(title) || title.length() <= 1)
             throw new BookstoreApiWrongParameterException("Wrong values passed to one or more parameters");
         else {
             List<Book> bookList = bookRepository.findBooksByTitleContaining(title);
-            if (bookList.size() > 0)
+            if (!bookList.isEmpty())
                 return bookList;
             else
                 throw new BookstoreApiWrongParameterException("No data found with specified parameters...");
@@ -139,7 +138,7 @@ public class BookService {
     }
 
     public Book getBookBySlug(String bookSlug) {
-        return bookRepository.findBookBySlugEquals(bookSlug);
+        return StringUtils.isEmpty(bookSlug) ? null : bookRepository.findBookBySlugEquals(bookSlug);
     }
 
     public Book getBookById(Integer bookId) {
@@ -168,29 +167,27 @@ public class BookService {
     }
 
     public Boolean limitDownloadExceded(String bookSlug) {
-        return StringUtils.isEmpty(bookSlug) ? false : fileDownloadService.isLimitDownloadExceeded(bookRepository.findBookBySlugEquals(bookSlug));
+        return !StringUtils.isEmpty(bookSlug) && fileDownloadService.isLimitDownloadExceeded(bookRepository.findBookBySlugEquals(bookSlug));
     }
 
     public ResponseEntity<ByteArrayResource> downloadBookFile(String fileHash) throws IOException {
         Book bookByFilHash = bookFileService.getBookByFileHash(fileHash);
-        if (bookByFilHash != null && !fileDownloadService.isLimitDownloadExceeded(bookByFilHash)) {
-            if (fileDownloadService.saveDownloadBook(bookByFilHash)) {
-                byte[] data = bookFileService.getBookFileByteArray(fileHash);
+        if (bookByFilHash != null && !fileDownloadService.isLimitDownloadExceeded(bookByFilHash) && fileDownloadService.saveDownloadBook(bookByFilHash)) {
+            byte[] data = bookFileService.getBookFileByteArray(fileHash);
 
-                return ResponseEntity.ok()
-                        .header(HttpHeaders.CONTENT_DISPOSITION, "attachment;filename=" + bookFileService.getBookFilePath(fileHash).getFileName().toString())
-                        .contentType(bookFileService.getBookFileMime(fileHash))
-                        .contentLength(data.length)
-                        .body(new ByteArrayResource(data));
-            }
+            return ResponseEntity.ok()
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment;filename=" + bookFileService.getBookFilePath(fileHash).getFileName().toString())
+                    .contentType(bookFileService.getBookFileMime(fileHash))
+                    .contentLength(data.length)
+                    .body(new ByteArrayResource(data));
         }
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
     }
 
     public List<BookFileDto> getBookFilesData(String bookSlug) throws IOException {
         List<BookFileDto> bookFileDtoList = new ArrayList<>();
-        List<BookFile> bookFiles = bookFileService.getBookFilesByBookSlug(bookSlug);
-        if (bookFiles != null) {
+        List<BookFile> bookFiles = StringUtils.isEmpty(bookSlug) ? Collections.emptyList() : bookFileService.getBookFilesByBookSlug(bookSlug);
+        if (bookFiles != null && !bookFiles.isEmpty()) {
             for (BookFile bookFile : bookFiles) {
                 Double fileSize = Math.ceil(bookFileService.getBookFileByteArray(bookFile.getHash()).length / 1024.0);
                 BookFileDto bookFileDto = new BookFileDto(bookFile, fileSize.intValue());
@@ -212,9 +209,9 @@ public class BookService {
         return bookInfoDto;
     }
 
-    public void saveBook(BookInfoDto bookInfoDto) throws ParseException {
+    public void saveBook(BookInfoDto bookInfoDto) {
         if (bookInfoDto != null) {
-            Boolean isChange = false;
+            boolean isChange = false;
             Book book = bookRepository.findBookBySlugEquals(bookInfoDto.getSlug());
             if (book == null) {
                 Book newBook = new Book();

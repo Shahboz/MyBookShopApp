@@ -1,7 +1,9 @@
 package com.example.MyBookShopApp.service;
 
+import com.example.MyBookShopApp.dto.GenreDto;
 import com.example.MyBookShopApp.repository.GenreRepository;
 import com.example.MyBookShopApp.entity.Genre;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.*;
@@ -35,8 +37,8 @@ public class GenreService {
         return genreDeep;
     }
 
-    public Genre getGenreBySlug(String genreSlug) {
-        return genreRepository.findGenreBySlug(genreSlug);
+    public GenreDto getGenreBySlug(String genreSlug) {
+        return StringUtils.isEmpty(genreSlug) ? null : new GenreDto(genreRepository.findGenreBySlug(genreSlug));
     }
 
     public Integer getCountGenres() {
