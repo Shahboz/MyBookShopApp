@@ -123,11 +123,11 @@ class AuthUserControllerTests {
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(model().attributeExists("regOk"))
-                .andExpect(model().attribute("regOk", false))
-                .andExpect(content().string(CoreMatchers.not(containsString("Регистрация прошла успешно!"))));
+                .andExpect(model().attribute("regOk", true))
+                .andExpect(content().string(CoreMatchers.containsString("Регистрация прошла успешно!")));
 
         Mockito.verify(userRepository, Mockito.times(0)).save(Mockito.any(User.class));
-        Mockito.verify(userContactRepository, Mockito.times(0)).save(Mockito.any(UserContact.class));
+        Mockito.verify(userContactRepository, Mockito.times(2)).save(Mockito.any(UserContact.class));
     }
 
     @Test

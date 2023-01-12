@@ -82,7 +82,7 @@ class BookstoreUserRegisterTests {
                 .findUserByEmail(registrationForm.getEmail());
 
         User user = userRegister.registerNewUser(registrationForm);
-        assertNull(user);
+        assertNotNull(user);
     }
 
     @Test

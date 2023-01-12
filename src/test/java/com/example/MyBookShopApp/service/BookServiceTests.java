@@ -7,10 +7,12 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.context.TestPropertySource;
 import java.util.ArrayList;
 import java.util.List;
@@ -20,6 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 
 @SpringBootTest
+@AutoConfigureMockMvc
 @TestPropertySource("/application-test.properties")
 class BookServiceTests {
 
@@ -49,11 +52,12 @@ class BookServiceTests {
     }
 
     @Test
+    @WithUserDetails("root@gmail.com")
     public void testGetPageOfRecommendedBooks() {
 
         Mockito.doReturn(new PageImpl<>(expectedBookList))
                 .when(bookRepository)
-                .findAll(PageRequest.of(0, 5));
+                .findRecommendBooksByRate(PageRequest.of(0, 5));
 
         List<Book> bookList = bookService.getPageOfRecommendedBooks(0, 5).getContent();
 
