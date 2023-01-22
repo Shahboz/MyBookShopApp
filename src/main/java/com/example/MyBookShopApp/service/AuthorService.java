@@ -45,7 +45,7 @@ public class AuthorService {
     }
 
     public void saveAuthor(AuthorDto authorDto) {
-        Boolean isChange = false;
+        boolean isChange = false;
         Author author = authorRepository.findAuthorBySlug(authorDto.getSlug());
         if (author == null) {
             // Создание автора

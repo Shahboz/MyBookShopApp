@@ -29,7 +29,7 @@ class MainPageControllerTests {
     }
 
     @Test
-    public void mainPageAccessTest() throws Exception {
+    void mainPageAccessTest() throws Exception {
         mockMvc.perform(get("/"))
                 .andDo(print())
                 .andExpect(content().string(containsString("BOOKSHOP")))
@@ -37,7 +37,7 @@ class MainPageControllerTests {
     }
 
     @Test
-    public void accessOnlyAuthorizedPageFailTest() throws Exception {
+    void accessOnlyAuthorizedPageFailTest() throws Exception {
         mockMvc.perform(get("/my"))
                 .andDo(print())
                 .andExpect(status().is3xxRedirection())
@@ -45,7 +45,7 @@ class MainPageControllerTests {
     }
 
     @Test
-    public void correctLoginTest() throws Exception{
+    void correctLoginTest() throws Exception{
         mockMvc.perform(formLogin("/signin").user("safarov1209@gmail.com").password("123123"))
                 .andDo(print())
                 .andExpect(status().is3xxRedirection())
@@ -54,7 +54,7 @@ class MainPageControllerTests {
 
     @Test
     @WithUserDetails("safarov1209@gmail.com")
-    public void testAuthenticatedAccessToProfilePage() throws Exception {
+    void testAuthenticatedAccessToProfilePage() throws Exception {
         mockMvc.perform(get("/profile"))
                 .andDo(print())
                 .andExpect(authenticated())
@@ -62,7 +62,7 @@ class MainPageControllerTests {
     }
 
     @Test
-    public void testSearchQuery() throws Exception {
+    void testSearchQuery() throws Exception {
         mockMvc.perform(get("/search/Joy"))
                 .andDo(print())
                 .andExpect(content().string(containsString("Bundle of Joy")));

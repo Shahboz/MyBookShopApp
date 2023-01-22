@@ -45,7 +45,7 @@ class AuthUserControllerTests {
 
 
     @Autowired
-    public AuthUserControllerTests(MockMvc mockMvc, PasswordEncoder passwordEncoder) {
+    AuthUserControllerTests(MockMvc mockMvc, PasswordEncoder passwordEncoder) {
         this.mockMvc = mockMvc;
         this.passwordEncoder = passwordEncoder;
     }
@@ -56,7 +56,7 @@ class AuthUserControllerTests {
     private UserContactRepository userContactRepository;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         registrationForm = new RegistrationForm();
         registrationForm.setName("Test User");
         registrationForm.setPhone("7 000 000 00 00");
@@ -78,14 +78,14 @@ class AuthUserControllerTests {
     }
 
     @AfterEach
-    public void tearDown() {
+    void tearDown() {
         user = null;
         payload = null;
         registrationForm = null;
     }
 
     @Test
-    public void registerNewUser() throws Exception {
+    void registerNewUser() throws Exception {
         MultiValueMap<String, String> requestparams = new LinkedMultiValueMap<>();
         requestparams.add("name", registrationForm.getName());
         requestparams.add("phone", registrationForm.getPhone());
@@ -106,7 +106,7 @@ class AuthUserControllerTests {
     }
 
     @Test
-    public void registerExistingUser() throws Exception {
+    void registerExistingUser() throws Exception {
         MultiValueMap<String, String> requestparams = new LinkedMultiValueMap<>();
         requestparams.add("name", registrationForm.getName());
         requestparams.add("phone", registrationForm.getPhone());
@@ -131,7 +131,7 @@ class AuthUserControllerTests {
     }
 
     @Test
-    public void loginTest() throws Exception {
+    void loginTest() throws Exception {
 
         Mockito.doReturn(this.user)
                 .when(userRepository)
@@ -148,7 +148,7 @@ class AuthUserControllerTests {
     }
 
     @Test
-    public void loginTestFailure() throws Exception {
+    void loginTestFailure() throws Exception {
 
         Mockito.doReturn(this.user)
                 .when(userRepository)
@@ -168,7 +168,7 @@ class AuthUserControllerTests {
 
     @Test
     @WithMockUser(username = "admin")
-    public void logoutTest() throws Exception {
+    void logoutTest() throws Exception {
         mockMvc.perform(get("/logout").cookie(new Cookie("token", "simpleCookie")))
                 .andDo(print())
                 .andExpect(status().is3xxRedirection())

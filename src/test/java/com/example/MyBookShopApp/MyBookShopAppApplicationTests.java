@@ -14,8 +14,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 class MyBookShopAppApplicationTests {
 
 	@Value("${auth.secret}")
-	String authSecret;
-
+	private String authSecret;
 	private final MyBookShopAppApplication application;
 
 	@Autowired

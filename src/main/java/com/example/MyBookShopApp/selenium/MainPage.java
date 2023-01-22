@@ -18,6 +18,11 @@ public class MainPage {
         this.driver = driver;
     }
 
+    public MainPage setFullScreen() {
+        this.driver.manage().window().fullscreen();
+        return this;
+    }
+
     public MainPage callMainPage() {
         return callPage(url);
     }

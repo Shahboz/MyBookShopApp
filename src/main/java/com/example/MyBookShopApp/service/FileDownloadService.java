@@ -24,8 +24,8 @@ public class FileDownloadService {
         this.fileDownloadRepository = fileDownloadRepository;
     }
 
-    public Boolean isLimitDownloadExceeded(Book book) {
-        Boolean result = false;
+    public boolean isLimitDownloadExceeded(Book book) {
+        boolean result = false;
         User currentUser = (User) userRegister.getCurrentUser();
         if (currentUser != null && book != null) {
             FileDownload fileDownload = fileDownloadRepository.findFileDownloadByUserIdAndBookSlug(currentUser.getId(), book.getSlug());
@@ -36,8 +36,8 @@ public class FileDownloadService {
         return result;
     }
 
-    public Boolean saveDownloadBook(Book book) {
-        Boolean result = false;
+    public boolean saveDownloadBook(Book book) {
+        boolean result = false;
         User currentUser = (User) userRegister.getCurrentUser();
         if (currentUser != null && book != null) {
             FileDownload fileDownload = fileDownloadRepository.findFileDownloadByUserIdAndBookSlug(currentUser.getId(), book.getSlug());

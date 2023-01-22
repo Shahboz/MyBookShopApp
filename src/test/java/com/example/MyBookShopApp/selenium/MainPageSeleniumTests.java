@@ -32,7 +32,7 @@ class MainPageSeleniumTests {
     }
 
     @Test
-    public void testMainPageAccess() throws InterruptedException {
+    void testMainPageAccess() throws InterruptedException {
         MainPage mainPage = new MainPage(driver);
         mainPage
                 .callMainPage()
@@ -42,11 +42,12 @@ class MainPageSeleniumTests {
     }
 
     @Test
-    public void testMainPageSearchByQuery() throws InterruptedException {
+    void testMainPageSearchByQuery() throws InterruptedException {
         MainPage mainPage = new MainPage(driver);
         mainPage
                 .callMainPage()
                 .pause()
+                .setFullScreen()
                 .setUpSearchToken("As")
                 .submit()
                 .pause();
@@ -55,7 +56,7 @@ class MainPageSeleniumTests {
     }
 
     @Test
-    public void checkChaptersNavigate() throws InterruptedException {
+    void checkChaptersNavigate() throws InterruptedException {
         MainPage mainPage = new MainPage(driver);
         List<String> urlChapters = mainPage
                 .callMainPage()

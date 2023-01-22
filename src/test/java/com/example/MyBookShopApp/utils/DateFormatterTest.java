@@ -40,6 +40,7 @@ class DateFormatterTest {
         date = null;
         dateFormat = null;
         formatDate = null;
+        anotherFormatDate = null;
     }
 
     @Test

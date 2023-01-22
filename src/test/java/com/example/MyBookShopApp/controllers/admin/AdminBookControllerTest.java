@@ -60,7 +60,7 @@ class AdminBookControllerTest {
     }
 
     @Test
-    public void addBookSuccessTest() throws Exception {
+    void addBookSuccessTest() throws Exception {
 
         MultiValueMap<String, String> requestParams = new LinkedMultiValueMap<>();
         requestParams.add("title", bookInfoDto.getTitle());

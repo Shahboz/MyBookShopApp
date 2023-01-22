@@ -23,12 +23,12 @@ class BookshopCardControllerTests {
     private final MockMvc mockMvc;
 
     @Autowired
-    public BookshopCardControllerTests(MockMvc mockMvc) {
+    BookshopCardControllerTests(MockMvc mockMvc) {
         this.mockMvc = mockMvc;
     }
 
     @Test
-    public void addBookToCart() throws Exception {
+    void addBookToCart() throws Exception {
         BookStatus bookStatus = new BookStatus();
         bookStatus.setStatus("CART");
         bookStatus.setBooksIds("simpleBook");
@@ -43,7 +43,7 @@ class BookshopCardControllerTests {
     }
 
     @Test
-    public void deleteBookFromCart() throws Exception {
+    void deleteBookFromCart() throws Exception {
         BookStatus bookStatus = new BookStatus();
         bookStatus.setStatus("UNLINK");
         bookStatus.setBooksIds("simpleBook");

@@ -1,60 +1,72 @@
 package com.example.MyBookShopApp.service;
 
+import com.example.MyBookShopApp.entity.*;
 import com.example.MyBookShopApp.repository.BookReviewLikeRepository;
-import com.example.MyBookShopApp.entity.Book;
-import com.example.MyBookShopApp.entity.BookReview;
-import com.example.MyBookShopApp.entity.User;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.test.context.TestPropertySource;
 import java.util.Date;
 import static org.junit.jupiter.api.Assertions.*;
 
 
 @SpringBootTest
-@TestPropertySource("/application-test.properties")
+@AutoConfigureMockMvc
 class BookReviewLikeServiceTests {
 
     private BookReviewLikeService reviewLikeService;
     private BookReview bookReview;
+    private BookReviewLike bookReviewLike;
+    private User user;
     private Integer likeCount;
     private Integer dislikeCount;
 
     @MockBean
-    BookReviewLikeRepository reviewLikeRepository;
+    private BookReviewLikeRepository reviewLikeRepository;
 
     @Autowired
-    public BookReviewLikeServiceTests(BookReviewLikeService reviewLikeService) {
+    BookReviewLikeServiceTests(BookReviewLikeService reviewLikeService) {
         this.reviewLikeService = reviewLikeService;
     }
 
     @BeforeEach
-    public void setup() {
+    void setup() {
+        user = new User();
+        user.setId(1);
+
         bookReview = new BookReview();
-        bookReview.setId(1);
+        bookReview.setId(2);
         bookReview.setBook(new Book());
         bookReview.setTime(new Date());
         bookReview.setText("Simple review");
-        bookReview.setUser(new User());
+        bookReview.setUser(user);
+
+        bookReviewLike = new BookReviewLike();
+        bookReviewLike.setId(3);
+        bookReviewLike.setReview(bookReview);
+        bookReviewLike.setUser(user);
+        bookReview.setTime(new Date());
+        bookReviewLike.setValue(1);
 
         likeCount = 100;
         dislikeCount = 50;
     }
 
     @AfterEach
-    public void tearDown() {
+    void tearDown() {
         bookReview = null;
+        user = null;
+        bookReviewLike = null;
         likeCount = 0;
         dislikeCount = 0;
     }
 
     @Test
-    public void testGetCountReviewByValue() {
+    void testGetCountReviewByValue() {
 
         Mockito.doReturn(likeCount)
                 .when(reviewLikeRepository)
@@ -69,6 +81,34 @@ class BookReviewLikeServiceTests {
 
         assertEquals(likeCount, this.likeCount);
         assertEquals(dislikeCount, this.dislikeCount);
+    }
+
+    @Test
+    void testGetUserReviewLike() {
+
+        Mockito.doReturn(bookReviewLike)
+                .when(reviewLikeRepository)
+                .findBookReviewLikeByReviewIdAndUserId(bookReview.getId(), user.getId());
+
+        BookReviewLike bookReviewLike = reviewLikeService.getUserReviewLike(bookReview.getId(), user.getId());
+
+        assertNotNull(bookReviewLike);
+        assertEquals(bookReviewLike.getId(), this.bookReviewLike.getId());
+        assertEquals(bookReviewLike.getReview(), this.bookReview);
+        assertEquals(bookReviewLike.getUser(), this.user);
+        assertEquals(bookReviewLike.getValue(), this.bookReviewLike.getValue());
+    }
+
+    @Test
+    void testSaveBookReviewLike() {
+
+        Mockito.doReturn(null)
+                .when(reviewLikeRepository)
+                .save(Mockito.any(BookReviewLike.class));
+
+        reviewLikeService.save(this.bookReviewLike);
+
+        Mockito.verify(reviewLikeRepository, Mockito.times(1)).save(Mockito.any(BookReviewLike.class));
     }
 
 }

@@ -5,7 +5,6 @@ import com.example.MyBookShopApp.entity.Role;
 import com.example.MyBookShopApp.repository.RoleRepository;
 import com.example.MyBookShopApp.repository.UserRepository;
 import com.example.MyBookShopApp.entity.User;
-import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
@@ -16,7 +15,6 @@ import java.util.stream.Collectors;
 
 
 @Service
-@NoArgsConstructor
 public class UserService {
 
     @Value("${user.refresh.offset}")

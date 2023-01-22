@@ -28,28 +28,6 @@ public class PaymentService {
         this.transactionService = transactionService;
     }
 
-    @Value("${robokassa.merchant.login}")
-    private String metchantLogin;
-
-    @Value("${robokassa.pass.first.test}")
-    private String firstTestPass;
-
-    public String getPaymentUrl(List<Book> booksFromCookiesSlug) throws NoSuchAlgorithmException {
-        int paymentSumTotal = booksFromCookiesSlug.stream().mapToInt(Book::getDiscountPrice).sum();
-        MessageDigest messageDigest = MessageDigest.getInstance("SHA-512");
-        String invId = "5"; // just for testing
-        messageDigest.update((metchantLogin + ":" + paymentSumTotal + ":" + invId + ":" + firstTestPass).getBytes());
-
-        return "https://auth.robokassa.ru/Merchant/Index.aspx" +
-                "?MerchantLogin=" + metchantLogin +
-                "&InvId=" + invId +
-                "&Culture=ru" +
-                "&Encoding=utf-8" +
-                "&OutSum=" + paymentSumTotal +
-                "%SignatureValue=" + DatatypeConverter.printHexBinary(messageDigest.digest()).toUpperCase() +
-                "&IsTest=1";
-    }
-
     public ResultResponse processPayUserBooks(User user, List<Book> bookList) {
         ResultResponse result = new ResultResponse();
         if (bookList != null && !bookList.isEmpty()) {

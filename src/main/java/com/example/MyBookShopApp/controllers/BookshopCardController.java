@@ -116,13 +116,6 @@ public class BookshopCardController {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
     }
 
-    @GetMapping("/payment")
-    public RedirectView handlePayment() throws NoSuchAlgorithmException {
-        List<Book> booksFromCookiesSlug = bookService.getBooksBySlugs(null);
-        String paymentUrl = paymentService.getPaymentUrl(booksFromCookiesSlug);
-        return new RedirectView(paymentUrl);
-    }
-
     @GetMapping("/pay")
     public String handlePay(RedirectAttributes redirectAttributes) {
         User currentUser = (User) userRegister.getCurrentUser();

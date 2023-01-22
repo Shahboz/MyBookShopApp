@@ -3,8 +3,6 @@ package com.example.MyBookShopApp.service;
 import com.example.MyBookShopApp.dto.BookInfoDto;
 import com.example.MyBookShopApp.repository.BookRepository;
 import com.example.MyBookShopApp.entity.*;
-import com.example.MyBookShopApp.entity.google.api.books.Item;
-import com.example.MyBookShopApp.entity.google.api.books.Root;
 import com.example.MyBookShopApp.exceptions.BookstoreApiWrongParameterException;
 import com.example.MyBookShopApp.security.BookstoreUserRegister;
 import com.example.MyBookShopApp.utils.DateFormatter;
@@ -19,7 +17,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.util.*;
@@ -38,16 +35,14 @@ public class BookService {
     private Integer searchLimit;
 
     private final BookRepository bookRepository;
-    private final RestTemplate restTemplate;
     private final BookstoreUserRegister userRegister;
     private final BookFileService bookFileService;
     private final FileDownloadService fileDownloadService;
 
     @Autowired
-    public BookService(BookRepository bookRepository, RestTemplate restTemplate, BookstoreUserRegister userRegister,
+    public BookService(BookRepository bookRepository, BookstoreUserRegister userRegister,
                        BookFileService bookFileService, FileDownloadService fileDownloadService) {
         this.bookRepository = bookRepository;
-        this.restTemplate = restTemplate;
         this.userRegister = userRegister;
         this.bookFileService = bookFileService;
         this.fileDownloadService = fileDownloadService;
@@ -80,7 +75,7 @@ public class BookService {
     public Page<Book> getPageOfRecommendedBooks(Integer offset, Integer limit) {
         Pageable nextPage = PageRequest.of(offset/limit, limit);
         User currentUser = (User) userRegister.getCurrentUser();
-        Integer countUserBooks = (currentUser == null ? 0 : bookRepository.getCountUserRecommendedBooks(currentUser.getId()));
+        int countUserBooks = (currentUser == null ? 0 : bookRepository.getCountUserRecommendedBooks(currentUser.getId()));
         return currentUser == null || countUserBooks == 0 ?
                 bookRepository.findRecommendBooksByRate(nextPage) : bookRepository.findRecommendBooksByUser(currentUser.getId(), nextPage);
     }
@@ -189,8 +184,8 @@ public class BookService {
         List<BookFile> bookFiles = StringUtils.isEmpty(bookSlug) ? Collections.emptyList() : bookFileService.getBookFilesByBookSlug(bookSlug);
         if (bookFiles != null && !bookFiles.isEmpty()) {
             for (BookFile bookFile : bookFiles) {
-                Double fileSize = Math.ceil(bookFileService.getBookFileByteArray(bookFile.getHash()).length / 1024.0);
-                BookFileDto bookFileDto = new BookFileDto(bookFile, fileSize.intValue());
+                double fileSize = Math.ceil(bookFileService.getBookFileByteArray(bookFile.getHash()).length / 1024.0);
+                BookFileDto bookFileDto = new BookFileDto(bookFile, (int) fileSize);
                 bookFileDtoList.add(bookFileDto);
             }
         }
@@ -240,7 +235,7 @@ public class BookService {
                     isChange = true;
                     book.setDescription(bookInfoDto.getDescription());
                 }
-                if (bookInfoDto.getPrice() > 0 && book.getPrice().equals(bookInfoDto.getPrice())) {
+                if (bookInfoDto.getPrice() > 0 && !book.getPrice().equals(bookInfoDto.getPrice())) {
                     isChange = true;
                     book.setPrice(bookInfoDto.getPrice());
                 }
@@ -264,41 +259,6 @@ public class BookService {
         if (book != null) {
             bookRepository.delete(book);
         }
-    }
-
-    @Value("${google.books.api.key}")
-    private String googleApiKey;
-
-    public List<Book> getPageOfGoogleBooksApiSearchResult(String searchWord, Integer offset, Integer limit) {
-        String requestUrl = "https://www.googleapis.com/books/v1/volumes" +
-                "?q=" + searchWord +
-                "&key=" + googleApiKey +
-                "&filter=paid-ebooks" +
-                "&startIndex=" + offset +
-                "&maxResult=" + limit;
-        Root root = restTemplate.getForEntity(requestUrl, Root.class).getBody();
-        ArrayList<Book> bookList = new ArrayList<>();
-        if (root != null) {
-            for (Item item : root.getItems()) {
-                Book book = new Book();
-                if (item.getVolumeInfo() != null) {
-                    List<Author> authorList = new ArrayList<>();
-                    authorList.add(new Author(item.getVolumeInfo().getAuthors()));
-                    book.setAuthors(authorList);
-                    book.setTitle(item.getVolumeInfo().getTitle());
-                    book.setImage(item.getVolumeInfo().getImageLinks().getThumbnail());
-                }
-                if (item.getSaleInfo() != null) {
-                    Double price = item.getSaleInfo().getRetailPrice().getAmount();
-                    book.setPrice(price.intValue());
-                    Double oldPrice = item.getSaleInfo().getListPrice().getAmount();
-                    book.setDiscount((int) (100 * (oldPrice - price)/ oldPrice));
-
-                }
-                bookList.add(book);
-            }
-        }
-        return bookList;
     }
 
 }

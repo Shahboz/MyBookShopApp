@@ -1,13 +1,10 @@
 package com.example.MyBookShopApp.utils;
 
-import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
 
-
-@NoArgsConstructor
 public class DateFormatter {
 
     private static final String PATTERN = "yyyy-MM-dd'T'HH:mm";

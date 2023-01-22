@@ -22,7 +22,7 @@ class UserRepositoryTests {
     }
 
     @Test
-    public void testAddUser() {
+    void testAddUser() {
         User user = new User();
         user.setName("Test user");
         user.setRegTime(new Date());
