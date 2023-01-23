@@ -7,6 +7,7 @@ import com.example.MyBookShopApp.entity.Book;
 import com.example.MyBookShopApp.entity.BookReview;
 import com.example.MyBookShopApp.entity.BookReviewLike;
 import com.example.MyBookShopApp.entity.User;
+import com.example.MyBookShopApp.repository.BookReviewLikeRepository;
 import com.example.MyBookShopApp.repository.BookReviewRepository;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.AfterEach;
@@ -43,13 +44,10 @@ class BookReviewServiceTest {
     private BookReview bookReview;
     private BookReviewData bookReviewData;
     private List<BookReview> expectedBookReviews;
-
     @MockBean
     private BookReviewRepository bookReviewRepository;
-
     @MockBean
-    private BookReviewLikeService bookReviewLikeService;
-
+    private BookReviewLikeRepository bookReviewLikeRepository;
     private final BookReviewService bookReviewService;
 
     @Autowired
@@ -294,8 +292,8 @@ class BookReviewServiceTest {
                 .findBookReviewById(reviewId);
 
         Mockito.doReturn(null)
-                .when(bookReviewLikeService)
-                .getUserReviewLike(Mockito.any(Integer.class), Mockito.any(Integer.class));
+                .when(bookReviewLikeRepository)
+                .findBookReviewLikeByReviewIdAndUserId(Mockito.any(Integer.class), Mockito.any(Integer.class));
 
         ResultResponse resultResponse = bookReviewService.bookReviewLiked(bookReviewData);
 
@@ -303,7 +301,7 @@ class BookReviewServiceTest {
         assertTrue(resultResponse.getResult());
         assertTrue(StringUtils.isEmpty(resultResponse.getError()));
 
-        Mockito.verify(bookReviewLikeService, Mockito.times(1)).save(Mockito.any(BookReviewLike.class));
+        Mockito.verify(bookReviewLikeRepository, Mockito.times(1)).save(Mockito.any(BookReviewLike.class));
     }
 
     @Test
@@ -315,8 +313,8 @@ class BookReviewServiceTest {
                 .findBookReviewById(reviewId);
 
         Mockito.doReturn(new BookReviewLike())
-                .when(bookReviewLikeService)
-                .getUserReviewLike(Mockito.any(Integer.class), Mockito.any(Integer.class));
+                .when(bookReviewLikeRepository)
+                .findBookReviewLikeByReviewIdAndUserId(Mockito.any(Integer.class), Mockito.any(Integer.class));
 
         ResultResponse resultResponse = bookReviewService.bookReviewLiked(bookReviewData);
 
@@ -324,7 +322,7 @@ class BookReviewServiceTest {
         assertTrue(resultResponse.getResult());
         assertTrue(StringUtils.isEmpty(resultResponse.getError()));
 
-        Mockito.verify(bookReviewLikeService, Mockito.times(1)).save(Mockito.any(BookReviewLike.class));
+        Mockito.verify(bookReviewLikeRepository, Mockito.times(1)).save(Mockito.any(BookReviewLike.class));
     }
 
     @Test

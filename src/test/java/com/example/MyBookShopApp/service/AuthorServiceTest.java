@@ -2,7 +2,6 @@ package com.example.MyBookShopApp.service;
 
 import com.example.MyBookShopApp.dto.AuthorDto;
 import com.example.MyBookShopApp.entity.Author;
-import com.example.MyBookShopApp.entity.AuthorBooks;
 import com.example.MyBookShopApp.repository.AuthorRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -19,6 +18,7 @@ import java.util.Map;
 
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
+
 
 @SpringBootTest
 @AutoConfigureMockMvc

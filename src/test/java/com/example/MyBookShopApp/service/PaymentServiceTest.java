@@ -2,9 +2,10 @@ package com.example.MyBookShopApp.service;
 
 import com.example.MyBookShopApp.dto.PaymentDto;
 import com.example.MyBookShopApp.dto.ResultResponse;
-import com.example.MyBookShopApp.entity.Book;
-import com.example.MyBookShopApp.entity.Transaction;
-import com.example.MyBookShopApp.entity.User;
+import com.example.MyBookShopApp.entity.*;
+import com.example.MyBookShopApp.repository.TransactionRepository;
+import com.example.MyBookShopApp.repository.UserBooksRepository;
+import com.example.MyBookShopApp.repository.UserRepository;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -31,11 +32,11 @@ class PaymentServiceTest {
     private PaymentDto paymentDto;
     private List<Book> bookList;
     @MockBean
-    private UserService userService;
+    private UserRepository userRepository;
     @MockBean
-    private UserBooksService userBooksService;
+    private UserBooksRepository userBooksRepository;
     @MockBean
-    private TransactionService transactionService;
+    private TransactionRepository transactionRepository;
     private final PaymentService paymentService;
 
     @Autowired
@@ -53,15 +54,23 @@ class PaymentServiceTest {
         paymentDto.setTime(new Date().getTime());
         paymentDto.setSum(100);
 
+        Role role = new Role();
+        role.setId(0);
+        role.setName("REGISTER");
+        List<Role> roleList = new ArrayList<>();
+        roleList.add(role);
+
         user = new User();
         user.setId(1);
         user.setHash(userHash);
         user.setBalance(100F);
+        user.setRoles(roleList);
 
         bookList = new ArrayList<>();
         for (int i = 1; i <= 5; i++) {
             Book book = new Book();
             book.setId(i + 10);
+            book.setSlug("Slug" + i);
             book.setPrice(i);
             book.setDiscount(0);
 
@@ -79,12 +88,10 @@ class PaymentServiceTest {
 
     @Test
     void testProcessPayUserBooksSuccess() {
-        ResultResponse isPaidBook = new ResultResponse();
-        isPaidBook.setResult(true);
 
-        Mockito.doReturn(isPaidBook)
-                .when(userBooksService)
-                .changeBookStatus(Mockito.any(String.class), Mockito.any(Book.class), Mockito.any(User.class));
+        Mockito.doReturn(new UserBooks())
+                .when(userBooksRepository)
+                .findUserBooksByUserIdAndBookSlugAndUserBookTypeCode(Mockito.any(Integer.class), Mockito.any(String.class), Mockito.any(String.class));
 
         ResultResponse result = paymentService.processPayUserBooks(user, bookList);
 
@@ -92,8 +99,8 @@ class PaymentServiceTest {
         assertTrue(result.getResult());
         assertTrue(StringUtils.isEmpty(result.getError()));
 
-        Mockito.verify(transactionService, Mockito.times(5)).save(Mockito.any(Transaction.class));
-        Mockito.verify(userService, Mockito.times(1)).save(Mockito.any(User.class));
+        Mockito.verify(transactionRepository, Mockito.times(5)).save(Mockito.any(Transaction.class));
+        Mockito.verify(userRepository, Mockito.times(1)).save(Mockito.any(User.class));
     }
 
     @Test
@@ -126,8 +133,8 @@ class PaymentServiceTest {
     void testProcessPaymentSuccess() {
 
         Mockito.doReturn(user)
-                .when(userService)
-                .getUserByHash(userHash);
+                .when(userRepository)
+                .findUserByHash(userHash);
 
         ResultResponse result = paymentService.processPayment(paymentDto);
 
@@ -135,8 +142,8 @@ class PaymentServiceTest {
         assertTrue(result.getResult());
         assertTrue(StringUtils.isEmpty(result.getError()));
 
-        Mockito.verify(transactionService, Mockito.times(1)).save(Mockito.any(Transaction.class));
-        Mockito.verify(userService, Mockito.times(1)).save(Mockito.any(User.class));
+        Mockito.verify(transactionRepository, Mockito.times(1)).save(Mockito.any(Transaction.class));
+        Mockito.verify(userRepository, Mockito.times(1)).save(Mockito.any(User.class));
     }
 
     @Test
@@ -172,8 +179,8 @@ class PaymentServiceTest {
     void testProcessPaymentIncorrectUserHashFail() {
 
         Mockito.doReturn(null)
-                .when(userService)
-                .getUserByHash(userHash);
+                .when(userRepository)
+                .findUserByHash(userHash);
 
         ResultResponse result = paymentService.processPayment(paymentDto);
 

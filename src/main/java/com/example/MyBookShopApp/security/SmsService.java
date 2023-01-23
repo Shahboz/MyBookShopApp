@@ -62,11 +62,6 @@ public class SmsService {
         } else {
             // Send SMS code
             Twilio.init(accountSid, authToken);
-            /*Message.creator(
-                    new PhoneNumber(userContact.getContact().replaceAll("[()-]]", "")),
-                    new PhoneNumber(twilioNumber),
-                    "Your secret code is: " + userContact.getCode()
-            ).create();*/
         }
         userContactService.save(userContact);
     }

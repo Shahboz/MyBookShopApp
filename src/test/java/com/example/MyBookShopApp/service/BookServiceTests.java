@@ -1,10 +1,10 @@
 package com.example.MyBookShopApp.service;
 
 import com.example.MyBookShopApp.dto.BookInfoDto;
-import com.example.MyBookShopApp.entity.BookFile;
-import com.example.MyBookShopApp.entity.BookFileDto;
+import com.example.MyBookShopApp.entity.*;
+import com.example.MyBookShopApp.repository.BookFileRepository;
 import com.example.MyBookShopApp.repository.BookRepository;
-import com.example.MyBookShopApp.entity.Book;
+import com.example.MyBookShopApp.repository.FileDownloadRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -41,15 +41,16 @@ class BookServiceTests {
     private Book book;
     private BookInfoDto bookInfoDto;
     private String[] booksSlug;
+    private FileDownload fileDownload;
     private List<Book> expectedBookList = new ArrayList<>();
     private final BookService bookService;
 
     @MockBean
     private BookRepository bookRepository;
     @MockBean
-    private FileDownloadService fileDownloadService;
+    private FileDownloadRepository fileDownloadRepository;
     @MockBean
-    private BookFileService bookFileService;
+    private BookFileRepository bookFileRepository;
 
     @Autowired
     BookServiceTests(BookService bookService) {
@@ -80,6 +81,12 @@ class BookServiceTests {
 
         booksSlug = new String[]{"slug1", "slug2"};
 
+        fileDownload = new FileDownload();
+        fileDownload.setId(2);
+        fileDownload.setBook(book);
+        fileDownload.setUser(new User());
+        fileDownload.setCount(0);
+
         for (int i = 4; i >= 0; i--) {
             Book book = new Book();
             book.setSlug("Slug" + i);
@@ -97,6 +104,7 @@ class BookServiceTests {
         book = null;
         bookInfoDto = null;
         booksSlug = null;
+        fileDownload = null;
         expectedBookList = null;
     }
 
@@ -337,12 +345,17 @@ class BookServiceTests {
     }
 
     @Test
+    @WithUserDetails("safarov1209@gmail.com")
     void testLimitDownloadExceeded() {
 
-        Mockito.doReturn(true)
-                .when(fileDownloadService)
-                .isLimitDownloadExceeded(Mockito.any());
+        Mockito.doReturn(book)
+                .when(bookRepository)
+                .findBookBySlugEquals(bookSlug);
+        Mockito.doReturn(fileDownload)
+                .when(fileDownloadRepository)
+                .findFileDownloadByUserIdAndBookSlug(Mockito.any(Integer.class), Mockito.any(String.class));
 
+        fileDownload.setCount(20);
         Boolean isExceeded = bookService.limitDownloadExceded(bookSlug);
 
         assertTrue(isExceeded);
@@ -351,9 +364,12 @@ class BookServiceTests {
     @Test
     void testNotLimitDownloadExceeded() {
 
-        Mockito.doReturn(false)
-                .when(fileDownloadService)
-                .isLimitDownloadExceeded(Mockito.any(Book.class));
+        Mockito.doReturn(book)
+                .when(bookRepository)
+                .findBookBySlugEquals(bookSlug);
+        Mockito.doReturn(fileDownload)
+                .when(fileDownloadRepository)
+                .findFileDownloadByUserIdAndBookSlug(Mockito.any(Integer.class), Mockito.any(String.class));
 
         Boolean isExceeded = bookService.limitDownloadExceded(bookSlug);
 
@@ -368,16 +384,17 @@ class BookServiceTests {
             bookFile.setId(i);
             bookFile.setBook(book);
             bookFile.setHash(simpleSlug);
+            bookFile.setPath("/Locke.pdf");
 
             bookFileList.add(bookFile);
         }
 
         Mockito.doReturn(bookFileList)
-                .when(bookFileService)
-                .getBookFilesByBookSlug(bookSlug);
-        Mockito.doReturn(new byte[]{})
-                .when(bookFileService)
-                .getBookFileByteArray(simpleSlug);
+                .when(bookFileRepository)
+                .findAllByBookSlugOrderByTypeNameAsc(bookSlug);
+        Mockito.doReturn(bookFileList.get(0))
+                .when(bookFileRepository)
+                .findFileByHash(simpleSlug);
 
         List<BookFileDto> bookFilesDto = bookService.getBookFilesData(bookSlug);
 

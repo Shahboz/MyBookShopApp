@@ -17,7 +17,25 @@
 	<properties>
 		<java.version>15</java.version>
 		<spring-boot-admin.version>2.4.3</spring-boot-admin.version>
+		<jacoco.version>0.8.7</jacoco.version>
+		<sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
+		<sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
 		<sonar.coverage.jacoco.xmlReportPaths>target/site/jacoco/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
+		<sonar.language>java</sonar.language>
+		<sonar.coverage.exclusions>
+			**/aspect/*,
+			**/controllers/**,
+			**/dto/*,
+			**/entity/**,
+			**/exceptions/*,
+			**/repository/*,
+			**/security/AuthUserController.java,
+			**/security/CustomOAuth2User.java,
+			**/security/PhoneNumberUserDetails.java,
+			**/security/SecurityConfig.java,
+			**/security/jwt/*,
+			**/MyBookShopAppApplication.java
+		</sonar.coverage.exclusions>
 	</properties>
 
 	<dependencies>
@@ -197,69 +215,49 @@
 				</configuration>
 			</plugin>
 
+			<plugin>
+				<groupId>org.sonarsource.scanner.maven</groupId>
+				<artifactId>sonar-maven-plugin</artifactId>
+				<version>3.7.0.1746</version>
+			</plugin>
+
+			<!-- Code Coverage report generation -->
+			<plugin>
+				<groupId>org.jacoco</groupId>
+				<artifactId>jacoco-maven-plugin</artifactId>
+				<version>${jacoco.version}</version>
+				<executions>
+					<execution>
+						<id>prepare-agent</id>
+						<goals>
+							<goal>prepare-agent</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>report</id>
+						<goals>
+							<goal>report</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<excludes>
+						<exclude>**/aspect/*</exclude>
+						<exclude>**/controllers/**</exclude>
+						<exclude>**/dto/*</exclude>
+						<exclude>**/entity/**</exclude>
+						<exclude>**/exceptions/*</exclude>
+						<exclude>**/repository/*</exclude>
+						<exclude>**/security/AuthUserController.class</exclude>
+						<exclude>**/security/CustomOAuth2User.class</exclude>
+						<exclude>**/security/PhoneNumberUserDetails.class</exclude>
+						<exclude>**/security/jwt/*</exclude>
+						<exclude>**/MyBookShopAppApplication.class</exclude>
+					</excludes>
+				</configuration>
+			</plugin>
 		</plugins>
 
-		<pluginManagement>
-			<plugins>
-				<plugin>
-					<groupId>org.sonarsource.scanner.maven</groupId>
-					<artifactId>sonar-maven-plugin</artifactId>
-					<version>3.7.0.1746</version>
-				</plugin>
-			</plugins>
-		</pluginManagement>
-
 	</build>
-
-	<profiles>
-		<profile>
-			<id>coverage</id>
-			<build>
-				<plugins>
-					<!-- Code Coverage report generation -->
-					<plugin>
-						<groupId>org.jacoco</groupId>
-						<artifactId>jacoco-maven-plugin</artifactId>
-						<version>0.8.7</version>
-						<executions>
-							<execution>
-								<id>prepare-agent</id>
-								<goals>
-									<goal>prepare-agent</goal>
-								</goals>
-							</execution>
-							<execution>
-								<id>report</id>
-								<goals>
-									<goal>report</goal>
-								</goals>
-								<configuration>
-									<formats>
-										<format>XML</format>
-										<format>HTML</format>
-									</formats>
-								</configuration>
-							</execution>
-						</executions>
-						<configuration>
-							<excludes>
-								<exclude>**/aspect/*</exclude>
-								<exclude>**/controllers/**</exclude>
-								<exclude>**/dto/*</exclude>
-								<exclude>**/entity/**</exclude>
-								<exclude>**/exceptions/*</exclude>
-								<exclude>**/repository/*</exclude>
-								<exclude>**/security/AuthUserController.class</exclude>
-								<exclude>**/security/CustomOAuth2User.class</exclude>
-								<exclude>**/security/PhoneNumberUserDetails.class</exclude>
-								<exclude>**/security/jwt/*</exclude>
-								<exclude>**/MyBookShopAppApplication.class</exclude>
-							</excludes>
-						</configuration>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-	</profiles>
 
 </project>
